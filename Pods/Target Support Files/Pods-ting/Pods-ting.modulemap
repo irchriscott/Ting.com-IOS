@@ -1,0 +1,6 @@
+module Pods_ting {
+  umbrella header "Pods-ting-umbrella.h"
+
+  export *
+  module * { export * }
+}
