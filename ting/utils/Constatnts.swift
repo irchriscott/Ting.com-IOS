@@ -46,6 +46,7 @@ struct URLs {
     
     static let checkEmail               = "\(endPoint)usr/check/email-username/"
     static let emailSignup              = "\(endPoint)usr/signup/email/"
+    static let googleSignup             = "\(endPoint)usr/signup/google/"
     static let authLoginUser            = "\(endPoint)usr/auth/login/"
     static let userResetPassword        = "\(endPoint)usr/auth/password/reset/"
     

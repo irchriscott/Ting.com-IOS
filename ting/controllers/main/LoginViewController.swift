@@ -10,7 +10,7 @@ import UIKit
 import QuartzCore
 import GoogleSignIn
 
-class LoginViewController: UIViewController, GIDSignInUIDelegate {
+class LoginViewController: UIViewController {
     
     @IBOutlet var scrollView: UIScrollView!
     @IBOutlet weak var loginEmailInput: UITextField!
@@ -29,7 +29,7 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        GIDSignIn.sharedInstance()?.uiDelegate = self
+        GIDSignIn.sharedInstance()?.presentingViewController = self
         GIDSignIn.sharedInstance()?.signOut()
         
         if UserAuthentication().isUserLoggedIn() {
@@ -138,7 +138,7 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
     }
     
     @IBAction func signInWithGoogle(_ sender: UIButton) {
-        GIDSignIn.sharedInstance()?.signInSilently()
+        GIDSignIn.sharedInstance()?.signIn()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
