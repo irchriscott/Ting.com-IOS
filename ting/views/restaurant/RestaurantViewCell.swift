@@ -40,6 +40,7 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         view.frame = CGRect(x: 0, y: 0, width: 80, height: 80)
         view.alpha = 0.4
         view.image = UIImage(named: "default_restaurant")
+        view.contentMode = .scaleAspectFill
         return view
     }()
     
@@ -162,7 +163,7 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         let view = IconTextView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.text = "4"
-        view.icon = UIImage(named: "icons-plus_filled_25_gray")!
+        view.icon = UIImage(named: "icon_plus_filled_25_gray")!
         return view
     }()
     
@@ -323,7 +324,7 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
         let menuController = storyboard.instantiateViewController(withIdentifier: "RestaurantMenuBottomView") as! BottomSheetMenuControllerView
         menuController.menu = menu
-        let sheetController = SheetViewController(controller: menuController, sizes: [.fixed(350), .halfScreen, .fullScreen])
+        let sheetController = SheetViewController(controller: menuController, sizes: [.fixed(400), .fixed(640)])
         sheetController.blurBottomSafeArea = false
         sheetController.adjustForBottomSafeArea = true
         sheetController.topCornersRadius = 8
@@ -400,6 +401,7 @@ class RestaurantViewCellMenuViewCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.alpha = 0.4
         view.image = UIImage(named: "default_meal")
+        view.contentMode = .scaleAspectFill
         return view
     }()
     

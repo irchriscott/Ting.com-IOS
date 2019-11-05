@@ -72,6 +72,8 @@ struct MenuPromotions: Codable {
 
 struct MenuReviews: Codable {
     let count: Int
+    let average: Double
+    let percents: [Int]
     let reviews: [MenuReview]?
 }
 

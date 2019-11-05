@@ -98,6 +98,7 @@
 		8FC6088822FBD361005D142B /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC6088722FBD361005D142B /* Functions.swift */; };
 		8FC6089222FCA7D3005D142B /* UITabBarViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC6089122FCA7D3005D142B /* UITabBarViewControllerExtension.swift */; };
 		8FC608942309BEB2005D142B /* References in Resources */ = {isa = PBXBuildFile; fileRef = 8FC608932309BEB2005D142B /* References */; };
+		8FDDF97623716A97000AA334 /* ImageTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDF97523716A97000AA334 /* ImageTextView.swift */; };
 		8FEB1D99232B66B10024FF04 /* RestaurantViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEB1D98232B66B10024FF04 /* RestaurantViewCell.swift */; };
 		C4BF786235A82C4975A5FBAE /* libPods-ting.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D97FDED79855837715D5225D /* libPods-ting.a */; };
 /* End PBXBuildFile section */
@@ -193,6 +194,7 @@
 		8FC6088722FBD361005D142B /* Functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		8FC6089122FCA7D3005D142B /* UITabBarViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITabBarViewControllerExtension.swift; sourceTree = "<group>"; };
 		8FC608932309BEB2005D142B /* References */ = {isa = PBXFileReference; lastKnownFileType = text; path = References; sourceTree = "<group>"; };
+		8FDDF97523716A97000AA334 /* ImageTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTextView.swift; sourceTree = "<group>"; };
 		8FEB1D98232B66B10024FF04 /* RestaurantViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantViewCell.swift; sourceTree = "<group>"; };
 		B3574E3CEF3D845DD3605E35 /* Pods-ting.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ting.release.xcconfig"; path = "Target Support Files/Pods-ting/Pods-ting.release.xcconfig"; sourceTree = "<group>"; };
 		B76E861E707C1B41EA38E562 /* Pods-ting.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ting.debug.xcconfig"; path = "Target Support Files/Pods-ting/Pods-ting.debug.xcconfig"; sourceTree = "<group>"; };
@@ -379,6 +381,7 @@
 				8F12248E23312351000C20EF /* FloatingButton.swift */,
 				8F13CAF32334EF3000E3D03D /* RestaurantMapInfoWindowView.swift */,
 				8F13CAF52334FDB300E3D03D /* InlineIconTextView.swift */,
+				8FDDF97523716A97000AA334 /* ImageTextView.swift */,
 			);
 			path = custom;
 			sourceTree = "<group>";
@@ -627,6 +630,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FDDF97623716A97000AA334 /* ImageTextView.swift in Sources */,
 				8F934E942370C2E30093D9AA /* Home.storyboard in Sources */,
 				8F934E932370C2DD0093D9AA /* Main.storyboard in Sources */,
 				8F934E922370C2D30093D9AA /* LaunchScreen.storyboard in Sources */,
