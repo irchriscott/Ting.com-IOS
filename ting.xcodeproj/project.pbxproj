@@ -265,6 +265,7 @@
 		8F2F8B0922F0BC2200FF5B59 /* ting */ = {
 			isa = PBXGroup;
 			children = (
+				8F30B20722F9B5D9000B66B7 /* providers */,
 				8F30B20C22F9B81C000B66B7 /* controllers */,
 				8FEB1D95232B660E0024FF04 /* views */,
 				8F1F112922FA29E600CA4DD9 /* storyboards */,
@@ -394,7 +395,6 @@
 		8F49C0FC22F372650084F3E7 /* utils */ = {
 			isa = PBXGroup;
 			children = (
-				8F30B20722F9B5D9000B66B7 /* providers */,
 				8F88EE7722F2B320000C4ED2 /* Constatnts.swift */,
 				8F43F3CD22F798E200545AC2 /* Requests.swift */,
 				8FC6088722FBD361005D142B /* Functions.swift */,
