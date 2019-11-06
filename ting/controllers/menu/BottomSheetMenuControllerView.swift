@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FittedSheets
 
 class BottomSheetMenuControllerView: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
@@ -21,6 +22,8 @@ class BottomSheetMenuControllerView: UICollectionViewController, UICollectionVie
         }
     }
     
+    var controller: HomeRestaurantsViewController?
+    
     let cellId = "cellId"
     let headerId = "headerId"
 
@@ -29,8 +32,15 @@ class BottomSheetMenuControllerView: UICollectionViewController, UICollectionVie
         self.view.backgroundColor = Colors.colorWhite
         self.sheetViewController!.handleScrollView(self.collectionView)
         
+        if let menu = self.menu {
+            let images = menu.menu?.images?.images
+            self.imageIndex = Int.random(in: 0...images!.count - 1)
+        }
+        
         self.collectionView.register(BottomSheetMenuHeaderViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: self.headerId)
         self.collectionView.register(BottomSheetMenuViewCell.self, forCellWithReuseIdentifier: self.cellId)
+        
+        self.collectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(BottomSheetMenuControllerView.navigateToRestaurantMenu)))
     }
     
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -60,6 +70,16 @@ class BottomSheetMenuControllerView: UICollectionViewController, UICollectionVie
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: self.view.frame.width, height: 300)
+    }
+    
+    @objc func navigateToRestaurantMenu(){
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let menuController = storyboard.instantiateViewController(withIdentifier: "RestaurantMenuView") as! RestaurantMenuViewController
+        menuController.restaurantMenu = self.menu
+        menuController.controller = self.controller
+        self.sheetViewController?.closeSheet(completion: {
+            self.controller?.navigationController?.pushViewController(menuController, animated: true)
+        })
     }
 }
 
@@ -172,7 +192,8 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         view.font = UIFont(name: "Poppins-Regular", size: 13)
         view.textColor = Colors.colorGray
         view.text = "Restaurant Menu Description"
-        view.numberOfLines = 3
+        view.numberOfLines = 0
+        view.sizeToFit()
         return view
     }()
     
@@ -228,6 +249,7 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         let view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.font = UIFont(name: "Poppins-Regular", size: 12)
+        view.textColor = Colors.colorGray
         return view
     }()
     
@@ -235,6 +257,7 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         let view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.font = UIFont(name: "Poppins-SemiBold", size: 27)
+        view.textColor = Colors.colorGray
         return view
     }()
     
@@ -242,6 +265,7 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         let view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.font = UIFont(name: "Poppins-Regular", size: 14)
+        view.textColor = Colors.colorGray
         return view
     }()
     
@@ -352,7 +376,7 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
                 
                 let attributeString = NSMutableAttributedString(string: "\((menu.menu?.currency)!) \(numberFormatter.string(from: NSNumber(value: Double((menu.menu?.lastPrice)!)!))!)")
                 
-                attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 2, range: NSMakeRange(0, attributeString.length))
+                attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 1, range: NSMakeRange(0, attributeString.length))
                 
                 self.restaurantMenuLastPriceTextView.attributedText = attributeString
                 
@@ -369,11 +393,11 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
                     restaurantMenuAvailabilityView.background = Colors.colorStatusTimeRed
                 }
                 
-                let frameWidth = frame.width - 20
+                let frameWidth = frame.width - 16
                 
                 let menuNameRect = NSString(string: (menu.menu?.name!)!).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: restaurantMenuNameTextSize)!], context: nil)
                 
-                let menuDescriptionRect = NSString(string: (menu.menu?.description!)!).boundingRect(with: CGSize(width: frameWidth - 28, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: restaurantMenuNameTextSize)!], context: nil)
+                let menuDescriptionRect = NSString(string: (menu.menu?.description!)!).boundingRect(with: CGSize(width: frameWidth - 22, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: restaurantMenuNameTextSize)!], context: nil)
                 
                 restaurantMenuNameHeight = menuNameRect.height
                 restaurantMenuDescriptionHeight = menuDescriptionRect.height
@@ -387,10 +411,11 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         restaurantMenuDescriptionView.addSubview(restaurantMenuDescriptionText)
         
         restaurantMenuDescriptionText.font = UIFont(name: "Poppins-Regular", size: restaurantDescriptionTextSize)
+        restaurantMenuDescriptionText.sizeToFit()
         
-        restaurantMenuDescriptionView.addConstraintsWithFormat(format: "H:|[v0(14)]-4-[v1]-8-|", views: restaurantMenuDescriptionIcon, restaurantMenuDescriptionText)
+        restaurantMenuDescriptionView.addConstraintsWithFormat(format: "H:|[v0(14)]-8-[v1]|", views: restaurantMenuDescriptionIcon, restaurantMenuDescriptionText)
         restaurantMenuDescriptionView.addConstraintsWithFormat(format: "V:|[v0(14)]", views: restaurantMenuDescriptionIcon)
-        restaurantMenuDescriptionView.addConstraintsWithFormat(format: "V:|[v0(\(restaurantMenuDescriptionHeight + 4))]", views: restaurantMenuDescriptionText)
+        restaurantMenuDescriptionView.addConstraintsWithFormat(format: "V:|[v0(\(restaurantMenuDescriptionHeight - 10))]", views: restaurantMenuDescriptionText)
         
         if menu?.type?.id != 2 {
             restaurantMenuView.addSubview(restaurantMenuCategoryView)
@@ -432,16 +457,16 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
             }
             
             if (menu.menu?.isCountable)! && Double((menu.menu?.price)!) != Double((menu.menu?.lastPrice)!) {
-                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0]-8-[v1]-8-[v2]", views: restaurantMenuQuantityTextView, restaurantMenuPriceTextView, restaurantMenuLastPriceTextView)
+                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0]-4-[v1]-4-[v2]|", views: restaurantMenuQuantityTextView, restaurantMenuPriceTextView, restaurantMenuLastPriceTextView)
                 menuPriceHeight += 45
             } else if !(menu.menu?.isCountable)! && Double((menu.menu?.price)!) != Double((menu.menu?.lastPrice)!) {
-                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0]-8-[v1]", views: restaurantMenuPriceTextView, restaurantMenuLastPriceTextView)
-                menuPriceHeight += 35
+                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0]-4-[v1]|", views: restaurantMenuPriceTextView, restaurantMenuLastPriceTextView)
+                menuPriceHeight += 38
             } else if (menu.menu?.isCountable)! && !(Double((menu.menu?.price)!) != Double((menu.menu?.lastPrice)!)){
-                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0]-8-[v1]", views: restaurantMenuQuantityTextView, restaurantMenuPriceTextView)
+                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0]-4-[v1]|", views: restaurantMenuQuantityTextView, restaurantMenuPriceTextView)
                 menuPriceHeight += 35
             } else {
-                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0]", views: restaurantMenuPriceTextView)
+                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuPriceTextView)
                 menuPriceHeight += 25
             }
         }
@@ -464,18 +489,16 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         addSubview(separatorTwo)
         addSubview(restaurantMenuDataView)
         
-        print(menuPriceHeight)
-        
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: menuNameTextView)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuRating)
-        addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuDescriptionView)
+        addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: restaurantMenuDescriptionView)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorOne)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuPriceView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorTwo)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuDataView)
         
-        addConstraintsWithFormat(format: "V:|-8-[v0(\(restaurantMenuNameHeight))]-8-[v1]-8-[v2(\(restaurantMenuDescriptionHeight + 4))]-8-[v3(26)]-8-[v4(0.5)]-8-[v5(\(menuPriceHeight))]-8-[v6(0.5)]-8-[v7(26)]", views: menuNameTextView, restaurantMenuRating, restaurantMenuDescriptionView, restaurantMenuView, separatorOne, restaurantMenuPriceView, separatorTwo, restaurantMenuDataView)
+        addConstraintsWithFormat(format: "V:|-8-[v0(\(restaurantMenuNameHeight - 10))]-8-[v1]-8-[v2(\(restaurantMenuDescriptionHeight - 10))]-8-[v3(26)]-8-[v4(0.5)]-8-[v5(\(menuPriceHeight))]-8-[v6(0.5)]-8-[v7(26)]", views: menuNameTextView, restaurantMenuRating, restaurantMenuDescriptionView, restaurantMenuView, separatorOne, restaurantMenuPriceView, separatorTwo, restaurantMenuDataView)
     }
     
     required init?(coder: NSCoder) {

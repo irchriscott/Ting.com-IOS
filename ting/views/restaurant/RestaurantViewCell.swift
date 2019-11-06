@@ -324,7 +324,8 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
         let menuController = storyboard.instantiateViewController(withIdentifier: "RestaurantMenuBottomView") as! BottomSheetMenuControllerView
         menuController.menu = menu
-        let sheetController = SheetViewController(controller: menuController, sizes: [.fixed(400), .fixed(640)])
+        menuController.controller = self.controller
+        let sheetController = SheetViewController(controller: menuController, sizes: [.fixed(415), .fixed(640)])
         sheetController.blurBottomSafeArea = false
         sheetController.adjustForBottomSafeArea = true
         sheetController.topCornersRadius = 8
@@ -412,6 +413,7 @@ class RestaurantViewCellMenuViewCell: UICollectionViewCell {
                 let image = images![Int.random(in: 0...images!.count - 1)]
                 self.menuImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(image.image)")!)
                 self.menuImageView.alpha = 1.0
+                self.menuImageView.contentMode = .scaleAspectFill
             }
         }
     }

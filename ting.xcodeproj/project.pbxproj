@@ -99,6 +99,8 @@
 		8FC6089222FCA7D3005D142B /* UITabBarViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC6089122FCA7D3005D142B /* UITabBarViewControllerExtension.swift */; };
 		8FC608942309BEB2005D142B /* References in Resources */ = {isa = PBXBuildFile; fileRef = 8FC608932309BEB2005D142B /* References */; };
 		8FDDF97623716A97000AA334 /* ImageTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDF97523716A97000AA334 /* ImageTextView.swift */; };
+		8FDDF97823729C07000AA334 /* VerticalTopAlignLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDF97723729C07000AA334 /* VerticalTopAlignLabel.swift */; };
+		8FDDF97A2372A737000AA334 /* RestaurantMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDF9792372A737000AA334 /* RestaurantMenuViewController.swift */; };
 		8FEB1D99232B66B10024FF04 /* RestaurantViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEB1D98232B66B10024FF04 /* RestaurantViewCell.swift */; };
 		C4BF786235A82C4975A5FBAE /* libPods-ting.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D97FDED79855837715D5225D /* libPods-ting.a */; };
 /* End PBXBuildFile section */
@@ -195,6 +197,8 @@
 		8FC6089122FCA7D3005D142B /* UITabBarViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITabBarViewControllerExtension.swift; sourceTree = "<group>"; };
 		8FC608932309BEB2005D142B /* References */ = {isa = PBXFileReference; lastKnownFileType = text; path = References; sourceTree = "<group>"; };
 		8FDDF97523716A97000AA334 /* ImageTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTextView.swift; sourceTree = "<group>"; };
+		8FDDF97723729C07000AA334 /* VerticalTopAlignLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalTopAlignLabel.swift; sourceTree = "<group>"; };
+		8FDDF9792372A737000AA334 /* RestaurantMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantMenuViewController.swift; sourceTree = "<group>"; };
 		8FEB1D98232B66B10024FF04 /* RestaurantViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantViewCell.swift; sourceTree = "<group>"; };
 		B3574E3CEF3D845DD3605E35 /* Pods-ting.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ting.release.xcconfig"; path = "Target Support Files/Pods-ting/Pods-ting.release.xcconfig"; sourceTree = "<group>"; };
 		B76E861E707C1B41EA38E562 /* Pods-ting.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ting.debug.xcconfig"; path = "Target Support Files/Pods-ting/Pods-ting.debug.xcconfig"; sourceTree = "<group>"; };
@@ -264,7 +268,6 @@
 				8F30B20C22F9B81C000B66B7 /* controllers */,
 				8FEB1D95232B660E0024FF04 /* views */,
 				8F1F112922FA29E600CA4DD9 /* storyboards */,
-				8F30B20722F9B5D9000B66B7 /* providers */,
 				8F79B4B822F4C93A000FBBB1 /* segues */,
 				8F49C10022F385B10084F3E7 /* modals */,
 				8F49C0FD22F382F90084F3E7 /* icons */,
@@ -315,6 +318,7 @@
 			isa = PBXGroup;
 			children = (
 				8F36E728233648D70028ECE6 /* BottomSheetMenuControllerView.swift */,
+				8FDDF9792372A737000AA334 /* RestaurantMenuViewController.swift */,
 			);
 			path = menu;
 			sourceTree = "<group>";
@@ -382,6 +386,7 @@
 				8F13CAF32334EF3000E3D03D /* RestaurantMapInfoWindowView.swift */,
 				8F13CAF52334FDB300E3D03D /* InlineIconTextView.swift */,
 				8FDDF97523716A97000AA334 /* ImageTextView.swift */,
+				8FDDF97723729C07000AA334 /* VerticalTopAlignLabel.swift */,
 			);
 			path = custom;
 			sourceTree = "<group>";
@@ -389,6 +394,7 @@
 		8F49C0FC22F372650084F3E7 /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				8F30B20722F9B5D9000B66B7 /* providers */,
 				8F88EE7722F2B320000C4ED2 /* Constatnts.swift */,
 				8F43F3CD22F798E200545AC2 /* Requests.swift */,
 				8FC6088722FBD361005D142B /* Functions.swift */,
@@ -642,6 +648,7 @@
 				8F0D3577232A10A500B39825 /* CGRectExtension.swift in Sources */,
 				8F3EA429230F2C7A00508E67 /* EditUserCollectionViewController.swift in Sources */,
 				8F07FFD12312F14100D0ACD5 /* Spinner.swift in Sources */,
+				8FDDF97A2372A737000AA334 /* RestaurantMenuViewController.swift in Sources */,
 				8F79B4BA22F4C9D3000FBBB1 /* LeftToRightSegue.swift in Sources */,
 				8F1095022330C83400A7519B /* DoubleExtension.swift in Sources */,
 				8F88EE7A22F2B737000C4ED2 /* UIViewExtension.swift in Sources */,
@@ -676,6 +683,7 @@
 				8F3309D722F9E8B400437767 /* HomeDiscoverViewController.swift in Sources */,
 				8FEB1D99232B66B10024FF04 /* RestaurantViewCell.swift in Sources */,
 				8F38602222F1D21E00479072 /* PaddedTextField.swift in Sources */,
+				8FDDF97823729C07000AA334 /* VerticalTopAlignLabel.swift in Sources */,
 				8F3309DB22F9E8E900437767 /* HomeMomentsViewController.swift in Sources */,
 				8F68B03222F583E500A3AB3B /* PrimaryButton.swift in Sources */,
 				8F36E72D2336881B0028ECE6 /* PolylineMapRoute.swift in Sources */,
