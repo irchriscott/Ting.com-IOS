@@ -1,4 +1,4 @@
-module FittedSheets {
+framework module FittedSheets {
   umbrella header "FittedSheets-umbrella.h"
 
   export *

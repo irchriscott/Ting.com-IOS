@@ -5,7 +5,8 @@ source 'https://github.com/CocoaPods/Specs.git'
     pod 'GoogleSignIn'
     pod 'Floaty'
     pod 'FittedSheets'
-    # pod 'Kingfisher', '~> 5.0'
-    # use_frameworks!
-    # pod 'ReachabilitySwift'
+    pod 'Kingfisher'
+    use_frameworks!
+    pod 'ReachabilitySwift'
+    pod 'ImageViewer', :git => 'https://github.com/Krisiacik/ImageViewer.git'
 end

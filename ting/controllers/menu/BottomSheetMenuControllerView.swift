@@ -192,8 +192,7 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         view.font = UIFont(name: "Poppins-Regular", size: 13)
         view.textColor = Colors.colorGray
         view.text = "Restaurant Menu Description"
-        view.numberOfLines = 0
-        view.sizeToFit()
+        view.numberOfLines = 4
         return view
     }()
     
@@ -397,7 +396,7 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
                 
                 let menuNameRect = NSString(string: (menu.menu?.name!)!).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: restaurantMenuNameTextSize)!], context: nil)
                 
-                let menuDescriptionRect = NSString(string: (menu.menu?.description!)!).boundingRect(with: CGSize(width: frameWidth - 22, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: restaurantMenuNameTextSize)!], context: nil)
+                let menuDescriptionRect = NSString(string: (menu.menu?.description!)!).boundingRect(with: CGSize(width: frameWidth - 20, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: restaurantDescriptionTextSize)!], context: nil)
                 
                 restaurantMenuNameHeight = menuNameRect.height
                 restaurantMenuDescriptionHeight = menuDescriptionRect.height
@@ -411,11 +410,10 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         restaurantMenuDescriptionView.addSubview(restaurantMenuDescriptionText)
         
         restaurantMenuDescriptionText.font = UIFont(name: "Poppins-Regular", size: restaurantDescriptionTextSize)
-        restaurantMenuDescriptionText.sizeToFit()
         
         restaurantMenuDescriptionView.addConstraintsWithFormat(format: "H:|[v0(14)]-8-[v1]|", views: restaurantMenuDescriptionIcon, restaurantMenuDescriptionText)
         restaurantMenuDescriptionView.addConstraintsWithFormat(format: "V:|[v0(14)]", views: restaurantMenuDescriptionIcon)
-        restaurantMenuDescriptionView.addConstraintsWithFormat(format: "V:|[v0(\(restaurantMenuDescriptionHeight - 10))]", views: restaurantMenuDescriptionText)
+        restaurantMenuDescriptionView.addConstraintsWithFormat(format: "V:|[v0(\(restaurantMenuDescriptionHeight))]", views: restaurantMenuDescriptionText)
         
         if menu?.type?.id != 2 {
             restaurantMenuView.addSubview(restaurantMenuCategoryView)
@@ -498,7 +496,7 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorTwo)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuDataView)
         
-        addConstraintsWithFormat(format: "V:|-8-[v0(\(restaurantMenuNameHeight - 10))]-8-[v1]-8-[v2(\(restaurantMenuDescriptionHeight - 10))]-8-[v3(26)]-8-[v4(0.5)]-8-[v5(\(menuPriceHeight))]-8-[v6(0.5)]-8-[v7(26)]", views: menuNameTextView, restaurantMenuRating, restaurantMenuDescriptionView, restaurantMenuView, separatorOne, restaurantMenuPriceView, separatorTwo, restaurantMenuDataView)
+        addConstraintsWithFormat(format: "V:|-8-[v0(\(restaurantMenuNameHeight - 5))]-8-[v1]-8-[v2(\(restaurantMenuDescriptionHeight))]-8-[v3(26)]-8-[v4(0.5)]-8-[v5(\(menuPriceHeight))]-8-[v6(0.5)]-8-[v7(26)]", views: menuNameTextView, restaurantMenuRating, restaurantMenuDescriptionView, restaurantMenuView, separatorOne, restaurantMenuPriceView, separatorTwo, restaurantMenuDataView)
     }
     
     required init?(coder: NSCoder) {

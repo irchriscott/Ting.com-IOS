@@ -5,7 +5,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -20,7 +19,7 @@
         <!--Moments-->
         <scene sceneID="G41-8D-CFT">
             <objects>
-                <viewController id="zqC-ba-sRA" customClass="HomeMomentsViewController" customModule="ting" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="zqC-ba-sRA" customClass="HomeMomentsViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="b0R-hW-U0e">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -45,7 +44,7 @@
         <!--Discovery-->
         <scene sceneID="6NR-Bh-Dx8">
             <objects>
-                <viewController id="hYB-MA-usT" customClass="HomeDiscoverViewController" customModule="ting" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="hYB-MA-usT" customClass="HomeDiscoverViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ncp-t1-bfw">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -72,7 +71,7 @@
         <!--Home View Controller-->
         <scene sceneID="dPj-QS-bYy">
             <objects>
-                <tabBarController restorationIdentifier="HomeTabBar" storyboardIdentifier="HomeTabBar" id="bbF-wh-4TP" customClass="HomeViewController" customModule="ting" customModuleProvider="target" sceneMemberID="viewController">
+                <tabBarController restorationIdentifier="HomeTabBar" storyboardIdentifier="HomeTabBar" id="bbF-wh-4TP" customClass="HomeViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="kQN-Wt-aWm">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -94,7 +93,7 @@
         <!--User Menu View Controller-->
         <scene sceneID="3Yg-HV-p87">
             <objects>
-                <viewController title="User Menu View Controller" id="XyE-7e-Tfy" customClass="HomeMenuViewController" customModule="ting" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="User Menu View Controller" id="XyE-7e-Tfy" customClass="HomeMenuViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
                     <scrollView key="view" contentMode="scaleToFill" ambiguous="YES" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" keyboardDismissMode="interactive" id="Bcs-5a-eLE">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="571"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -103,7 +102,7 @@
                                 <rect key="frame" x="16" y="15" width="343" height="65"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="default_user.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="sYj-NY-b3T" customClass="CircularImageView" customModule="ting" customModuleProvider="target">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="default_user.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="sYj-NY-b3T" customClass="CircularImageView" customModule="Ting" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="8" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
@@ -304,7 +303,7 @@
         <!--User View Controller-->
         <scene sceneID="UQ8-OV-yx4">
             <objects>
-                <collectionViewController restorationIdentifier="UserView" storyboardIdentifier="UserView" id="mLq-bL-zGq" customClass="UserViewController" customModule="ting" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController restorationIdentifier="UserView" storyboardIdentifier="UserView" id="mLq-bL-zGq" customClass="UserViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="L9B-1z-mkw">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -338,7 +337,7 @@
         <!--Edit User Collection View Controller-->
         <scene sceneID="8U6-54-ROx">
             <objects>
-                <collectionViewController restorationIdentifier="EditUser" storyboardIdentifier="EditUser" id="w2u-NJ-htJ" customClass="EditUserCollectionViewController" customModule="ting" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController restorationIdentifier="EditUser" storyboardIdentifier="EditUser" id="w2u-NJ-htJ" customClass="EditUserCollectionViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="wKY-Fu-YiQ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -424,9 +423,9 @@
         <!--Restaurants-->
         <scene sceneID="lOv-RI-d2K">
             <objects>
-                <collectionViewController id="dMH-QD-BJp" customClass="HomeRestaurantsViewController" customModule="ting" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="Uuj-Jr-ZPN">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
+                <collectionViewController id="dMH-QD-BJp" customClass="HomeRestaurantsViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" id="Uuj-Jr-ZPN">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="571"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="O9D-W4-VbO">
@@ -456,45 +455,10 @@
             </objects>
             <point key="canvasLocation" x="-1164" y="1327"/>
         </scene>
-        <!--Restaurant Menu View Controller-->
-        <scene sceneID="gcl-vD-UjH">
-            <objects>
-                <collectionViewController restorationIdentifier="RestaurantMenuView" storyboardIdentifier="RestaurantMenuView" id="jFq-X6-fHS" customClass="RestaurantMenuViewController" customModule="ting" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="ELZ-PS-Ntt">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Pp9-gS-aQg">
-                            <size key="itemSize" width="50" height="50"/>
-                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                        </collectionViewFlowLayout>
-                        <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="Pwx-cz-J6u">
-                                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="FeL-wT-IWw">
-                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </collectionViewCellContentView>
-                            </collectionViewCell>
-                        </cells>
-                        <connections>
-                            <outlet property="dataSource" destination="jFq-X6-fHS" id="BON-gn-hKv"/>
-                            <outlet property="delegate" destination="jFq-X6-fHS" id="Lsc-Zn-rlm"/>
-                        </connections>
-                    </collectionView>
-                    <navigationItem key="navigationItem" id="TEe-Bg-piH"/>
-                </collectionViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="7BH-es-Dji" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1846" y="1326"/>
-        </scene>
         <!--Restaurant View Controller-->
         <scene sceneID="W1c-pz-stL">
             <objects>
-                <collectionViewController restorationIdentifier="RestaurantView" storyboardIdentifier="RestaurantView" id="Tht-GT-lNx" customClass="RestaurantViewController" customModule="ting" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController restorationIdentifier="RestaurantView" storyboardIdentifier="RestaurantView" id="Tht-GT-lNx" customClass="RestaurantViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="YVC-0x-NKm">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -528,7 +492,7 @@
         <!--Bottom Sheet Menu Controller View-->
         <scene sceneID="cFr-Jf-RTU">
             <objects>
-                <collectionViewController restorationIdentifier="RestaurantMenuBottomView" storyboardIdentifier="RestaurantMenuBottomView" id="tlT-HE-8xY" customClass="BottomSheetMenuControllerView" customModule="ting" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController restorationIdentifier="RestaurantMenuBottomView" storyboardIdentifier="RestaurantMenuBottomView" id="tlT-HE-8xY" customClass="BottomSheetMenuControllerView" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="trm-yw-7rQ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -560,23 +524,20 @@
             </objects>
             <point key="canvasLocation" x="433" y="1326"/>
         </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="xnM-eb-6p1">
+        <!--Restaurant Menu View Controller-->
+        <scene sceneID="JTX-YT-bAC">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="cSl-mZ-rpt" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="irj-vH-YcQ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="jFq-X6-fHS" kind="relationship" relationship="rootViewController" id="kO8-CT-JJP"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="qjK-kr-yXx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <viewController restorationIdentifier="RestaurantMenuView" storyboardIdentifier="RestaurantMenuView" id="ir0-pA-5nL" customClass="RestaurantMenuViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ruu-9w-yqC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="axQ-ln-YnI"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Dob-Cy-n6Q" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1114" y="1326"/>
+            <point key="canvasLocation" x="1210" y="1326"/>
         </scene>
     </scenes>
     <resources>

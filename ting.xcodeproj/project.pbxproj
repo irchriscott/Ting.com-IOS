@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1EA1169CA9C5C516138DB602 /* Pods_ting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4863839C5BE4B747F8CCDFF /* Pods_ting.framework */; };
 		8F05667F230DBD8900225A95 /* icon_unwind_25_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F05667E230DBD8700225A95 /* icon_unwind_25_white.png */; };
 		8F056685230DECF400225A95 /* icon_edit_25_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F056684230DECF400225A95 /* icon_edit_25_white.png */; };
 		8F056687230E8AF700225A95 /* UserTabLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F056686230E8AF700225A95 /* UserTabLayoutView.swift */; };
@@ -101,8 +102,8 @@
 		8FDDF97623716A97000AA334 /* ImageTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDF97523716A97000AA334 /* ImageTextView.swift */; };
 		8FDDF97823729C07000AA334 /* VerticalTopAlignLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDF97723729C07000AA334 /* VerticalTopAlignLabel.swift */; };
 		8FDDF97A2372A737000AA334 /* RestaurantMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDF9792372A737000AA334 /* RestaurantMenuViewController.swift */; };
+		8FDDF97C23741608000AA334 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDF97B23741608000AA334 /* StringExtension.swift */; };
 		8FEB1D99232B66B10024FF04 /* RestaurantViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEB1D98232B66B10024FF04 /* RestaurantViewCell.swift */; };
-		C4BF786235A82C4975A5FBAE /* libPods-ting.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D97FDED79855837715D5225D /* libPods-ting.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -130,7 +131,7 @@
 		8F1D75E82331F801000B25C9 /* UIApplicationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtension.swift; sourceTree = "<group>"; };
 		8F1F112522FA23CC00CA4DD9 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		8F2F05152335352F00517F36 /* RestaurantViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantViewController.swift; sourceTree = "<group>"; };
-		8F2F8B0722F0BC2200FF5B59 /* ting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ting.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F2F8B0722F0BC2200FF5B59 /* Ting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ting.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F2F8B0A22F0BC2200FF5B59 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8F2F8B0C22F0BC2200FF5B59 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		8F2F8B0F22F0BC2200FF5B59 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -199,10 +200,11 @@
 		8FDDF97523716A97000AA334 /* ImageTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTextView.swift; sourceTree = "<group>"; };
 		8FDDF97723729C07000AA334 /* VerticalTopAlignLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalTopAlignLabel.swift; sourceTree = "<group>"; };
 		8FDDF9792372A737000AA334 /* RestaurantMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantMenuViewController.swift; sourceTree = "<group>"; };
+		8FDDF97B23741608000AA334 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		8FEB1D98232B66B10024FF04 /* RestaurantViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantViewCell.swift; sourceTree = "<group>"; };
 		B3574E3CEF3D845DD3605E35 /* Pods-ting.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ting.release.xcconfig"; path = "Target Support Files/Pods-ting/Pods-ting.release.xcconfig"; sourceTree = "<group>"; };
 		B76E861E707C1B41EA38E562 /* Pods-ting.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ting.debug.xcconfig"; path = "Target Support Files/Pods-ting/Pods-ting.debug.xcconfig"; sourceTree = "<group>"; };
-		D97FDED79855837715D5225D /* libPods-ting.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ting.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4863839C5BE4B747F8CCDFF /* Pods_ting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,7 +212,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C4BF786235A82C4975A5FBAE /* libPods-ting.a in Frameworks */,
+				1EA1169CA9C5C516138DB602 /* Pods_ting.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,7 +222,7 @@
 		32B7745E560901E28E1B6134 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D97FDED79855837715D5225D /* libPods-ting.a */,
+				F4863839C5BE4B747F8CCDFF /* Pods_ting.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -257,7 +259,7 @@
 		8F2F8B0822F0BC2200FF5B59 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8F2F8B0722F0BC2200FF5B59 /* ting.app */,
+				8F2F8B0722F0BC2200FF5B59 /* Ting.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -362,6 +364,7 @@
 				8F1095012330C83300A7519B /* DoubleExtension.swift */,
 				8F1D75E82331F801000B25C9 /* UIApplicationExtension.swift */,
 				8F14F137233285D300844B63 /* UIDeviceExtension.swift */,
+				8FDDF97B23741608000AA334 /* StringExtension.swift */,
 			);
 			path = extensions;
 			sourceTree = "<group>";
@@ -508,6 +511,7 @@
 				8F2F8B0422F0BC2200FF5B59 /* Frameworks */,
 				8F2F8B0522F0BC2200FF5B59 /* Resources */,
 				C12E1165918757A5C3C0F50B /* [CP] Copy Pods Resources */,
+				AD5F803E44E77BF57FD028ED /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -515,7 +519,7 @@
 			);
 			name = ting;
 			productName = ting;
-			productReference = 8F2F8B0722F0BC2200FF5B59 /* ting.app */;
+			productReference = 8F2F8B0722F0BC2200FF5B59 /* Ting.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -590,6 +594,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		AD5F803E44E77BF57FD028ED /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ting/Pods-ting-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ting/Pods-ting-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ting/Pods-ting-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		B7F8EFAF29F58B66622C1B8E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -644,6 +665,7 @@
 				8F1095002330060700A7519B /* DateExtension.swift in Sources */,
 				8F13CAF42334EF3000E3D03D /* RestaurantMapInfoWindowView.swift in Sources */,
 				8F49C10A22F496270084F3E7 /* Restaurant.swift in Sources */,
+				8FDDF97C23741608000AA334 /* StringExtension.swift in Sources */,
 				8F49C10822F494C50084F3E7 /* MenuPromotion.swift in Sources */,
 				8F0D3577232A10A500B39825 /* CGRectExtension.swift in Sources */,
 				8F3EA429230F2C7A00508E67 /* EditUserCollectionViewController.swift in Sources */,
@@ -850,14 +872,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = FNNB96NC39;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ting/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.codepipes.ting;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Ting;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -869,14 +891,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = FNNB96NC39;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ting/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.codepipes.ting;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Ting;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

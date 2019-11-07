@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B71C614CBF9B1B690FE941C4DF44D040"
-               BuildableName = "libFittedSheets.a"
+               BuildableName = "FittedSheets.framework"
                BlueprintName = "FittedSheets"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>

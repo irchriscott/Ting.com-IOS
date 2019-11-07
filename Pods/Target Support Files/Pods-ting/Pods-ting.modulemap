@@ -1,4 +1,4 @@
-module Pods_ting {
+framework module Pods_ting {
   umbrella header "Pods-ting-umbrella.h"
 
   export *
