@@ -9,4 +9,5 @@ source 'https://github.com/CocoaPods/Specs.git'
     use_frameworks!
     pod 'ReachabilitySwift'
     pod 'ImageViewer', :git => 'https://github.com/Krisiacik/ImageViewer.git'
+    pod 'Charts'
 end

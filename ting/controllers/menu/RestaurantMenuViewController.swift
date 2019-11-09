@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MapKit
 import ImageViewer
 
 class RestaurantMenuViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, GalleryDisplacedViewsDataSource, GalleryItemsDataSource, GalleryItemsDelegate {
@@ -50,8 +51,10 @@ class RestaurantMenuViewController: UIViewController, UICollectionViewDelegateFl
     }()
 
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         self.setupNavigationBar()
+        self.loadRestaurantMenu()
         
         if let menu = self.restaurantMenu {
             let images = menu.menu?.images?.images
@@ -99,6 +102,17 @@ class RestaurantMenuViewController: UIViewController, UICollectionViewDelegateFl
             let statusBar = UIView(frame: UIApplication.shared.keyWindow?.windowScene?.statusBarManager?.statusBarFrame ?? CGRect.zero)
             statusBar.backgroundColor = Colors.colorPrimaryDark
             UIApplication.shared.keyWindow?.addSubview(statusBar)
+        }
+    }
+    
+    private func loadRestaurantMenu(){
+        if let menu = self.restaurantMenu {
+            APIDataProvider.instance.getRestaurantmenu(url: "\(URLs.hostEndPoint)\((menu.urls?.apiGet)!)") { (restoMenu) in
+                DispatchQueue.main.async {
+                    self.restaurantMenu = restoMenu
+                    self.restaurantDetailsView.reloadData()
+                }
+            }
         }
     }
     
@@ -272,7 +286,7 @@ class RestaurantMenuHeaderImageViewCell: UICollectionViewCell {
     }
 }
 
-class MenuDetailsViewCell: UICollectionViewCell {
+class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -286,6 +300,27 @@ class MenuDetailsViewCell: UICollectionViewCell {
     
     var restaurantMenuNameTextSize: CGFloat = 20
     var restaurantDescriptionTextSize: CGFloat = 13
+    
+    var locationManager = CLLocationManager()
+    var selectedLocation: CLLocation?
+    
+    let session = UserAuthentication().get()!
+    var isMapOpened: Bool = false
+    var mapCenter: CLLocation?
+    
+    let mapFloatingButton: FloatingButton = {
+        let view = FloatingButton()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.icon = UIImage(named: "icon_addess_white")
+        return view
+    }()
+    
+    lazy var mapView: RestaurantMapView = {
+        let view = RestaurantMapView()
+        //view.controller = self
+        //view.restaurant = self.selectedBranch
+        return view
+    }()
     
     lazy var menuNameTextView: UILabel = {
         let view = UILabel()
@@ -574,6 +609,21 @@ class MenuDetailsViewCell: UICollectionViewCell {
                 
                 restaurantMenuNameHeight = menuNameRect.height
                 restaurantMenuDescriptionHeight = menuDescriptionRect.height
+                
+                if let branch = menu.menu?.branch, let restaurant = menu.menu?.restaurant {
+                    restaurantName.text = "\(restaurant.name), \(branch.name)"
+                    restaurantName.imageURL = "\(URLs.hostEndPoint)\(restaurant.logo)"
+                    
+                    self.setTimeStatus()
+                    
+                    if branch.isAvailable { Timer.scheduledTimer(timeInterval: 60, target: self, selector: #selector(setTimeStatus), userInfo: nil, repeats: true)
+                    }
+                    
+                    let latitude = CLLocationDegrees(exactly: Double(branch.latitude)!)
+                    let longitude = CLLocationDegrees(exactly: Double(branch.longitude)!)
+                    
+                    self.selectedLocation = CLLocation(latitude: latitude!, longitude: longitude!)
+                }
             }
             self.setup()
         }
@@ -684,8 +734,32 @@ class MenuDetailsViewCell: UICollectionViewCell {
         
         addConstraintsWithFormat(format: "V:|-8-[v0(\(restaurantMenuNameHeight - 5))]-8-[v1]-8-[v2(\(restaurantMenuDescriptionHeight))]-8-[v3(26)]-8-[v4(0.5)]-8-[v5(\(menuPriceHeight))]-8-[v6(0.5)]-8-[v7(26)]-8-[v8(0.5)]-8-[v9(60)]", views: menuNameTextView, restaurantMenuRating, restaurantMenuDescriptionView, restaurantMenuView, separatorOne, restaurantMenuPriceView, separatorTwo, restaurantMenuDataView, separatorThree, restaurantDataView)
     }
-
     
+    @objc private func setTimeStatus(){
+        if let branch = self.menu?.menu?.branch,  let restaurant = self.menu?.menu?.restaurant {
+            if branch.isAvailable {
+                let timeStatus = Functions.statusWorkTime(open: restaurant.opening, close: restaurant.closing)
+                if let status = timeStatus {
+                    self.restaurantTimeStatusView.text = status["msg"]!
+                    switch status["clr"] {
+                    case "orange":
+                        self.restaurantTimeStatusView.background = Colors.colorStatusTimeOrange
+                    case "red":
+                        self.restaurantTimeStatusView.background = Colors.colorStatusTimeRed
+                    case "green":
+                        self.restaurantTimeStatusView.background = Colors.colorStatusTimeGreen
+                    default:
+                        self.restaurantTimeStatusView.background = Colors.colorStatusTimeOrange
+                    }
+                }
+            } else {
+                self.restaurantTimeStatusView.background = Colors.colorStatusTimeRed
+                self.restaurantTimeStatusView.text = "Not Available"
+                self.restaurantTimeStatusView.icon = UIImage(named: "icon_close_bold_25_white")!
+            }
+        }
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
