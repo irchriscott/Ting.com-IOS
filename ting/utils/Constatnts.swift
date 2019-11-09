@@ -38,9 +38,9 @@ struct Sizes {
 }
 
 struct URLs {
-    static let hostEndPoint             = "http://192.168.137.1:8000"
-    static let uploadEndPoint           = "http://192.168.137.1:8000/tinguploads/"
-    static let endPoint                 = "http://192.168.137.1:8000/api/v1/"
+    static let hostEndPoint             = "http://192.168.235.1:8000"
+    static let uploadEndPoint           = "http://192.168.235.1:8000/tinguploads/"
+    static let endPoint                 = "http://192.168.235.1:8000/api/v1/"
     
     //SIGNUP & AUTH ROUTES
     
