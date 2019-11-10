@@ -133,6 +133,8 @@ class RestaurantMenuViewController: UIViewController, UICollectionViewDelegateFl
         case self.restaurantDetailsView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdMenuDetails, for: indexPath) as! MenuDetailsViewCell
             cell.menu = self.restaurantMenu
+            cell.parentController = self
+            cell.controller = self.controller
             return cell
         default:
             return collectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdDefault, for: indexPath)
@@ -288,10 +290,6 @@ class RestaurantMenuHeaderImageViewCell: UICollectionViewCell {
 
 class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
     let numberFormatter = NumberFormatter()
     
     var restaurantMenuNameHeight: CGFloat = 28
@@ -437,6 +435,26 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         return view
     }()
     
+    let restaurantLikeView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.frame = CGRect(x: 0, y: 0, width: 46, height: 46)
+        view.layer.cornerRadius = 23
+        view.layer.masksToBounds = true
+        view.backgroundColor = Colors.colorDarkTransparent
+        return view
+    }()
+    
+    let restaurantLikeImage: UIImageView = {
+        let view = UIImageView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        view.frame = CGRect(x: 0, y: 0, width: 28, height: 28)
+        view.contentMode = .scaleAspectFill
+        view.image = UIImage(named: "icon_heart_like_32_gray")
+        return view
+    }()
+    
     let separatorTwo: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -517,11 +535,11 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
     }()
     
     var parentController: RestaurantMenuViewController? {
-        didSet {}
+        didSet { self.setup() }
     }
     
-    var controlelr: HomeRestaurantsViewController? {
-        didSet {}
+    var controller: HomeRestaurantsViewController? {
+        didSet { self.setup() }
     }
     
     var menu: RestaurantMenu? {
@@ -633,12 +651,22 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
                     self.mapCenter = CLLocation(latitude: latitude!, longitude: longitude!)
                     self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
                 }
+                
+                if let likes = menu.menu?.likes?.likes {
+                    let checkLike = likes.first { (like) -> Bool in like.user.id == session.id }
+                    if checkLike != nil { restaurantLikeImage.image =  UIImage(named: "icon_heart_like_32_primary") }
+                }
             }
             self.setup()
         }
     }
     
-    private func setup(){
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.restaurantDistanceView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(MenuDetailsViewCell.showUserAddresses)))
+    }
+    
+    private func setup() {
         
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -681,6 +709,17 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         
         restaurantMenuPriceView.addSubview(restaurantMenuPriceTextView)
         restaurantMenuPriceView.addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuPriceTextView)
+
+        restaurantLikeView.addSubview(restaurantLikeImage)
+        restaurantLikeView.addConstraintsWithFormat(format: "H:[v0(28)]", views: restaurantLikeImage)
+        restaurantLikeView.addConstraintsWithFormat(format: "V:[v0(28)]", views: restaurantLikeImage)
+        restaurantLikeView.addConstraint(NSLayoutConstraint(item: restaurantLikeView, attribute: .centerX, relatedBy: .equal, toItem: restaurantLikeImage, attribute: .centerX, multiplier: 1, constant: 0))
+        restaurantLikeView.addConstraint(NSLayoutConstraint(item: restaurantLikeView, attribute: .centerY, relatedBy: .equal, toItem: restaurantLikeImage, attribute: .centerY, multiplier: 1, constant: 0))
+        
+        restaurantMenuPriceView.addSubview(restaurantLikeView)
+        restaurantMenuPriceView.addConstraintsWithFormat(format: "H:[v0(46)]|", views: restaurantLikeView)
+        restaurantMenuPriceView.addConstraintsWithFormat(format: "V:[v0(46)]", views: restaurantLikeView)
+        restaurantMenuPriceView.addConstraint(NSLayoutConstraint(item: restaurantMenuPriceView, attribute: .centerY, relatedBy: .equal, toItem: restaurantLikeView, attribute: .centerY, multiplier: 1, constant: 0))
         
         var menuPriceHeight: Int = 16
         
@@ -739,15 +778,13 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: restaurantMenuDescriptionView)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorOne)
-        addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuPriceView)
+        addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: restaurantMenuPriceView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorTwo)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuDataView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorThree)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantDataView)
         
         addConstraintsWithFormat(format: "V:|-8-[v0(\(restaurantMenuNameHeight - 5))]-8-[v1]-8-[v2(\(restaurantMenuDescriptionHeight))]-8-[v3(26)]-8-[v4(0.5)]-8-[v5(\(menuPriceHeight))]-8-[v6(0.5)]-8-[v7(26)]-8-[v8(0.5)]-8-[v9(60)]", views: menuNameTextView, restaurantMenuRating, restaurantMenuDescriptionView, restaurantMenuView, separatorOne, restaurantMenuPriceView, separatorTwo, restaurantMenuDataView, separatorThree, restaurantDataView)
-        
-        restaurantDistanceView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(MenuDetailsViewCell.showAddresses)))
     }
     
     private func checkLocationAuthorization(status: CLAuthorizationStatus){
@@ -823,7 +860,8 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         }
     }
     
-    @objc func showAddresses(){
+    @objc func showUserAddresses(){
+        print("Event triggered")
         let addresses = UIAlertController(title: "Restaurants Near Location", message: nil, preferredStyle: .actionSheet)
         addresses.addAction(UIAlertAction(title: "Current Location", style: .default) { (action) in
             DispatchQueue.main.async { self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus()) }
@@ -837,6 +875,7 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
                 }
             }))
         })
+
         addresses.addAction(UIAlertAction(title: "CANCEL", style: .cancel, handler: { (action) in }))
         self.parentController?.present(addresses, animated: true, completion: nil)
     }

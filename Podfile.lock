@@ -4,6 +4,9 @@ PODS:
     - AppAuth/ExternalUserAgent (= 1.2.0)
   - AppAuth/Core (1.2.0)
   - AppAuth/ExternalUserAgent (1.2.0)
+  - Charts (3.4.0):
+    - Charts/Core (= 3.4.0)
+  - Charts/Core (3.4.0)
   - FittedSheets (1.4.5)
   - Floaty (4.2.0)
   - GoogleMaps (3.6.0):
@@ -32,6 +35,7 @@ PODS:
   - ReachabilitySwift (5.0.0)
 
 DEPENDENCIES:
+  - Charts
   - FittedSheets
   - Floaty
   - GoogleMaps
@@ -44,6 +48,7 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AppAuth
+    - Charts
     - FittedSheets
     - Floaty
     - GoogleMaps
@@ -65,6 +70,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AppAuth: bce82c76043657c99d91e7882e8a9e1a93650cd4
+  Charts: 74c9f256eaf0460c0c416522d1cf8c634ea6b286
   FittedSheets: 7f754c9f6fb4ea330cbc57c652b594255f2a6819
   Floaty: e2bd5a0f6f7f70899e26ff2da31081c8bee8d1b0
   GoogleMaps: 82f8fe307193bb4de6ef6bf9e88f1d624b718f9d
@@ -76,6 +82,6 @@ SPEC CHECKSUMS:
   Kingfisher: ff98240aebb7302bdc4f1ecd701761030ce18b16
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
 
-PODFILE CHECKSUM: a4affa0b9a925881c68adc1a6154c363edacf57f
+PODFILE CHECKSUM: 4c9149b57c62633d5b1b8f3dc072e2303dd0879c
 
 COCOAPODS: 1.8.4
