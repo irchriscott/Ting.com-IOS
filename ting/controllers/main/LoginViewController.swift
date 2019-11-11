@@ -107,16 +107,19 @@ class LoginViewController: UIViewController {
                                 } catch {}
                             }
                         } else {
-                            self.showErrorMessage(message: serverResponse.message)
+                            DispatchQueue.main.async {
+                                self.showErrorMessage(message: serverResponse.message)
+                            }
                         }
                     } catch {
-                        self.showErrorMessage(message: error.localizedDescription)
+                        DispatchQueue.main.async {
+                            self.showErrorMessage(message: error.localizedDescription)
+                        }
                     }
                 }
             }.resume()
-        } else {
-            self.showErrorMessage(message: "Fill All The Fields")
-        }
+            
+        } else { self.showErrorMessage(message: "Fill All The Fields") }
     }
     
     @IBAction func prepareForUnwind(segue: UIStoryboardSegue){}

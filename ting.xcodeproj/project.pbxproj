@@ -93,6 +93,9 @@
 		8F934E932370C2DD0093D9AA /* Main.storyboard in Sources */ = {isa = PBXBuildFile; fileRef = 8F2F8B0E22F0BC2200FF5B59 /* Main.storyboard */; };
 		8F934E942370C2E30093D9AA /* Home.storyboard in Sources */ = {isa = PBXBuildFile; fileRef = 8F30B20A22F9B729000B66B7 /* Home.storyboard */; };
 		8FAA270822F8965300B0B05B /* InputTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAA270722F8965300B0B05B /* InputTextField.swift */; };
+		8FB57B9D2378633D00732D5A /* MenuDetailsViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57B9C2378633D00732D5A /* MenuDetailsViewCell.swift */; };
+		8FB57B9F2378671C00732D5A /* MenuReviewViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57B9E2378671C00732D5A /* MenuReviewViewCell.swift */; };
+		8FB57BA12379351100732D5A /* MenuDishFoodViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA02379351100732D5A /* MenuDishFoodViewCell.swift */; };
 		8FB7B0162329092C002B1F60 /* UserControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B0152329092C002B1F60 /* UserControlView.swift */; };
 		8FB7B01823294FA7002B1F60 /* TouchRespondScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B01723294FA7002B1F60 /* TouchRespondScrollView.swift */; };
 		8FC6088622FA2EE5005D142B /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC6088522FA2EE5005D142B /* Toast.swift */; };
@@ -191,6 +194,9 @@
 		8F88EE7722F2B320000C4ED2 /* Constatnts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constatnts.swift; sourceTree = "<group>"; };
 		8F88EE7922F2B737000C4ED2 /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
 		8FAA270722F8965300B0B05B /* InputTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextField.swift; sourceTree = "<group>"; };
+		8FB57B9C2378633D00732D5A /* MenuDetailsViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuDetailsViewCell.swift; sourceTree = "<group>"; };
+		8FB57B9E2378671C00732D5A /* MenuReviewViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuReviewViewCell.swift; sourceTree = "<group>"; };
+		8FB57BA02379351100732D5A /* MenuDishFoodViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuDishFoodViewCell.swift; sourceTree = "<group>"; };
 		8FB7B0152329092C002B1F60 /* UserControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserControlView.swift; sourceTree = "<group>"; };
 		8FB7B01723294FA7002B1F60 /* TouchRespondScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchRespondScrollView.swift; sourceTree = "<group>"; };
 		8FC6088522FA2EE5005D142B /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
@@ -449,9 +455,20 @@
 			path = segues;
 			sourceTree = "<group>";
 		};
+		8FB57B9B237862F300732D5A /* menu */ = {
+			isa = PBXGroup;
+			children = (
+				8FB57B9C2378633D00732D5A /* MenuDetailsViewCell.swift */,
+				8FB57B9E2378671C00732D5A /* MenuReviewViewCell.swift */,
+				8FB57BA02379351100732D5A /* MenuDishFoodViewCell.swift */,
+			);
+			path = menu;
+			sourceTree = "<group>";
+		};
 		8FEB1D95232B660E0024FF04 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				8FB57B9B237862F300732D5A /* menu */,
 				8FEB1D97232B66520024FF04 /* restaurant */,
 				8FEB1D96232B664C0024FF04 /* user */,
 			);
@@ -676,9 +693,12 @@
 				8F88EE7A22F2B737000C4ED2 /* UIViewExtension.swift in Sources */,
 				8F07FFCB2312828300D0ACD5 /* EditUserCollectionViewCell.swift in Sources */,
 				8F056687230E8AF700225A95 /* UserTabLayoutView.swift in Sources */,
+				8FB57B9D2378633D00732D5A /* MenuDetailsViewCell.swift in Sources */,
 				8F2F05162335352F00517F36 /* RestaurantViewController.swift in Sources */,
 				8F55441C232C0A32001BCBE2 /* CosmosView.swift in Sources */,
 				8F88EE7822F2B320000C4ED2 /* Constatnts.swift in Sources */,
+				8FB57BA12379351100732D5A /* MenuDishFoodViewCell.swift in Sources */,
+				8FB57B9F2378671C00732D5A /* MenuReviewViewCell.swift in Sources */,
 				8F0FB941232D3796003DAA86 /* IconTextView.swift in Sources */,
 				8F11988B232F5E3F00DA8C7D /* APIDataProvider.swift in Sources */,
 				8F43F3CE22F798E200545AC2 /* Requests.swift in Sources */,
