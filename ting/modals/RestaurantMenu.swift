@@ -84,7 +84,16 @@ struct MenuLikes: Codable {
 
 struct MenuFoods: Codable {
     let count: Int
-    let foods: [Menu]?
+    let foods: [MenuDishFood]?
+}
+
+struct MenuDishFood: Codable {
+    let id: Int
+    let food: Menu
+    let isCountable: Bool
+    let quantity: Int
+    let createdAt: String
+    let updatedAt: String
 }
 
 struct MenuImage: Codable {

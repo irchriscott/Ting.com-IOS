@@ -211,7 +211,9 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! RestaurantViewCell
-        cell.branch = self.restaurants[indexPath.item]
+        let restaurant = self.restaurants[indexPath.item]
+        cell.branch = restaurant
+        cell.menus = restaurant.menus.menus
         cell.controller = self
         return cell
     }

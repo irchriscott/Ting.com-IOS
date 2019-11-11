@@ -10,7 +10,7 @@ import UIKit
 
 class MenuDishFoodViewCell: UITableViewCell {
     
-    var menuNameHeight: CGFloat = 23
+    var menuNameHeight: CGFloat = 20
     var menuDescriptionHeight: CGFloat = 15
     let device = UIDevice.type
     
@@ -34,7 +34,6 @@ class MenuDishFoodViewCell: UITableViewCell {
         view.layer.cornerRadius = 4
         view.layer.masksToBounds = true
         view.frame = CGRect(x: 0, y: 0, width: 80, height: 80)
-        view.alpha = 0.4
         view.image = UIImage(named: "default_restaurant")
         view.contentMode = .scaleAspectFill
         return view
@@ -129,22 +128,24 @@ class MenuDishFoodViewCell: UITableViewCell {
         return view
     }()
     
-    var menu: Menu? {
+    var menuFood: MenuDishFood? {
         didSet {
-            if let menu = self.menu {
+            if let menu = self.menuFood {
                 
-                let images = menu.images?.images
+                print(menu.food.name!)
+                
+                let images = menu.food.images?.images
                 let imageIndex = Int.random(in: 0...images!.count - 1)
                 let image = images![imageIndex]
-                
+
                 menuImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(image.image)")!)
                 
-                menuNameView.text = menu.name
-                menuDescriptionTextView.text = menu.description
-                menuTypeView.text = menu.foodType!
-                menuRating.rating = (menu.reviews?.average)!
+                menuNameView.text = menu.food.name
+                menuDescriptionTextView.text = menu.food.description
+                menuTypeView.text = menu.food.foodType!
+                menuRating.rating = (menu.food.reviews?.average)!
                 
-                if menu.isAvailable ?? true {
+                if menu.food.isAvailable ?? true {
                     menuAvailabilityView.text = "Available"
                     menuAvailabilityView.icon = UIImage(named: "icon_check_white_25")!
                     menuAvailabilityView.background = Colors.colorStatusTimeGreen
@@ -166,9 +167,9 @@ class MenuDishFoodViewCell: UITableViewCell {
                 
                 let frameWidth = frame.width - (60 + menuImageConstant)
                 
-                let menuNameRect = NSString(string: menu.name!).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: menuNameTextSize)!], context: nil)
+                let menuNameRect = NSString(string: menu.food.name!).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: menuNameTextSize)!], context: nil)
                 
-                let menuDescriptionRect = NSString(string: menu.description!).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: menuDescriptionTextSize)!], context: nil)
+                let menuDescriptionRect = NSString(string: menu.food.description!).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: menuDescriptionTextSize)!], context: nil)
                 
                 menuDescriptionHeight = menuDescriptionRect.height
                 menuNameHeight = menuNameRect.height
@@ -179,12 +180,13 @@ class MenuDishFoodViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.setup()
     }
     
     private func setup() {
         addSubview(viewCell)
         
-        addConstraintsWithFormat(format: "V:|[v0]|", views: viewCell)
+        addConstraintsWithFormat(format: "V:|[v0]-12-|", views: viewCell)
         addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: viewCell)
         
         menuDescriptionView.addSubview(menuDescriptionIconView)
@@ -194,7 +196,7 @@ class MenuDishFoodViewCell: UITableViewCell {
         
         menuDescriptionView.addConstraintsWithFormat(format: "H:|[v0(14)]-4-[v1]|", views: menuDescriptionIconView, menuDescriptionTextView)
         menuDescriptionView.addConstraintsWithFormat(format: "V:|[v0(14)]", views: menuDescriptionIconView)
-        menuDescriptionView.addConstraintsWithFormat(format: "V:|[v0(\(menuDescriptionHeight))]", views: menuDescriptionTextView)
+        menuDescriptionView.addConstraintsWithFormat(format: "V:|[v0]", views: menuDescriptionTextView)
         
         menuClassView.addSubview(menuGroupView)
         menuClassView.addSubview(menuTypeView)
@@ -216,14 +218,14 @@ class MenuDishFoodViewCell: UITableViewCell {
         menuAboutView.addConstraintsWithFormat(format: "H:|[v0]|", views: menuRating)
         menuAboutView.addConstraintsWithFormat(format: "H:|[v0]|", views: menuDescriptionView)
         menuAboutView.addConstraintsWithFormat(format: "H:|[v0]|", views: menuClassView)
-        menuAboutView.addConstraintsWithFormat(format: "V:|[v0(\(menuNameHeight))]-8-[v1]-8-[v2(\(menuDescriptionHeight))]-8-[v3(26)]-12-|", views: menuNameView, menuRating, menuDescriptionView, menuClassView)
+        menuAboutView.addConstraintsWithFormat(format: "V:|[v0(\(menuNameHeight))]-4-[v1]-4-[v2]-8-[v3(26)]-12-|", views: menuNameView, menuRating, menuDescriptionView, menuClassView)
         
         viewCell.addSubview(menuImageView)
         viewCell.addSubview(menuAboutView)
         
-        viewCell.addConstraintsWithFormat(format: "H:|-12-[v0(\(menuImageConstant))]-12-[v1]|-12", views: menuImageView, menuAboutView)
-        viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(\(menuImageConstant))]", views: menuImageView)
-        viewCell.addConstraintsWithFormat(format: "V:|-12-[v0]", views: menuAboutView)
+        viewCell.addConstraintsWithFormat(format: "H:|-12-[v0(\(menuImageConstant))]-12-[v1]-12-|", views: menuImageView, menuAboutView)
+        viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(55)]", views: menuImageView)
+        viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(\(95 + menuDescriptionHeight + menuNameHeight))]", views: menuAboutView)
     }
     
     required init?(coder: NSCoder) {

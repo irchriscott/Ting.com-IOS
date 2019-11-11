@@ -9,7 +9,7 @@
 import UIKit
 import ImageViewer
 
-class RestaurantMenuViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, UITableViewDelegate, UITableViewDataSource, GalleryDisplacedViewsDataSource, GalleryItemsDataSource, GalleryItemsDelegate {
+class RestaurantMenuViewController: UITableViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, GalleryDisplacedViewsDataSource, GalleryItemsDataSource, GalleryItemsDelegate {
     
     struct DataImageItem {
         let imageView: UIImageView
@@ -21,9 +21,10 @@ class RestaurantMenuViewController: UIViewController, UICollectionViewDelegateFl
     private var imageIndex: Int = 0
     private let headerIdImage = "headerIdImage"
     private let cellIdMenuDetails = "cellIdMenuDetails"
-    
+    private let cellTableViewIdDetails = "cellTableViewIdDetails"
     private let cellIdDefault = "cellId"
     private let headerIdDefault = "headerId"
+    private let cellIdTableDishFoodView = "tableIdDishFoodView"
     private let cellIdTableDishFood = "tableIdDishFood"
     private let cellIdTableHeaderDishFood = "tableIdDishFoodHeader"
     private let cellTableViewIdDefault = "tableViewIdDefault"
@@ -33,6 +34,9 @@ class RestaurantMenuViewController: UIViewController, UICollectionViewDelegateFl
             if let menu = self.restaurantMenu {
                 let images = menu.menu?.images?.images
                 self.imageIndex = Int.random(in: 0...images!.count - 1)
+                self.promotions = menu.menu?.promotions?.promotions?.filter({ (promo) -> Bool in
+                    promo.isOn && promo.isOnToday
+                })
             }
         }
     }
@@ -58,16 +62,20 @@ class RestaurantMenuViewController: UIViewController, UICollectionViewDelegateFl
         view.delegate = self
         view.dataSource = self
         view.separatorStyle = .none
-        view.estimatedRowHeight = view.rowHeight
-        view.rowHeight = UITableView.automaticDimension
         return view
     }()
+    
+    var promotions: [MenuPromotion]? {
+        didSet {}
+    }
 
     override func viewDidLoad() {
         
         super.viewDidLoad()
         self.setupNavigationBar()
         self.loadRestaurantMenu()
+        
+        self.tableView.separatorStyle = .none
         
         if let menu = self.restaurantMenu {
             let images = menu.menu?.images?.images
@@ -87,19 +95,11 @@ class RestaurantMenuViewController: UIViewController, UICollectionViewDelegateFl
         self.restaurantDetailsView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: self.cellIdDefault)
         
         self.restaurantMenuDishFoodsView.register(MenuDishFoodViewCell.self, forCellReuseIdentifier: cellIdTableDishFood)
+        self.restaurantMenuDishFoodsView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDefault)
         
-        self.view.addSubview(restaurantDetailsView)
-        if self.restaurantMenu?.type?.id == 3 {
-            self.view.addSubview(restaurantMenuDishFoodsView)
-            self.view.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuDishFoodsView)
-        }
-        
-        self.view.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDetailsView)
-        if self.restaurantMenu?.type?.id == 3 {
-            self.view.addConstraintsWithFormat(format: "V:|[v0]-8-[v1]|", views: restaurantDetailsView, restaurantMenuDishFoodsView)
-        } else {
-            self.view.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantDetailsView)
-        }
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDetails)
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDefault)
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellIdTableDishFoodView)
     }
     
     private func setupNavigationBar(){
@@ -200,61 +200,200 @@ class RestaurantMenuViewController: UIViewController, UICollectionViewDelegateFl
         }
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch tableView {
+        case self.tableView:
+            if promotions!.count > 0 {
+                return (self.restaurantMenu?.type!.id)! == 3 ? 4 : 3
+            } else { return (self.restaurantMenu?.type!.id)! == 3 ? 3 : 2 }
         case restaurantMenuDishFoodsView:
-            return self.restaurantMenu?.type?.id == 3 ? self.restaurantMenu?.menu?.foods?.count ?? 0 : 0
+            return (self.restaurantMenu?.type!.id)! == 3 ? (self.restaurantMenu?.menu?.foods!.count)! : 0
         default:
             return 0
         }
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         switch tableView {
+        case self.tableView:
+            if promotions!.count > 0 {
+                if (self.restaurantMenu?.type!.id)! == 3 {
+                    switch indexPath.item {
+                    case 0:
+                        let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
+                        menuDetailsCell.addSubview(restaurantDetailsView)
+                        menuDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDetailsView)
+                        menuDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantDetailsView)
+                        menuDetailsCell.selectionStyle = .none
+                        return menuDetailsCell
+                    case 1:
+                        let menuFoodsCell = tableView.dequeueReusableCell(withIdentifier: self.cellIdTableDishFoodView, for: indexPath)
+                        menuFoodsCell.addSubview(restaurantMenuDishFoodsView)
+                        menuFoodsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuDishFoodsView)
+                        menuFoodsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuDishFoodsView)
+                        menuFoodsCell.selectionStyle = .none
+                        return menuFoodsCell
+                    case 2:
+                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                    case 3:
+                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                    default:
+                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                    }
+                } else {
+                    switch indexPath.item {
+                    case 0:
+                        let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
+                        menuDetailsCell.addSubview(restaurantDetailsView)
+                        menuDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDetailsView)
+                        menuDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantDetailsView)
+                        menuDetailsCell.selectionStyle = .none
+                        return menuDetailsCell
+                    case 1:
+                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                    case 2:
+                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                    default:
+                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                    }
+                }
+            } else {
+                if (self.restaurantMenu?.type!.id)! == 3 {
+                    switch indexPath.item {
+                    case 0:
+                        let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
+                        menuDetailsCell.addSubview(restaurantDetailsView)
+                        menuDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDetailsView)
+                        menuDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantDetailsView)
+                        menuDetailsCell.selectionStyle = .none
+                        return menuDetailsCell
+                    case 1:
+                        let menuFoodsCell = tableView.dequeueReusableCell(withIdentifier: self.cellIdTableDishFoodView, for: indexPath)
+                        menuFoodsCell.addSubview(restaurantMenuDishFoodsView)
+                        menuFoodsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuDishFoodsView)
+                        menuFoodsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuDishFoodsView)
+                        menuFoodsCell.selectionStyle = .none
+                        return menuFoodsCell
+                    case 2:
+                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                    default:
+                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                    }
+                } else {
+                    switch indexPath.item {
+                    case 0:
+                        let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
+                        menuDetailsCell.addSubview(restaurantDetailsView)
+                        menuDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDetailsView)
+                        menuDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantDetailsView)
+                        menuDetailsCell.selectionStyle = .none
+                        return menuDetailsCell
+                    case 1:
+                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                    default:
+                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                    }
+                }
+            }
         case restaurantMenuDishFoodsView:
             let cell = tableView.dequeueReusableCell(withIdentifier: self.cellIdTableDishFood, for: indexPath) as! MenuDishFoodViewCell
+            cell.menuFood = self.restaurantMenu?.menu?.foods?.foods![indexPath.item]
+            cell.selectionStyle = .none
             return cell
         default:
             return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
         }
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView: UIView = {
-            let view = UIView()
-            view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
-            view.backgroundColor = .white
-            return view
-        }()
-        
-        let titleLabel: UILabel = {
-            let view = UILabel()
-            view.translatesAutoresizingMaskIntoConstraints = false
-            view.textColor = Colors.colorGray
-            view.text = "Header Title"
-            view.font = UIFont(name: "Poppins-Regular", size: 16)
-            return view
-        }()
-        
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         switch tableView {
-        case restaurantMenuDishFoodsView:
-            titleLabel.text = "Dish Foods".uppercased()
-            break
+        case self.tableView:
+            return nil
         default:
-            titleLabel.text = "Some Title".uppercased()
-            break
+            let headerView: UIView = {
+                let view = UIView()
+                view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
+                view.backgroundColor = .white
+                return view
+            }()
+            
+            let titleLabel: UILabel = {
+                let view = UILabel()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.textColor = Colors.colorGray
+                view.text = "Header Title"
+                view.font = UIFont(name: "Poppins-Regular", size: 16)
+                return view
+            }()
+            
+            switch tableView {
+            case restaurantMenuDishFoodsView:
+                titleLabel.text = "Dish Foods".uppercased()
+                break
+            default:
+                titleLabel.text = "Some Title".uppercased()
+                break
+            }
+            
+            headerView.addSubview(titleLabel)
+            headerView.addConstraintsWithFormat(format: "H:|-12-[v0]", views: titleLabel)
+            headerView.addConstraintsWithFormat(format: "V:[v0]", views: titleLabel)
+            headerView.addConstraint(NSLayoutConstraint(item: headerView, attribute: .centerY, relatedBy: .equal, toItem: titleLabel, attribute: .centerY, multiplier: 1, constant: 0))
+            
+            return headerView
         }
-        
-        headerView.addSubview(titleLabel)
-        headerView.addConstraintsWithFormat(format: "H:|-8-[v0]", views: titleLabel)
-        headerView.addConstraintsWithFormat(format: "V:[v0]", views: titleLabel)
-        headerView.addConstraint(NSLayoutConstraint(item: headerView, attribute: .centerY, relatedBy: .equal, toItem: titleLabel, attribute: .centerY, multiplier: 1, constant: 0))
-        
-        return headerView
     }
     
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 50
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        switch tableView {
+        case self.tableView:
+            switch indexPath.item {
+            case 0:
+                return 700
+            default:
+                return 300
+            }
+        case self.restaurantMenuDishFoodsView:
+            let device = UIDevice.type
+            
+            var menuNameTextSize: CGFloat = 15
+            var menuDescriptionTextSize: CGFloat = 13
+            var menuImageConstant: CGFloat = 80
+            
+            let menu = self.restaurantMenu?.menu?.foods?.foods![indexPath.item]
+            let heightConstant: CGFloat = 95
+            
+            if UIDevice.smallDevices.contains(device) {
+                menuImageConstant = 55
+                menuNameTextSize = 14
+                menuDescriptionTextSize = 12
+            } else if UIDevice.mediumDevices.contains(device) {
+                menuImageConstant = 70
+                menuNameTextSize = 15
+                menuDescriptionTextSize = 12
+            }
+            
+            let frameWidth = view.frame.width - (60 + menuImageConstant)
+            
+            let menuNameRect = NSString(string: menu!.food.name!).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: menuNameTextSize)!], context: nil)
+            
+            let menuDescriptionRect = NSString(string: menu!.food.description!).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: menuDescriptionTextSize)!], context: nil)
+            
+            return heightConstant + menuNameRect.height + menuDescriptionRect.height
+        default:
+            return 0
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch tableView {
+        case self.tableView:
+            return 0
+        default:
+            return 50
+        }
     }
     
     func provideDisplacementItem(atIndex index: Int) -> DisplaceableView? {

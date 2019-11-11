@@ -179,6 +179,14 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         didSet { self.setup() }
     }
     
+    var menus: [RestaurantMenu]? {
+        didSet {}
+    }
+    
+    var shuffeledMenus: [RestaurantMenu]? {
+        didSet {}
+    }
+    
     var branch: Branch? {
         didSet {
             numberFormatter.numberStyle = .decimal
@@ -211,6 +219,8 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
                 
                 restaurantAddressHeight = branchAddressRect.height
                 restaurantNameHeight = branchNameRect.height
+                
+                self.shuffeledMenus = (branch.menus.menus)!.filter({ (m) -> Bool in m.type?.id == 3 })
             }
             self.setup()
         }
@@ -306,12 +316,12 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.branch?.menus.count ?? 0 >= 4 ? 4 : self.branch?.menus.count ?? 0
+        return self.shuffeledMenus?.count ?? 0 //self.branch?.menus.count ?? 0 >= 4 ? 4 : self.branch?.menus.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! RestaurantViewCellMenuViewCell
-        cell.menu = self.branch?.menus.menus?[indexPath.item]
+        cell.menu = self.shuffeledMenus?[indexPath.item]
         return cell
     }
     
@@ -320,7 +330,7 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let menu = self.branch?.menus.menus?[indexPath.item]
+        let menu = self.shuffeledMenus?[indexPath.item]
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
         let menuController = storyboard.instantiateViewController(withIdentifier: "RestaurantMenuBottomView") as! BottomSheetMenuControllerView
         menuController.menu = menu

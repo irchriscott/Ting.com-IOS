@@ -425,7 +425,7 @@
             <objects>
                 <collectionViewController id="dMH-QD-BJp" customClass="HomeRestaurantsViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" id="Uuj-Jr-ZPN">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="571"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="O9D-W4-VbO">
@@ -525,19 +525,32 @@
             <point key="canvasLocation" x="433" y="1326"/>
         </scene>
         <!--Restaurant Menu View Controller-->
-        <scene sceneID="JTX-YT-bAC">
+        <scene sceneID="boI-fM-TCf">
             <objects>
-                <viewController restorationIdentifier="RestaurantMenuView" storyboardIdentifier="RestaurantMenuView" id="ir0-pA-5nL" customClass="RestaurantMenuViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Ruu-9w-yqC">
+                <tableViewController restorationIdentifier="RestaurantMenuView" storyboardIdentifier="RestaurantMenuView" id="Ly3-3h-SE8" customClass="RestaurantMenuViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="emK-oP-8xy">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <viewLayoutGuide key="safeArea" id="axQ-ln-YnI"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Dob-Cy-n6Q" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="R26-LV-KuB">
+                                <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="R26-LV-KuB" id="guR-Fj-moC">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Ly3-3h-SE8" id="tKf-TD-zSh"/>
+                            <outlet property="delegate" destination="Ly3-3h-SE8" id="xo5-r8-OI8"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Lau-e4-5Bd" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1210" y="1326"/>
+            <point key="canvasLocation" x="1324" y="1326"/>
         </scene>
     </scenes>
     <resources>
