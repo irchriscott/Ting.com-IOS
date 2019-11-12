@@ -96,6 +96,7 @@
 		8FB57B9D2378633D00732D5A /* MenuDetailsViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57B9C2378633D00732D5A /* MenuDetailsViewCell.swift */; };
 		8FB57B9F2378671C00732D5A /* MenuReviewViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57B9E2378671C00732D5A /* MenuReviewViewCell.swift */; };
 		8FB57BA12379351100732D5A /* MenuDishFoodViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA02379351100732D5A /* MenuDishFoodViewCell.swift */; };
+		8FB57BA3237AA21700732D5A /* MenuPromotionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA2237AA21700732D5A /* MenuPromotionViewCell.swift */; };
 		8FB7B0162329092C002B1F60 /* UserControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B0152329092C002B1F60 /* UserControlView.swift */; };
 		8FB7B01823294FA7002B1F60 /* TouchRespondScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B01723294FA7002B1F60 /* TouchRespondScrollView.swift */; };
 		8FC6088622FA2EE5005D142B /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC6088522FA2EE5005D142B /* Toast.swift */; };
@@ -197,6 +198,7 @@
 		8FB57B9C2378633D00732D5A /* MenuDetailsViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuDetailsViewCell.swift; sourceTree = "<group>"; };
 		8FB57B9E2378671C00732D5A /* MenuReviewViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuReviewViewCell.swift; sourceTree = "<group>"; };
 		8FB57BA02379351100732D5A /* MenuDishFoodViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuDishFoodViewCell.swift; sourceTree = "<group>"; };
+		8FB57BA2237AA21700732D5A /* MenuPromotionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPromotionViewCell.swift; sourceTree = "<group>"; };
 		8FB7B0152329092C002B1F60 /* UserControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserControlView.swift; sourceTree = "<group>"; };
 		8FB7B01723294FA7002B1F60 /* TouchRespondScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchRespondScrollView.swift; sourceTree = "<group>"; };
 		8FC6088522FA2EE5005D142B /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
@@ -461,6 +463,7 @@
 				8FB57B9C2378633D00732D5A /* MenuDetailsViewCell.swift */,
 				8FB57B9E2378671C00732D5A /* MenuReviewViewCell.swift */,
 				8FB57BA02379351100732D5A /* MenuDishFoodViewCell.swift */,
+				8FB57BA2237AA21700732D5A /* MenuPromotionViewCell.swift */,
 			);
 			path = menu;
 			sourceTree = "<group>";
@@ -703,6 +706,7 @@
 				8F11988B232F5E3F00DA8C7D /* APIDataProvider.swift in Sources */,
 				8F43F3CE22F798E200545AC2 /* Requests.swift in Sources */,
 				8F1D75E92331F801000B25C9 /* UIApplicationExtension.swift in Sources */,
+				8FB57BA3237AA21700732D5A /* MenuPromotionViewCell.swift in Sources */,
 				8F07FFCD23128B2D00D0ACD5 /* TitleTextLabel.swift in Sources */,
 				8F49C0F922F2F7F60084F3E7 /* UIViewControllerExtension.swift in Sources */,
 				8F1F112622FA23CC00CA4DD9 /* ResetPasswordViewController.swift in Sources */,

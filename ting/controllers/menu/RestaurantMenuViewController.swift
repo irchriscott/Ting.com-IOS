@@ -28,6 +28,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     private let cellIdTableDishFood = "tableIdDishFood"
     private let cellIdTableHeaderDishFood = "tableIdDishFoodHeader"
     private let cellTableViewIdDefault = "tableViewIdDefault"
+    private let cellTableViewIdPromotion = "cellTableViewIdPromotion"
     
     var restaurantMenu: RestaurantMenu? {
         didSet {
@@ -58,6 +59,16 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     }()
     
     lazy var restaurantMenuDishFoodsView: UITableView = {
+        let view = UITableView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        view.dataSource = self
+        view.separatorStyle = .none
+        view.isScrollEnabled = false
+        return view
+    }()
+    
+    lazy var restaurantMenuPromotionsView: UITableView = {
         let view = UITableView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.delegate = self
@@ -98,6 +109,9 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         
         self.restaurantMenuDishFoodsView.register(MenuDishFoodViewCell.self, forCellReuseIdentifier: cellIdTableDishFood)
         self.restaurantMenuDishFoodsView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDefault)
+        
+        self.restaurantMenuPromotionsView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDefault)
+        self.restaurantMenuPromotionsView.register(MenuPromotionViewCell.self, forCellReuseIdentifier: self.cellTableViewIdPromotion)
         
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDetails)
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDefault)

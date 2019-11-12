@@ -132,8 +132,6 @@ class MenuDishFoodViewCell: UITableViewCell {
         didSet {
             if let menu = self.menuFood {
                 
-                print(menu.food.name!)
-                
                 let images = menu.food.images?.images
                 let imageIndex = Int.random(in: 0...images!.count - 1)
                 let image = images![imageIndex]

@@ -77,7 +77,7 @@ class InlineIconTextView: UIView {
         
         addConstraintsWithFormat(format: "H:|[v0(\(imageSize))]-4-[v1]|", views: iconView, textView)
         addConstraintsWithFormat(format: "V:|[v0(\(imageSize))]", views: iconView)
-        addConstraintsWithFormat(format: "V:|[v0]|", views: textView)
+        addConstraintsWithFormat(format: "V:|[v0]", views: textView)
     }
     
     required init?(coder aDecoder: NSCoder) {
