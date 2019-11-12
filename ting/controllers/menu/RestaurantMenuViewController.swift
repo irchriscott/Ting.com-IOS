@@ -29,6 +29,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     private let cellIdTableHeaderDishFood = "tableIdDishFoodHeader"
     private let cellTableViewIdDefault = "tableViewIdDefault"
     private let cellTableViewIdPromotion = "cellTableViewIdPromotion"
+    private let cellTableViewIdPromotions = "cellTableViewIdPromotions"
     
     var restaurantMenu: RestaurantMenu? {
         didSet {
@@ -116,6 +117,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDetails)
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDefault)
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellIdTableDishFoodView)
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdPromotions)
     }
     
     private func setupNavigationBar(){
@@ -224,6 +226,8 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             } else { return (self.restaurantMenu?.type!.id)! == 3 ? 3 : 2 }
         case restaurantMenuDishFoodsView:
             return (self.restaurantMenu?.type!.id)! == 3 ? (self.restaurantMenu?.menu?.foods!.count)! : 0
+        case restaurantMenuPromotionsView:
+            return self.promotions?.count ?? 0
         default:
             return 0
         }
@@ -251,7 +255,11 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                         menuFoodsCell.selectionStyle = .none
                         return menuFoodsCell
                     case 2:
-                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                        let promotionsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdPromotions, for: indexPath)
+                        promotionsCell.addSubview(restaurantMenuPromotionsView)
+                        promotionsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuPromotionsView)
+                        promotionsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuPromotionsView)
+                        return promotionsCell
                     case 3:
                         return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
                     default:
@@ -267,7 +275,11 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                         menuDetailsCell.selectionStyle = .none
                         return menuDetailsCell
                     case 1:
-                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                        let promotionsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdPromotions, for: indexPath)
+                        promotionsCell.addSubview(restaurantMenuPromotionsView)
+                        promotionsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuPromotionsView)
+                        promotionsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuPromotionsView)
+                        return promotionsCell
                     case 2:
                         return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
                     default:
@@ -317,6 +329,11 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             cell.menuFood = self.restaurantMenu?.menu?.foods?.foods![indexPath.item]
             cell.selectionStyle = .none
             return cell
+        case restaurantMenuPromotionsView:
+            let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdPromotion, for: indexPath) as! MenuPromotionViewCell
+            cell.promotion = self.promotions![indexPath.item]
+            cell.selectionStyle = .none
+            return cell
         default:
             return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
         }
@@ -347,6 +364,8 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             case restaurantMenuDishFoodsView:
                 titleLabel.text = "Dish Foods".uppercased()
                 break
+            case restaurantMenuPromotionsView:
+                titleLabel.text = "Today's Promotions".uppercased()
             default:
                 titleLabel.text = "Some Title".uppercased()
                 break
@@ -371,8 +390,9 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                     case 0:
                         return self.restaurantDetailsViewHeight
                     case 1:
-                        var height: CGFloat = 50
+                        var height: CGFloat = 0
                         if self.restaurantMenu?.menu?.foods?.count ?? 0 > 0 {
+                            height += 50
                             if let foods = self.restaurantMenu?.menu?.foods?.foods {
                                 for (index, _) in foods.enumerated() {
                                     height += self.dishFoodViewCellHeight(index: index)
@@ -381,7 +401,16 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                         }
                         return height
                     case 2:
-                        return 0
+                        var height: CGFloat = 0
+                        if promotions?.count ?? 0 > 0 {
+                            height += 50
+                            if let promotions = self.promotions {
+                                for (index, _) in promotions.enumerated() {
+                                    height += self.menuPromotionViewCellHeight(index: index)
+                                }
+                            }
+                        }
+                        return height
                     case 3:
                         return 0
                     default:
@@ -392,7 +421,16 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                     case 0:
                         return self.restaurantDetailsViewHeight
                     case 1:
-                        return 0
+                        var height: CGFloat = 0
+                        if promotions?.count ?? 0 > 0 {
+                            height += 50
+                            if let promotions = self.promotions {
+                                for (index, _) in promotions.enumerated() {
+                                    height += self.menuPromotionViewCellHeight(index: index)
+                                }
+                            }
+                        }
+                        return height
                     case 2:
                         return 0
                     default:
@@ -405,8 +443,9 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                     case 0:
                         return self.restaurantDetailsViewHeight
                     case 1:
-                        var height: CGFloat = 50
+                        var height: CGFloat = 0
                         if self.restaurantMenu?.menu?.foods?.count ?? 0 > 0 {
+                            height += 50
                             if let foods = self.restaurantMenu?.menu?.foods?.foods {
                                 for (index, _) in foods.enumerated() {
                                     height += self.dishFoodViewCellHeight(index: index)
@@ -432,6 +471,8 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             }
         case self.restaurantMenuDishFoodsView:
             return self.dishFoodViewCellHeight(index: indexPath.item)
+        case self.restaurantMenuPromotionsView:
+            return self.menuPromotionViewCellHeight(index: indexPath.item)
         default:
             return 0
         }
@@ -554,6 +595,57 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         let menuDescriptionRect = NSString(string: menu!.food.description!).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: menuDescriptionTextSize)!], context: nil)
         
         return heightConstant + menuNameRect.height + menuDescriptionRect.height
+    }
+    
+    private func menuPromotionViewCellHeight(index: Int) -> CGFloat {
+        
+        var promotionOccasionHeight: CGFloat = 20
+        var promotionPeriodHeight: CGFloat = 15
+        var promotionReductionHeight: CGFloat = 0
+        var promotionSupplementHeight: CGFloat = 0
+        let device = UIDevice.type
+        
+        var promotionOccationTextSize: CGFloat = 15
+        let promotionTextSize: CGFloat = 13
+        var promotionPosterConstant: CGFloat = 80
+        
+        let promotion = self.promotions![index]
+        
+        if UIDevice.smallDevices.contains(device) {
+            promotionPosterConstant = 55
+            promotionOccationTextSize = 14
+        } else if UIDevice.mediumDevices.contains(device) {
+            promotionPosterConstant = 70
+            promotionOccationTextSize = 15
+        }
+        
+        let frameWidth = view.frame.width - (60 + promotionPosterConstant)
+        
+        let promotionOccationRect = NSString(string: promotion.occasionEvent).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: promotionOccationTextSize)!], context: nil)
+        
+        let promotionPeriodRect = NSString(string: promotion.period).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: promotionTextSize)!], context: nil)
+        
+        promotionOccasionHeight = promotionOccationRect.height
+        promotionPeriodHeight = promotionPeriodRect.height
+        
+        if promotion.reduction.hasReduction {
+            let reductionText = "Order this menu and get \(promotion.reduction.amount) \((promotion.reduction.reductionType)!) reduction"
+            let promotionReductionRect = NSString(string: reductionText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: promotionTextSize)!], context: nil)
+            promotionReductionHeight = promotionReductionRect.height
+        }
+        
+        if promotion.supplement.hasSupplement {
+            var supplementText: String!
+            if !promotion.supplement.isSame {
+                supplementText = "Order \(promotion.supplement.minQuantity) of this menu and get \(promotion.supplement.quantity) free \((promotion.supplement.supplement?.menu?.name)!)"
+            } else {
+                supplementText = "Order \(promotion.supplement.minQuantity) of this menu and get \(promotion.supplement.quantity) more for free"
+            }
+            let promotionSupplementRect = NSString(string: supplementText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: promotionTextSize)!], context: nil)
+            promotionSupplementHeight = promotionSupplementRect.height
+        }
+        
+        return 40 + promotionOccasionHeight + promotionPeriodHeight + promotionReductionHeight + promotionSupplementHeight + 12 + 32
     }
     
     var restaurantDetailsViewHeight: CGFloat {
