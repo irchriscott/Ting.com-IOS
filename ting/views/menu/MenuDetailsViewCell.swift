@@ -16,6 +16,7 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
     
     var restaurantMenuNameHeight: CGFloat = 28
     var restaurantMenuDescriptionHeight: CGFloat = 16
+    var restaurantMenuIngredientsHeight: CGFloat = 16
     let device = UIDevice.type
     
     var restaurantMenuNameTextSize: CGFloat = 20
@@ -117,6 +118,31 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.text = "Breakfast"
         view.icon = UIImage(named: "icon_plus_filled_25_gray")!
+        return view
+    }()
+    
+    let separatorZero: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = Colors.colorVeryLightGray
+        return view
+    }()
+    
+    let restaurantIngredientsTitleView: UILabel = {
+        let view = UILabel()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.font = UIFont(name: "Poppins-Medium", size: 14)
+        view.text = "Ingredients".uppercased()
+        view.textColor = Colors.colorGray
+        return view
+    }()
+    
+    let restaurantIngredientsView: UILabel = {
+        let view = UILabel()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.font = UIFont(name: "Poppins-Regular", size: 13)
+        view.text = "Not Available"
+        view.textColor = Colors.colorGray
         return view
     }()
     
@@ -256,6 +282,13 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         return view
     }()
     
+    let separatorFour: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = Colors.colorVeryLightGray
+        return view
+    }()
+    
     var parentController: RestaurantMenuViewController? {
         didSet { self.setup() }
     }
@@ -354,6 +387,13 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
                 let menuNameRect = NSString(string: (menu.menu?.name!)!).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: restaurantMenuNameTextSize)!], context: nil)
                 
                 let menuDescriptionRect = NSString(string: (menu.menu?.description!)!).boundingRect(with: CGSize(width: frameWidth - 20, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: restaurantDescriptionTextSize)!], context: nil)
+                
+                if menu.menu?.showIngredients ?? true {
+                    let menuIngredientsRect = NSString(string: (menu.menu?.ingredients!)!.withoutHtml).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+                    
+                    restaurantIngredientsView.text = menu.menu?.ingredients!.withoutHtml
+                    restaurantMenuIngredientsHeight = menuIngredientsRect.height
+                }
                 
                 restaurantMenuNameHeight = menuNameRect.height
                 restaurantMenuDescriptionHeight = menuDescriptionRect.height
@@ -489,25 +529,33 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         addSubview(restaurantMenuRating)
         addSubview(restaurantMenuDescriptionView)
         addSubview(restaurantMenuView)
+        addSubview(separatorZero)
+        addSubview(restaurantIngredientsTitleView)
+        addSubview(restaurantIngredientsView)
         addSubview(separatorOne)
         addSubview(restaurantMenuPriceView)
         addSubview(separatorTwo)
         addSubview(restaurantMenuDataView)
         addSubview(separatorThree)
         addSubview(restaurantDataView)
+        addSubview(separatorFour)
         
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: menuNameTextView)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuRating)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: restaurantMenuDescriptionView)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuView)
+        addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorZero)
+        addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantIngredientsTitleView)
+        addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: restaurantIngredientsView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorOne)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: restaurantMenuPriceView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorTwo)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuDataView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorThree)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantDataView)
+        addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorFour)
         
-        addConstraintsWithFormat(format: "V:|-8-[v0(\(restaurantMenuNameHeight - 5))]-8-[v1]-8-[v2(\(restaurantMenuDescriptionHeight))]-8-[v3(26)]-8-[v4(0.5)]-8-[v5(\(menuPriceHeight))]-8-[v6(0.5)]-8-[v7(26)]-8-[v8(0.5)]-8-[v9(60)]", views: menuNameTextView, restaurantMenuRating, restaurantMenuDescriptionView, restaurantMenuView, separatorOne, restaurantMenuPriceView, separatorTwo, restaurantMenuDataView, separatorThree, restaurantDataView)
+        addConstraintsWithFormat(format: "V:|-8-[v0(\(restaurantMenuNameHeight - 5))]-8-[v1]-8-[v2(\(restaurantMenuDescriptionHeight))]-8-[v3(26)]-8-[v4(0.5)]-8-[v5(18)]-8-[v6(\(restaurantMenuIngredientsHeight))]-8-[v7(0.5)]-8-[v8(\(menuPriceHeight))]-8-[v9(0.5)]-8-[v10(26)]-8-[v11(0.5)]-8-[v12(60)]-8-[v13(0.5)]", views: menuNameTextView, restaurantMenuRating, restaurantMenuDescriptionView, restaurantMenuView, separatorZero, restaurantIngredientsTitleView, restaurantIngredientsView, separatorOne, restaurantMenuPriceView, separatorTwo, restaurantMenuDataView, separatorThree, restaurantDataView, separatorFour)
     }
     
     private func checkLocationAuthorization(status: CLAuthorizationStatus){

@@ -53,6 +53,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         view.dataSource = self
         view.delegate = self
         view.tag = 1
+        view.isScrollEnabled = false
         return view
     }()
     
@@ -62,6 +63,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         view.delegate = self
         view.dataSource = self
         view.separatorStyle = .none
+        view.isScrollEnabled = false
         return view
     }()
     
@@ -349,39 +351,73 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         
         switch tableView {
         case self.tableView:
-            switch indexPath.item {
-            case 0:
-                return 700
-            default:
-                return 300
+            if promotions!.count > 0 {
+                if (self.restaurantMenu?.type!.id)! == 3 {
+                    switch indexPath.item {
+                    case 0:
+                        return self.restaurantDetailsViewHeight
+                    case 1:
+                        var height: CGFloat = 50
+                        if self.restaurantMenu?.menu?.foods?.count ?? 0 > 0 {
+                            if let foods = self.restaurantMenu?.menu?.foods?.foods {
+                                for (index, _) in foods.enumerated() {
+                                    height += self.dishFoodViewCellHeight(index: index)
+                                }
+                            }
+                        }
+                        return height
+                    case 2:
+                        return 0
+                    case 3:
+                        return 0
+                    default:
+                        return 0
+                    }
+                } else {
+                    switch indexPath.item {
+                    case 0:
+                        return self.restaurantDetailsViewHeight
+                    case 1:
+                        return 0
+                    case 2:
+                        return 0
+                    default:
+                        return 0
+                    }
+                }
+            } else {
+                if (self.restaurantMenu?.type!.id)! == 3 {
+                    switch indexPath.item {
+                    case 0:
+                        return self.restaurantDetailsViewHeight
+                    case 1:
+                        var height: CGFloat = 50
+                        if self.restaurantMenu?.menu?.foods?.count ?? 0 > 0 {
+                            if let foods = self.restaurantMenu?.menu?.foods?.foods {
+                                for (index, _) in foods.enumerated() {
+                                    height += self.dishFoodViewCellHeight(index: index)
+                                }
+                            }
+                        }
+                        return height
+                    case 2:
+                        return 0
+                    default:
+                        return 0
+                    }
+                } else {
+                    switch indexPath.item {
+                    case 0:
+                        return self.restaurantDetailsViewHeight
+                    case 1:
+                        return 0
+                    default:
+                        return 0
+                    }
+                }
             }
         case self.restaurantMenuDishFoodsView:
-            let device = UIDevice.type
-            
-            var menuNameTextSize: CGFloat = 15
-            var menuDescriptionTextSize: CGFloat = 13
-            var menuImageConstant: CGFloat = 80
-            
-            let menu = self.restaurantMenu?.menu?.foods?.foods![indexPath.item]
-            let heightConstant: CGFloat = 95
-            
-            if UIDevice.smallDevices.contains(device) {
-                menuImageConstant = 55
-                menuNameTextSize = 14
-                menuDescriptionTextSize = 12
-            } else if UIDevice.mediumDevices.contains(device) {
-                menuImageConstant = 70
-                menuNameTextSize = 15
-                menuDescriptionTextSize = 12
-            }
-            
-            let frameWidth = view.frame.width - (60 + menuImageConstant)
-            
-            let menuNameRect = NSString(string: menu!.food.name!).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: menuNameTextSize)!], context: nil)
-            
-            let menuDescriptionRect = NSString(string: menu!.food.description!).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: menuDescriptionTextSize)!], context: nil)
-            
-            return heightConstant + menuNameRect.height + menuDescriptionRect.height
+            return self.dishFoodViewCellHeight(index: indexPath.item)
         default:
             return 0
         }
@@ -474,6 +510,93 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         galleryViewController.landedPageAtIndexCompletion = { index in }
         
         self.presentImageGallery(galleryViewController)
+    }
+    
+    private func dishFoodViewCellHeight(index: Int) -> CGFloat {
+        
+        let device = UIDevice.type
+        
+        var menuNameTextSize: CGFloat = 15
+        var menuDescriptionTextSize: CGFloat = 13
+        var menuImageConstant: CGFloat = 80
+        
+        let menu = self.restaurantMenu?.menu?.foods?.foods![index]
+        let heightConstant: CGFloat = 95
+        
+        if UIDevice.smallDevices.contains(device) {
+            menuImageConstant = 55
+            menuNameTextSize = 14
+            menuDescriptionTextSize = 12
+        } else if UIDevice.mediumDevices.contains(device) {
+            menuImageConstant = 70
+            menuNameTextSize = 15
+            menuDescriptionTextSize = 12
+        }
+        
+        let frameWidth = view.frame.width - (60 + menuImageConstant)
+        
+        let menuNameRect = NSString(string: menu!.food.name!).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: menuNameTextSize)!], context: nil)
+        
+        let menuDescriptionRect = NSString(string: menu!.food.description!).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: menuDescriptionTextSize)!], context: nil)
+        
+        return heightConstant + menuNameRect.height + menuDescriptionRect.height
+    }
+    
+    var restaurantDetailsViewHeight: CGFloat {
+        
+        if let menu = self.restaurantMenu {
+            
+            var restaurantMenuNameHeight: CGFloat = 28
+            var restaurantMenuDescriptionHeight: CGFloat = 16
+            var restaurantMenuIngredientsHeight: CGFloat = 16
+            let device = UIDevice.type
+            
+            var restaurantMenuNameTextSize: CGFloat = 20
+            var restaurantDescriptionTextSize: CGFloat = 13
+            
+            var menuPriceHeight: CGFloat = 16
+            
+            if UIDevice.smallDevices.contains(device) {
+                restaurantMenuNameTextSize = 15
+                restaurantDescriptionTextSize = 12
+            } else if UIDevice.mediumDevices.contains(device) {
+                restaurantMenuNameTextSize = 17
+            }
+            
+            let frameWidth = self.view.frame.width - 16
+            
+            let menuNameRect = NSString(string: (menu.menu?.name!)!).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: restaurantMenuNameTextSize)!], context: nil)
+            
+            let menuDescriptionRect = NSString(string: (menu.menu?.description!)!).boundingRect(with: CGSize(width: frameWidth - 20, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: restaurantDescriptionTextSize)!], context: nil)
+            
+            restaurantMenuNameHeight = menuNameRect.height - 5
+            restaurantMenuDescriptionHeight = menuDescriptionRect.height
+            
+            if menu.menu?.showIngredients ?? true {
+                let menuIngredientsRect = NSString(string: (menu.menu?.ingredients!)!.withoutHtml).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+                
+                restaurantMenuIngredientsHeight = menuIngredientsRect.height
+            }
+            
+            if (menu.menu?.isCountable)! && Double((menu.menu?.price)!) != Double((menu.menu?.lastPrice)!) {
+                menuPriceHeight += 45
+            } else if !(menu.menu?.isCountable)! && Double((menu.menu?.price)!) != Double((menu.menu?.lastPrice)!) {
+                menuPriceHeight += 38
+            } else if (menu.menu?.isCountable)! && !(Double((menu.menu?.price)!) != Double((menu.menu?.lastPrice)!)){
+                menuPriceHeight += 35
+            } else {
+                menuPriceHeight += 25
+            }
+            
+            let margins: CGFloat = 8 * 14
+            let separators: CGFloat = 0.5 * 5
+            let tiles: CGFloat = 26 * 2
+            
+            let constantHeight: CGFloat = 320 + margins + separators + tiles + 60 + 18 + 17
+            
+            return constantHeight + restaurantMenuNameHeight + restaurantMenuDescriptionHeight + restaurantMenuIngredientsHeight + menuPriceHeight
+        }
+        return 700
     }
 }
 
