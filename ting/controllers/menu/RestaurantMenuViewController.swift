@@ -30,6 +30,8 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     private let cellTableViewIdDefault = "tableViewIdDefault"
     private let cellTableViewIdPromotion = "cellTableViewIdPromotion"
     private let cellTableViewIdPromotions = "cellTableViewIdPromotions"
+    private let cellTableViewIdReview = "cellTableViewIdReview"
+    private let cellTableViewIdReviews = "cellTableViewIdReviews"
     
     var restaurantMenu: RestaurantMenu? {
         didSet {
@@ -79,6 +81,16 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         return view
     }()
     
+    lazy var restaurantMenuReviewsView: UITableView = {
+        let view = UITableView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        view.dataSource = self
+        view.separatorStyle = .none
+        view.isScrollEnabled = false
+        return view
+    }()
+    
     var promotions: [MenuPromotion]? {
         didSet {}
     }
@@ -114,10 +126,14 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         self.restaurantMenuPromotionsView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDefault)
         self.restaurantMenuPromotionsView.register(MenuPromotionViewCell.self, forCellReuseIdentifier: self.cellTableViewIdPromotion)
         
+        self.restaurantMenuReviewsView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDefault)
+        self.restaurantMenuReviewsView.register(MenuReviewViewCell.self, forCellReuseIdentifier: self.cellTableViewIdPromotion)
+        
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDetails)
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDefault)
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellIdTableDishFoodView)
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdPromotions)
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdReviews)
     }
     
     private func setupNavigationBar(){
@@ -261,7 +277,11 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                         promotionsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuPromotionsView)
                         return promotionsCell
                     case 3:
-                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                        let reviewsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReviews, for: indexPath)
+                        reviewsCell.addSubview(restaurantMenuReviewsView)
+                        reviewsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuReviewsView)
+                        reviewsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuReviewsView)
+                        return reviewsCell
                     default:
                         return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
                     }
@@ -281,7 +301,11 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                         promotionsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuPromotionsView)
                         return promotionsCell
                     case 2:
-                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                        let reviewsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReviews, for: indexPath)
+                        reviewsCell.addSubview(restaurantMenuReviewsView)
+                        reviewsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuReviewsView)
+                        reviewsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuReviewsView)
+                        return reviewsCell
                     default:
                         return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
                     }
@@ -304,7 +328,11 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                         menuFoodsCell.selectionStyle = .none
                         return menuFoodsCell
                     case 2:
-                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                        let reviewsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReviews, for: indexPath)
+                        reviewsCell.addSubview(restaurantMenuReviewsView)
+                        reviewsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuReviewsView)
+                        reviewsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuReviewsView)
+                        return reviewsCell
                     default:
                         return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
                     }
@@ -318,7 +346,11 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                         menuDetailsCell.selectionStyle = .none
                         return menuDetailsCell
                     case 1:
-                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                        let reviewsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReviews, for: indexPath)
+                        reviewsCell.addSubview(restaurantMenuReviewsView)
+                        reviewsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuReviewsView)
+                        reviewsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuReviewsView)
+                        return reviewsCell
                     default:
                         return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
                     }
@@ -334,6 +366,10 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             cell.promotion = self.promotions![indexPath.item]
             cell.selectionStyle = .none
             return cell
+        case restaurantMenuReviewsView:
+            let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReview, for: indexPath) as! MenuReviewViewCell
+            cell.selectionStyle = .none
+            return cell
         default:
             return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
         }
@@ -343,6 +379,8 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         switch tableView {
         case self.tableView:
             return nil
+        case restaurantMenuReviewsView:
+            return self.reviewHeaderView(width: view.frame.width)
         default:
             let headerView: UIView = {
                 let view = UIView()
@@ -397,6 +435,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                 for (index, _) in foods.enumerated() {
                                     height += self.dishFoodViewCellHeight(index: index)
                                 }
+                                height -= 10
                             }
                         }
                         return height
@@ -408,11 +447,12 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                 for (index, _) in promotions.enumerated() {
                                     height += self.menuPromotionViewCellHeight(index: index)
                                 }
+                                height -= 10
                             }
                         }
                         return height
                     case 3:
-                        return 0
+                        return 152
                     default:
                         return 0
                     }
@@ -428,11 +468,12 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                 for (index, _) in promotions.enumerated() {
                                     height += self.menuPromotionViewCellHeight(index: index)
                                 }
+                                height -= 10
                             }
                         }
                         return height
                     case 2:
-                        return 0
+                        return 152
                     default:
                         return 0
                     }
@@ -450,11 +491,12 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                 for (index, _) in foods.enumerated() {
                                     height += self.dishFoodViewCellHeight(index: index)
                                 }
+                                height -= 10
                             }
                         }
                         return height
                     case 2:
-                        return 0
+                        return 152
                     default:
                         return 0
                     }
@@ -463,7 +505,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                     case 0:
                         return self.restaurantDetailsViewHeight
                     case 1:
-                        return 0
+                        return 152
                     default:
                         return 0
                     }
@@ -482,6 +524,8 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         switch tableView {
         case self.tableView:
             return 0
+        case self.restaurantMenuReviewsView:
+            return 128
         default:
             return 50
         }
@@ -703,6 +747,93 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             return constantHeight + restaurantMenuNameHeight + restaurantMenuDescriptionHeight + restaurantMenuIngredientsHeight + menuPriceHeight
         }
         return 700
+    }
+    
+    private func reviewHeaderView(width: CGFloat) -> UIView {
+        
+        let view = UIView()
+        view.backgroundColor = .white
+        
+        let reviewsCountView: UILabel = {
+            let label = UILabel()
+            label.textColor = Colors.colorGray
+            label.translatesAutoresizingMaskIntoConstraints = false
+            label.font = UIFont(name: "Poppins-SemiBold", size: 32)!
+            label.text = "0.0"
+            return label
+        }()
+        
+        let reviewsMaxView: UILabel = {
+            let label = UILabel()
+            label.textColor = Colors.colorGray
+            label.translatesAutoresizingMaskIntoConstraints = false
+            label.font = UIFont(name: "Poppins-Regular", size: 14)!
+            label.text = "Out of 5"
+            return label
+        }()
+        
+        let reviewsAverageView: UIView = {
+            let reviewView = UIView()
+            reviewView.translatesAutoresizingMaskIntoConstraints = false
+            return reviewView
+        }()
+        
+        reviewsAverageView.addSubview(reviewsCountView)
+        reviewsAverageView.addSubview(reviewsMaxView)
+        
+        reviewsAverageView.addConstraintsWithFormat(format: "H:[v0]", views: reviewsCountView)
+        reviewsAverageView.addConstraintsWithFormat(format: "H:[v0]", views: reviewsMaxView)
+        reviewsAverageView.addConstraintsWithFormat(format: "V:[v0(35)]-4-[v1(16)]", views: reviewsCountView, reviewsMaxView)
+        
+        reviewsAverageView.addConstraint(NSLayoutConstraint(item: reviewsAverageView, attribute: .centerX, relatedBy: .equal, toItem: reviewsCountView, attribute: .centerX, multiplier: 1, constant: 0))
+        reviewsAverageView.addConstraint(NSLayoutConstraint(item: reviewsAverageView, attribute: .centerX, relatedBy: .equal, toItem: reviewsMaxView, attribute: .centerX, multiplier: 1, constant: 0))
+        
+        let reviewsBarView: ReviewsPercentsView = {
+            let barView = ReviewsPercentsView()
+            barView.translatesAutoresizingMaskIntoConstraints = false
+            return barView
+        }()
+        
+        reviewsBarView.width = width - 36 - 70
+        
+        if let reviews = self.restaurantMenu?.menu?.reviews {
+            reviewsBarView.dataEntries = [
+                BarChartEntry(score: reviews.percents[4], title: "5 ★"),
+                BarChartEntry(score: reviews.percents[3], title: "4 ★"),
+                BarChartEntry(score: reviews.percents[2], title: "3 ★"),
+                BarChartEntry(score: reviews.percents[1], title: "2 ★"),
+                BarChartEntry(score: reviews.percents[0], title: "1 ★")
+            ]
+            reviewsCountView.text = "\(reviews.average)"
+        }
+        
+        let reviewsTitleView: UILabel = {
+            let label = UILabel()
+            label.textColor = Colors.colorGray
+            label.translatesAutoresizingMaskIntoConstraints = false
+            label.font = UIFont(name: "Poppins-Medium", size: 14)!
+            label.text = "Ratings & Reviews".uppercased()
+            return label
+        }()
+        
+        let separatorView: UIView = {
+            let separator = UIView()
+            separator.translatesAutoresizingMaskIntoConstraints = false
+            separator.backgroundColor = Colors.colorVeryLightGray
+            return separator
+        }()
+        
+        view.addSubview(reviewsTitleView)
+        view.addSubview(reviewsAverageView)
+        view.addSubview(reviewsBarView)
+        view.addSubview(separatorView)
+        view.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: separatorView)
+        view.addConstraintsWithFormat(format: "H:|-12-[v0]", views: reviewsTitleView)
+        view.addConstraintsWithFormat(format: "V:|-8-[v0(22)]-4-[v1(80)]-0-[v2(0.5)]|", views: reviewsTitleView, reviewsAverageView, separatorView)
+        view.addConstraintsWithFormat(format: "V:[v0(80)]|", views: reviewsBarView)
+        view.addConstraintsWithFormat(format: "H:|-12-[v0(70)]-12-[v1(\(width - 36 - 70))]-12-|", views: reviewsAverageView, reviewsBarView)
+        
+        return view
     }
 }
 

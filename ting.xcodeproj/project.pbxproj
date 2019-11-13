@@ -97,6 +97,8 @@
 		8FB57B9F2378671C00732D5A /* MenuReviewViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57B9E2378671C00732D5A /* MenuReviewViewCell.swift */; };
 		8FB57BA12379351100732D5A /* MenuDishFoodViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA02379351100732D5A /* MenuDishFoodViewCell.swift */; };
 		8FB57BA3237AA21700732D5A /* MenuPromotionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA2237AA21700732D5A /* MenuPromotionViewCell.swift */; };
+		8FB57BA5237BF3BC00732D5A /* ReviewsPercentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA4237BF3BB00732D5A /* ReviewsPercentsView.swift */; };
+		8FB57BA7237BF44200732D5A /* BarChartEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA6237BF44200732D5A /* BarChartEntry.swift */; };
 		8FB7B0162329092C002B1F60 /* UserControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B0152329092C002B1F60 /* UserControlView.swift */; };
 		8FB7B01823294FA7002B1F60 /* TouchRespondScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B01723294FA7002B1F60 /* TouchRespondScrollView.swift */; };
 		8FC6088622FA2EE5005D142B /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC6088522FA2EE5005D142B /* Toast.swift */; };
@@ -199,6 +201,8 @@
 		8FB57B9E2378671C00732D5A /* MenuReviewViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuReviewViewCell.swift; sourceTree = "<group>"; };
 		8FB57BA02379351100732D5A /* MenuDishFoodViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuDishFoodViewCell.swift; sourceTree = "<group>"; };
 		8FB57BA2237AA21700732D5A /* MenuPromotionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPromotionViewCell.swift; sourceTree = "<group>"; };
+		8FB57BA4237BF3BB00732D5A /* ReviewsPercentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewsPercentsView.swift; sourceTree = "<group>"; };
+		8FB57BA6237BF44200732D5A /* BarChartEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChartEntry.swift; sourceTree = "<group>"; };
 		8FB7B0152329092C002B1F60 /* UserControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserControlView.swift; sourceTree = "<group>"; };
 		8FB7B01723294FA7002B1F60 /* TouchRespondScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchRespondScrollView.swift; sourceTree = "<group>"; };
 		8FC6088522FA2EE5005D142B /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
@@ -399,6 +403,7 @@
 				8F13CAF52334FDB300E3D03D /* InlineIconTextView.swift */,
 				8FDDF97523716A97000AA334 /* ImageTextView.swift */,
 				8FDDF97723729C07000AA334 /* VerticalTopAlignLabel.swift */,
+				8FB57BA4237BF3BB00732D5A /* ReviewsPercentsView.swift */,
 			);
 			path = custom;
 			sourceTree = "<group>";
@@ -445,6 +450,7 @@
 				8F49C10D22F49ABA0084F3E7 /* User.swift */,
 				8F43F3CF22F79DC900545AC2 /* Media.swift */,
 				8F36E72C2336881A0028ECE6 /* PolylineMapRoute.swift */,
+				8FB57BA6237BF44200732D5A /* BarChartEntry.swift */,
 			);
 			path = modals;
 			sourceTree = "<group>";
@@ -705,6 +711,7 @@
 				8F0FB941232D3796003DAA86 /* IconTextView.swift in Sources */,
 				8F11988B232F5E3F00DA8C7D /* APIDataProvider.swift in Sources */,
 				8F43F3CE22F798E200545AC2 /* Requests.swift in Sources */,
+				8FB57BA5237BF3BC00732D5A /* ReviewsPercentsView.swift in Sources */,
 				8F1D75E92331F801000B25C9 /* UIApplicationExtension.swift in Sources */,
 				8FB57BA3237AA21700732D5A /* MenuPromotionViewCell.swift in Sources */,
 				8F07FFCD23128B2D00D0ACD5 /* TitleTextLabel.swift in Sources */,
@@ -741,6 +748,7 @@
 				8FB7B0162329092C002B1F60 /* UserControlView.swift in Sources */,
 				8F3E3D0F230C5F6800D9BC1C /* UserViewController.swift in Sources */,
 				8F3E3D0D230BDA9000D9BC1C /* UserMenuNavigationController.swift in Sources */,
+				8FB57BA7237BF44200732D5A /* BarChartEntry.swift in Sources */,
 				8F43F3D022F79DC900545AC2 /* Media.swift in Sources */,
 				8F3E3CF6230B981C00D9BC1C /* CircularImageView.swift in Sources */,
 				8F49C11022F4A7460084F3E7 /* SignUpViewController.swift in Sources */,
