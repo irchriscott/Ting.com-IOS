@@ -525,7 +525,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                     }
                                 }
                             }
-                            height += 12
+                            height += 12 + 50
                         } else {
                             let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                             height += 30 + 90 + 12 + emptyTextRect.height + 30
@@ -567,7 +567,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                     }
                                 }
                             }
-                            height += 12
+                            height += 12 + 50
                         } else {
                             let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                             height += 30 + 90 + 12 + emptyTextRect.height + 30
@@ -611,7 +611,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                     }
                                 }
                             }
-                            height += 12
+                            height += 12 + 50
                         } else {
                             let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                             height += 30 + 90 + 12 + emptyTextRect.height + 30
@@ -641,7 +641,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                     }
                                 }
                             }
-                            height += 12
+                            height += 12 + 50
                         } else {
                             let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                             height += 30 + 90 + 12 + emptyTextRect.height + 30
@@ -680,11 +680,59 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return nil
+        switch tableView {
+        case self.restaurantMenuReviewsView:
+            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                let footerView: UIView = {
+                    let view = UIView()
+                    view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
+                    view.backgroundColor = .white
+                    return view
+                }()
+                
+                let separatorView: UIView = {
+                    let view = UIView()
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    view.backgroundColor = Colors.colorVeryLightGray
+                    return view
+                }()
+                
+                let labelView: UIView = {
+                    let view = UILabel()
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    view.text = "Show More".uppercased()
+                    view.font = UIFont(name: "Poppins-Medium", size: 14)
+                    view.textColor = Colors.colorPrimary
+                    return view
+                }()
+                
+                footerView.addSubview(labelView)
+                footerView.addSubview(separatorView)
+                footerView.addConstraintsWithFormat(format: "H:[v0]", views: labelView)
+                footerView.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: separatorView)
+                footerView.addConstraintsWithFormat(format: "V:|-12-[v0(0.5)]-12-[v1]", views: separatorView, labelView)
+                footerView.addConstraint(NSLayoutConstraint(item: footerView, attribute: .centerX, relatedBy: .equal, toItem: labelView, attribute: .centerX, multiplier: 1, constant: 0))
+                
+                labelView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showMoreReviews(_:))))
+                
+                return footerView
+            } else { return nil }
+        default:
+            return nil
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 0
+        switch tableView {
+        case self.restaurantMenuReviewsView:
+            return self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 ? 50 : 0
+        default:
+            return 0
+        }
+    }
+    
+    @objc public func showMoreReviews(_ sender: Any?) {
+        
     }
     
     func provideDisplacementItem(atIndex index: Int) -> DisplaceableView? {

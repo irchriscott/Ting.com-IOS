@@ -99,6 +99,7 @@
 		8FB57BA3237AA21700732D5A /* MenuPromotionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA2237AA21700732D5A /* MenuPromotionViewCell.swift */; };
 		8FB57BA5237BF3BC00732D5A /* ReviewsPercentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA4237BF3BB00732D5A /* ReviewsPercentsView.swift */; };
 		8FB57BA7237BF44200732D5A /* BarChartEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA6237BF44200732D5A /* BarChartEntry.swift */; };
+		8FB57BA9237EE58100732D5A /* RestaurantMenuReviewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA8237EE58100732D5A /* RestaurantMenuReviewsViewController.swift */; };
 		8FB7B0162329092C002B1F60 /* UserControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B0152329092C002B1F60 /* UserControlView.swift */; };
 		8FB7B01823294FA7002B1F60 /* TouchRespondScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B01723294FA7002B1F60 /* TouchRespondScrollView.swift */; };
 		8FC6088622FA2EE5005D142B /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC6088522FA2EE5005D142B /* Toast.swift */; };
@@ -203,6 +204,7 @@
 		8FB57BA2237AA21700732D5A /* MenuPromotionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPromotionViewCell.swift; sourceTree = "<group>"; };
 		8FB57BA4237BF3BB00732D5A /* ReviewsPercentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewsPercentsView.swift; sourceTree = "<group>"; };
 		8FB57BA6237BF44200732D5A /* BarChartEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChartEntry.swift; sourceTree = "<group>"; };
+		8FB57BA8237EE58100732D5A /* RestaurantMenuReviewsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantMenuReviewsViewController.swift; sourceTree = "<group>"; };
 		8FB7B0152329092C002B1F60 /* UserControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserControlView.swift; sourceTree = "<group>"; };
 		8FB7B01723294FA7002B1F60 /* TouchRespondScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchRespondScrollView.swift; sourceTree = "<group>"; };
 		8FC6088522FA2EE5005D142B /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
@@ -334,6 +336,7 @@
 			children = (
 				8F36E728233648D70028ECE6 /* BottomSheetMenuControllerView.swift */,
 				8FDDF9792372A737000AA334 /* RestaurantMenuViewController.swift */,
+				8FB57BA8237EE58100732D5A /* RestaurantMenuReviewsViewController.swift */,
 			);
 			path = menu;
 			sourceTree = "<group>";
@@ -736,6 +739,7 @@
 				8F3309D722F9E8B400437767 /* HomeDiscoverViewController.swift in Sources */,
 				8FEB1D99232B66B10024FF04 /* RestaurantViewCell.swift in Sources */,
 				8F38602222F1D21E00479072 /* PaddedTextField.swift in Sources */,
+				8FB57BA9237EE58100732D5A /* RestaurantMenuReviewsViewController.swift in Sources */,
 				8FDDF97823729C07000AA334 /* VerticalTopAlignLabel.swift in Sources */,
 				8F3309DB22F9E8E900437767 /* HomeMomentsViewController.swift in Sources */,
 				8F68B03222F583E500A3AB3B /* PrimaryButton.swift in Sources */,
