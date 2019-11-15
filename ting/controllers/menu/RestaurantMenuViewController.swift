@@ -378,11 +378,19 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                
+                let cellView: UIView = {
+                    let view = UIView()
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    return view
+                }()
+                
                 let emptyImageView: UIImageView = {
                     let view = UIImageView()
                     view.translatesAutoresizingMaskIntoConstraints = false
                     view.image = UIImage(named: "icon_bubble_chat_96_gray")!
                     view.contentMode = .scaleAspectFill
+                    view.alpha = 0.6
                     return view
                 }()
                 
@@ -390,23 +398,32 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                     let view = UILabel()
                     view.translatesAutoresizingMaskIntoConstraints = false
                     view.text = "No Reviews For This Menu"
-                    view.font = UIFont(name: "Poppins-SemiBold", size: 26)
-                    view.textColor = Colors.colorGray
+                    view.font = UIFont(name: "Poppins-SemiBold", size: 23)
+                    view.textColor = Colors.colorVeryLightGray
+                    view.textAlignment = .center
                     return view
                 }()
                 
-                let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: cell.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 26)!], context: nil)
+                let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: cell.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                 
-                cell.addSubview(emptyImageView)
-                cell.addSubview(emptyTextView)
+                cellView.addSubview(emptyImageView)
+                cellView.addSubview(emptyTextView)
                 
-                cell.addConstraintsWithFormat(format: "H:[v0(90)]", views: emptyImageView)
-                cell.addConstraintsWithFormat(format: "H:|[v0]|", views: emptyTextView)
+                cellView.addConstraintsWithFormat(format: "H:[v0(90)]", views: emptyImageView)
+                cellView.addConstraintsWithFormat(format: "H:|[v0]|", views: emptyTextView)
+                cellView.addConstraintsWithFormat(format: "V:|[v0(90)]-6-[v1(\(emptyTextRect.height))]|", views: emptyImageView, emptyTextView)
                 
-                cell.addConstraintsWithFormat(format: "V:|-30-[v0(90)]-12-[v1(\(emptyTextRect.height))]-30-|", views: emptyImageView, emptyTextView)
+                cellView.addConstraint(NSLayoutConstraint(item: cellView, attribute: .centerX, relatedBy: .equal, toItem: emptyImageView, attribute: .centerX, multiplier: 1, constant: 0))
+                cellView.addConstraint(NSLayoutConstraint(item: cellView, attribute: .centerX, relatedBy: .equal, toItem: emptyTextView, attribute: .centerX, multiplier: 1, constant: 0))
                 
-                cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerX, relatedBy: .equal, toItem: emptyImageView, attribute: .centerX, multiplier: 1, constant: 0))
-                cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerX, relatedBy: .equal, toItem: emptyTextView, attribute: .centerX, multiplier: 1, constant: 0))
+                cell.selectionStyle = .none
+                
+                cell.addSubview(cellView)
+                cell.addConstraintsWithFormat(format: "H:[v0]", views: cellView)
+                cell.addConstraintsWithFormat(format: "V:|-30-[v0(\(90 + 12 + emptyTextRect.height))]-30-|", views: cellView)
+                
+                cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerX, relatedBy: .equal, toItem: cellView, attribute: .centerX, multiplier: 1, constant: 0))
+                cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerY, relatedBy: .equal, toItem: cellView, attribute: .centerY, multiplier: 1, constant: 0))
                 
                 return cell
             }
@@ -510,7 +527,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                             }
                             height += 12
                         } else {
-                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 26)!], context: nil)
+                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                             height += 30 + 90 + 12 + emptyTextRect.height + 30
                         }
                         return height
@@ -552,7 +569,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                             }
                             height += 12
                         } else {
-                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 26)!], context: nil)
+                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                             height += 30 + 90 + 12 + emptyTextRect.height + 30
                         }
                         return height
@@ -596,7 +613,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                             }
                             height += 12
                         } else {
-                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 26)!], context: nil)
+                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                             height += 30 + 90 + 12 + emptyTextRect.height + 30
                         }
                         return height
@@ -626,7 +643,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                             }
                             height += 12
                         } else {
-                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 26)!], context: nil)
+                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                             height += 30 + 90 + 12 + emptyTextRect.height + 30
                         }
                         return height
@@ -643,7 +660,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
                 return self.menuReviewViewCellHeight(index: indexPath.item)
             } else {
-                let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 26)!], context: nil)
+                let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                 return  128 + 30 + 90 + 12 + emptyTextRect.height + 30
             }
         default:
