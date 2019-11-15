@@ -16,7 +16,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         let galleryItem: GalleryItem
     }
     
-    var imageItems:[DataImageItem] = []
+    var imageItems: [DataImageItem] = []
     
     private var imageIndex: Int = 0
     private let headerIdImage = "headerIdImage"
@@ -127,7 +127,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         self.restaurantMenuPromotionsView.register(MenuPromotionViewCell.self, forCellReuseIdentifier: self.cellTableViewIdPromotion)
         
         self.restaurantMenuReviewsView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDefault)
-        self.restaurantMenuReviewsView.register(MenuReviewViewCell.self, forCellReuseIdentifier: self.cellTableViewIdPromotion)
+        self.restaurantMenuReviewsView.register(MenuReviewViewCell.self, forCellReuseIdentifier: self.cellTableViewIdReview)
         
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDetails)
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellTableViewIdDefault)
@@ -244,6 +244,10 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             return (self.restaurantMenu?.type!.id)! == 3 ? (self.restaurantMenu?.menu?.foods!.count)! : 0
         case restaurantMenuPromotionsView:
             return self.promotions?.count ?? 0
+        case restaurantMenuReviewsView:
+            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                return self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 ? 5 : self.restaurantMenu?.menu?.reviews?.count ?? 0
+            } else { return 1 }
         default:
             return 0
         }
@@ -367,9 +371,45 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             cell.selectionStyle = .none
             return cell
         case restaurantMenuReviewsView:
-            let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReview, for: indexPath) as! MenuReviewViewCell
-            cell.selectionStyle = .none
-            return cell
+            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReview, for: indexPath) as! MenuReviewViewCell
+                cell.selectionStyle = .none
+                cell.review = self.restaurantMenu?.menu?.reviews?.reviews![indexPath.item]
+                return cell
+            } else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                let emptyImageView: UIImageView = {
+                    let view = UIImageView()
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    view.image = UIImage(named: "icon_bubble_chat_96_gray")!
+                    view.contentMode = .scaleAspectFill
+                    return view
+                }()
+                
+                let emptyTextView: UILabel = {
+                    let view = UILabel()
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    view.text = "No Reviews For This Menu"
+                    view.font = UIFont(name: "Poppins-SemiBold", size: 26)
+                    view.textColor = Colors.colorGray
+                    return view
+                }()
+                
+                let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: cell.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 26)!], context: nil)
+                
+                cell.addSubview(emptyImageView)
+                cell.addSubview(emptyTextView)
+                
+                cell.addConstraintsWithFormat(format: "H:[v0(90)]", views: emptyImageView)
+                cell.addConstraintsWithFormat(format: "H:|[v0]|", views: emptyTextView)
+                
+                cell.addConstraintsWithFormat(format: "V:|-30-[v0(90)]-12-[v1(\(emptyTextRect.height))]-30-|", views: emptyImageView, emptyTextView)
+                
+                cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerX, relatedBy: .equal, toItem: emptyImageView, attribute: .centerX, multiplier: 1, constant: 0))
+                cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerX, relatedBy: .equal, toItem: emptyTextView, attribute: .centerX, multiplier: 1, constant: 0))
+                
+                return cell
+            }
         default:
             return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
         }
@@ -452,7 +492,28 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                         }
                         return height
                     case 3:
-                        return 152
+                        var height: CGFloat = 128
+                        if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 {
+                                let reviews = self.restaurantMenu?.menu?.reviews?.reviews?.prefix(5)
+                                if let reviews = reviews {
+                                    for (index, _) in reviews.enumerated() {
+                                        height += self.menuReviewViewCellHeight(index: index)
+                                    }
+                                }
+                            } else {
+                                if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
+                                    for (index, _) in reviews.enumerated() {
+                                        height += self.menuReviewViewCellHeight(index: index)
+                                    }
+                                }
+                            }
+                            height += 12
+                        } else {
+                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 26)!], context: nil)
+                            height += 30 + 90 + 12 + emptyTextRect.height + 30
+                        }
+                        return height
                     default:
                         return 0
                     }
@@ -473,7 +534,28 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                         }
                         return height
                     case 2:
-                        return 152
+                        var height: CGFloat = 128
+                        if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 {
+                                let reviews = self.restaurantMenu?.menu?.reviews?.reviews?.prefix(5)
+                                if let reviews = reviews {
+                                    for (index, _) in reviews.enumerated() {
+                                        height += self.menuReviewViewCellHeight(index: index)
+                                    }
+                                }
+                            } else {
+                                if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
+                                    for (index, _) in reviews.enumerated() {
+                                        height += self.menuReviewViewCellHeight(index: index)
+                                    }
+                                }
+                            }
+                            height += 12
+                        } else {
+                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 26)!], context: nil)
+                            height += 30 + 90 + 12 + emptyTextRect.height + 30
+                        }
+                        return height
                     default:
                         return 0
                     }
@@ -496,7 +578,28 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                         }
                         return height
                     case 2:
-                        return 152
+                        var height: CGFloat = 128
+                        if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 {
+                                let reviews = self.restaurantMenu?.menu?.reviews?.reviews?.prefix(5)
+                                if let reviews = reviews {
+                                    for (index, _) in reviews.enumerated() {
+                                        height += self.menuReviewViewCellHeight(index: index)
+                                    }
+                                }
+                            } else {
+                                if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
+                                    for (index, _) in reviews.enumerated() {
+                                        height += self.menuReviewViewCellHeight(index: index)
+                                    }
+                                }
+                            }
+                            height += 12
+                        } else {
+                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 26)!], context: nil)
+                            height += 30 + 90 + 12 + emptyTextRect.height + 30
+                        }
+                        return height
                     default:
                         return 0
                     }
@@ -505,7 +608,28 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                     case 0:
                         return self.restaurantDetailsViewHeight
                     case 1:
-                        return 152
+                        var height: CGFloat = 128
+                        if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 {
+                                let reviews = self.restaurantMenu?.menu?.reviews?.reviews?.prefix(5)
+                                if let reviews = reviews {
+                                    for (index, _) in reviews.enumerated() {
+                                        height += self.menuReviewViewCellHeight(index: index)
+                                    }
+                                }
+                            } else {
+                                if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
+                                    for (index, _) in reviews.enumerated() {
+                                        height += self.menuReviewViewCellHeight(index: index)
+                                    }
+                                }
+                            }
+                            height += 12
+                        } else {
+                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 26)!], context: nil)
+                            height += 30 + 90 + 12 + emptyTextRect.height + 30
+                        }
+                        return height
                     default:
                         return 0
                     }
@@ -515,6 +639,13 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             return self.dishFoodViewCellHeight(index: indexPath.item)
         case self.restaurantMenuPromotionsView:
             return self.menuPromotionViewCellHeight(index: indexPath.item)
+        case self.restaurantMenuReviewsView:
+            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                return self.menuReviewViewCellHeight(index: indexPath.item)
+            } else {
+                let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 26)!], context: nil)
+                return  128 + 30 + 90 + 12 + emptyTextRect.height + 30
+            }
         default:
             return 0
         }
@@ -529,6 +660,14 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         default:
             return 50
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
     }
     
     func provideDisplacementItem(atIndex index: Int) -> DisplaceableView? {
@@ -690,6 +829,32 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         }
         
         return 40 + promotionOccasionHeight + promotionPeriodHeight + promotionReductionHeight + promotionSupplementHeight + 12 + 32
+    }
+    
+    private func menuReviewViewCellHeight(index: Int) -> CGFloat {
+        if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
+            
+            let review = reviews[index]
+            
+            var userNameHeight: CGFloat = 20
+            var reviewTextHeight: CGFloat = 15
+            
+            let userNameTextSize: CGFloat = 14
+            let reviewTextSize: CGFloat = 11
+            let userImageConstant: CGFloat = 50
+            
+            let frameWidth = view.frame.width - (60 + userImageConstant)
+            
+            let userNameRect = NSString(string: review.user.name).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: userNameTextSize)!], context: nil)
+            
+            let reviewTextRect = NSString(string: review.comment).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: reviewTextSize)!], context: nil)
+            
+            reviewTextHeight = reviewTextRect.height
+            userNameHeight = userNameRect.height
+            
+            return 4 + 10 + 4 + 26 + 12 + reviewTextHeight + userNameHeight + 12 + 12
+        }
+        return 0
     }
     
     var restaurantDetailsViewHeight: CGFloat {
