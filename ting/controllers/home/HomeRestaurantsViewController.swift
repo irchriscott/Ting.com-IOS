@@ -90,7 +90,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     private func getRestaurants(location: CLLocation?){
         self.spinnerViewHeight = 100
         self.restaurants = []
-        APIDataProvider.instance.loadRestaurants(url: URLs.restaurantsGlobal) { (branches) in
+        APIDataProvider.instance.getRestaurants(url: URLs.restaurantsGlobal) { (branches) in
             DispatchQueue.main.async {
                 if !branches.isEmpty {
                     if let userLocation = location {

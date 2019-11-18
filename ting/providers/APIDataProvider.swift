@@ -15,7 +15,7 @@ class APIDataProvider: NSObject {
     let session = UserAuthentication().get()!
     let appWindow = UIApplication.shared.keyWindow
     
-    func loadRestaurants(url: String, completion: @escaping ([Branch]) -> ()){
+    public func getRestaurants(url: String, completion: @escaping ([Branch]) -> ()){
         
         guard let url = URL(string: url) else { return }
         
@@ -42,7 +42,7 @@ class APIDataProvider: NSObject {
         }.resume()
     }
     
-    public func getRestaurantmenu(url: String, completion: @escaping (RestaurantMenu?) -> ()){
+    public func getRestaurantMenu(url: String, completion: @escaping (RestaurantMenu?) -> ()){
         
         guard let url = URL(string: url) else { return }
         
@@ -63,6 +63,33 @@ class APIDataProvider: NSObject {
                     DispatchQueue.main.async {
                         completion(nil)
                         Toast.makeToast(message: error.localizedDescription, duration: Toast.MID_LENGTH_DURATION, style: .error)
+                    }
+                }
+            }
+        }.resume()
+    }
+    
+    public func getMenuReviews(url: String, completion: @escaping ([MenuReview]) -> ()){
+        
+        guard let url = URL(string: url) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let reviews = try JSONDecoder().decode([MenuReview].self, from: data)
+                    DispatchQueue.main.async { completion(reviews) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([])
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
                     }
                 }
             }

@@ -8,6 +8,7 @@
 
 import UIKit
 import ImageViewer
+import FittedSheets
 
 class RestaurantMenuViewController: UITableViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, GalleryDisplacedViewsDataSource, GalleryItemsDataSource, GalleryItemsDelegate {
     
@@ -164,7 +165,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     
     private func loadRestaurantMenu(){
         if let menu = self.restaurantMenu {
-            APIDataProvider.instance.getRestaurantmenu(url: "\(URLs.hostEndPoint)\((menu.urls?.apiGet)!)") { (restoMenu) in
+            APIDataProvider.instance.getRestaurantMenu(url: "\(URLs.hostEndPoint)\((menu.urls?.apiGet)!)") { (restoMenu) in
                 DispatchQueue.main.async {
                     self.restaurantMenu = restoMenu
                     self.restaurantDetailsView.reloadData()
@@ -732,7 +733,20 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     }
     
     @objc public func showMoreReviews(_ sender: Any?) {
-        
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let reviewsController = storyboard.instantiateViewController(withIdentifier: "RestaurantMenuReviews") as! RestaurantMenuReviewsViewController
+        reviewsController.menuReviews = self.restaurantMenu?.menu?.reviews
+        reviewsController.reviews = self.restaurantMenu?.menu?.reviews?.reviews
+        reviewsController.reviewsURL = self.restaurantMenu?.urls?.apiReviews
+        let sheetController = SheetViewController(controller: reviewsController, sizes: [.halfScreen, .fullScreen])
+        sheetController.blurBottomSafeArea = false
+        sheetController.adjustForBottomSafeArea = true
+        sheetController.topCornersRadius = 8
+        sheetController.dismissOnBackgroundTap = true
+        sheetController.extendBackgroundBehindHandle = false
+        sheetController.willDismiss = {_ in }
+        sheetController.didDismiss = {_ in }
+        self.present(sheetController, animated: false, completion: nil)
     }
     
     func provideDisplacementItem(atIndex index: Int) -> DisplaceableView? {
