@@ -29,6 +29,7 @@ class RestaurantMenuReviewsViewController: UITableViewController {
     }
     
     private func getMenuReviews () {
+        self.reviews = []
         if let url = self.reviewsURL {
             APIDataProvider.instance.getMenuReviews(url: "\(URLs.hostEndPoint)\(url)") { (allReviews) in
                 if allReviews.count > 0 { DispatchQueue.main.async { self.reviews = allReviews } }
@@ -39,6 +40,7 @@ class RestaurantMenuReviewsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.getMenuReviews()
+        self.sheetViewController?.handleScrollView(self.tableView)
         self.tableView.register(MenuReviewViewCell.self, forCellReuseIdentifier: self.cellId)
     }
 

@@ -519,6 +519,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                         height += self.menuReviewViewCellHeight(index: index)
                                     }
                                 }
+                                height += 50
                             } else {
                                 if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
                                     for (index, _) in reviews.enumerated() {
@@ -526,7 +527,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                     }
                                 }
                             }
-                            height += 12 + 50
+                            height += 12
                         } else {
                             let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                             height += 30 + 90 + 12 + emptyTextRect.height + 30
@@ -561,6 +562,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                         height += self.menuReviewViewCellHeight(index: index)
                                     }
                                 }
+                                height += 50
                             } else {
                                 if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
                                     for (index, _) in reviews.enumerated() {
@@ -568,7 +570,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                     }
                                 }
                             }
-                            height += 12 + 50
+                            height += 12
                         } else {
                             let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                             height += 30 + 90 + 12 + emptyTextRect.height + 30
@@ -605,6 +607,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                         height += self.menuReviewViewCellHeight(index: index)
                                     }
                                 }
+                                height += 50
                             } else {
                                 if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
                                     for (index, _) in reviews.enumerated() {
@@ -612,7 +615,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                     }
                                 }
                             }
-                            height += 12 + 50
+                            height += 12
                         } else {
                             let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                             height += 30 + 90 + 12 + emptyTextRect.height + 30
@@ -635,6 +638,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                         height += self.menuReviewViewCellHeight(index: index)
                                     }
                                 }
+                                height += 50
                             } else {
                                 if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
                                     for (index, _) in reviews.enumerated() {
@@ -642,7 +646,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                                     }
                                 }
                             }
-                            height += 12 + 50
+                            height += 12
                         } else {
                             let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
                             height += 30 + 90 + 12 + emptyTextRect.height + 30
@@ -714,7 +718,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                 footerView.addConstraintsWithFormat(format: "V:|-12-[v0(0.5)]-12-[v1]", views: separatorView, labelView)
                 footerView.addConstraint(NSLayoutConstraint(item: footerView, attribute: .centerX, relatedBy: .equal, toItem: labelView, attribute: .centerX, multiplier: 1, constant: 0))
                 
-                labelView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showMoreReviews(_:))))
+                footerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showMoreReviews(_:))))
                 
                 return footerView
             } else { return nil }
@@ -726,7 +730,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         switch tableView {
         case self.restaurantMenuReviewsView:
-            return self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 ? 50 : 0
+            return self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 ? 50 : 0
         default:
             return 0
         }
