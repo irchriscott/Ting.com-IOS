@@ -425,7 +425,7 @@
             <objects>
                 <collectionViewController id="dMH-QD-BJp" customClass="HomeRestaurantsViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" id="Uuj-Jr-ZPN">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="571"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="O9D-W4-VbO">
@@ -579,6 +579,21 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="f9E-xm-lPE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1974" y="1326"/>
+        </scene>
+        <!--Edit Menu Review View Controller-->
+        <scene sceneID="eCz-Q2-Hsl">
+            <objects>
+                <viewController restorationIdentifier="EditMenuReview" storyboardIdentifier="EditMenuReview" id="w71-OC-bZ4" customClass="EditMenuReviewViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="k4M-UY-p3Z">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="S5T-Zj-WLM"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="02o-Xi-fYg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2738" y="1328"/>
         </scene>
     </scenes>
     <resources>

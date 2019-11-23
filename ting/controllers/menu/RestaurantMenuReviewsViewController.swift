@@ -41,6 +41,7 @@ class RestaurantMenuReviewsViewController: UITableViewController {
         super.viewDidLoad()
         self.getMenuReviews()
         self.sheetViewController?.handleScrollView(self.tableView)
+        self.tableView.separatorStyle = .none
         self.tableView.register(MenuReviewViewCell.self, forCellReuseIdentifier: self.cellId)
     }
 

@@ -117,6 +117,8 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             }
         }
         
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "icon_star_outline_25_white"), style: .plain, target: self, action: #selector(editMenuReview(_:)))
+        
         self.restaurantDetailsView.register(RestaurantMenuHeaderImageViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: self.headerIdImage)
         self.restaurantDetailsView.register(MenuDetailsViewCell.self, forCellWithReuseIdentifier: self.cellIdMenuDetails)
         self.restaurantDetailsView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: self.cellIdDefault)
@@ -831,6 +833,12 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         galleryViewController.landedPageAtIndexCompletion = { index in }
         
         self.presentImageGallery(galleryViewController)
+    }
+    
+    @objc func editMenuReview(_ sender: Any?){
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let editReviewController = storyboard.instantiateViewController(withIdentifier: "EditMenuReview") as! EditMenuReviewViewController
+        self.present(editReviewController, animated: true, completion: nil)
     }
     
     private func dishFoodViewCellHeight(index: Int) -> CGFloat {

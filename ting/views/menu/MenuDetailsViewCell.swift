@@ -603,6 +603,15 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
             let branchLocation = CLLocation(latitude: CLLocationDegrees(exactly: Double(branch.latitude)!)!, longitude: CLLocationDegrees(exactly: Double(branch.longitude)!)!)
             let distance = Double(branchLocation.distance(from: location) / 1000).rounded(toPlaces: 2)
             restaurantDistanceView.text = "\(numberFormatter.string(from: NSNumber(value: distance))!) km"
+        } else if let branch = self.menu?.menu?.branch {
+            let address = session.addresses?.addresses[0]
+            let branchLocation = CLLocation(latitude: CLLocationDegrees(exactly: Double(branch.latitude)!)!, longitude: CLLocationDegrees(exactly: Double(branch.longitude)!)!)
+            self.selectedLocation = CLLocation(latitude: CLLocationDegrees(exactly: Double(address!.latitude)!)!, longitude: CLLocationDegrees(exactly: Double(address!.longitude)!)!)
+            
+            if let location = self.selectedLocation {
+                let distance = Double(branchLocation.distance(from: location) / 1000).rounded(toPlaces: 2)
+                restaurantDistanceView.text = "\(numberFormatter.string(from: NSNumber(value: distance))!) km"
+            }
         }
     }
     

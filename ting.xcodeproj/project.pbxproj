@@ -102,6 +102,7 @@
 		8FB57BA9237EE58100732D5A /* RestaurantMenuReviewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA8237EE58100732D5A /* RestaurantMenuReviewsViewController.swift */; };
 		8FB7B0162329092C002B1F60 /* UserControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B0152329092C002B1F60 /* UserControlView.swift */; };
 		8FB7B01823294FA7002B1F60 /* TouchRespondScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B01723294FA7002B1F60 /* TouchRespondScrollView.swift */; };
+		8FB7B20A2389034C00245012 /* EditMenuReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B2092389034B00245012 /* EditMenuReviewViewController.swift */; };
 		8FC6088622FA2EE5005D142B /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC6088522FA2EE5005D142B /* Toast.swift */; };
 		8FC6088822FBD361005D142B /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC6088722FBD361005D142B /* Functions.swift */; };
 		8FC6089222FCA7D3005D142B /* UITabBarViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC6089122FCA7D3005D142B /* UITabBarViewControllerExtension.swift */; };
@@ -207,6 +208,7 @@
 		8FB57BA8237EE58100732D5A /* RestaurantMenuReviewsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantMenuReviewsViewController.swift; sourceTree = "<group>"; };
 		8FB7B0152329092C002B1F60 /* UserControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserControlView.swift; sourceTree = "<group>"; };
 		8FB7B01723294FA7002B1F60 /* TouchRespondScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchRespondScrollView.swift; sourceTree = "<group>"; };
+		8FB7B2092389034B00245012 /* EditMenuReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMenuReviewViewController.swift; sourceTree = "<group>"; };
 		8FC6088522FA2EE5005D142B /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		8FC6088722FBD361005D142B /* Functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		8FC6089122FCA7D3005D142B /* UITabBarViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITabBarViewControllerExtension.swift; sourceTree = "<group>"; };
@@ -337,6 +339,7 @@
 				8F36E728233648D70028ECE6 /* BottomSheetMenuControllerView.swift */,
 				8FDDF9792372A737000AA334 /* RestaurantMenuViewController.swift */,
 				8FB57BA8237EE58100732D5A /* RestaurantMenuReviewsViewController.swift */,
+				8FB7B2092389034B00245012 /* EditMenuReviewViewController.swift */,
 			);
 			path = menu;
 			sourceTree = "<group>";
@@ -691,6 +694,7 @@
 				8F934E932370C2DD0093D9AA /* Main.storyboard in Sources */,
 				8F934E922370C2D30093D9AA /* LaunchScreen.storyboard in Sources */,
 				8F3E3CFC230BABDF00D9BC1C /* UIImageViewExtension.swift in Sources */,
+				8FB7B20A2389034C00245012 /* EditMenuReviewViewController.swift in Sources */,
 				8F1095002330060700A7519B /* DateExtension.swift in Sources */,
 				8F13CAF42334EF3000E3D03D /* RestaurantMapInfoWindowView.swift in Sources */,
 				8F49C10A22F496270084F3E7 /* Restaurant.swift in Sources */,
