@@ -838,6 +838,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     @objc func editMenuReview(_ sender: Any?){
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
         let editReviewController = storyboard.instantiateViewController(withIdentifier: "EditMenuReview") as! EditMenuReviewViewController
+        editReviewController.menu = self.restaurantMenu
         self.present(editReviewController, animated: true, completion: nil)
     }
     
