@@ -95,6 +95,8 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     var promotions: [MenuPromotion]? {
         didSet {}
     }
+    
+    let session = UserAuthentication().get()!
 
     override func viewDidLoad() {
         
@@ -171,6 +173,8 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                 DispatchQueue.main.async {
                     self.restaurantMenu = restoMenu
                     self.restaurantDetailsView.reloadData()
+                    self.restaurantMenuReviewsView.reloadData()
+                    self.restaurantMenuPromotionsView.reloadData()
                 }
             }
         }
@@ -839,6 +843,57 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
         let editReviewController = storyboard.instantiateViewController(withIdentifier: "EditMenuReview") as! EditMenuReviewViewController
         editReviewController.menu = self.restaurantMenu
+        editReviewController.onDismiss = { edited in
+            
+            if editReviewController.reviewComment.textColor == Colors.colorGray {
+                
+                let comment = editReviewController.reviewComment.text!
+                let rating = editReviewController.reviewRating.rating
+                
+                editReviewController.submitButton.isEnabled = false
+                editReviewController.reviewComment.resignFirstResponder()
+                
+                let params: Parameters = ["review": "\(rating)", "comment": comment]
+                
+                guard let url = URL(string: "\(URLs.hostEndPoint)\((self.restaurantMenu?.urls?.apiAddReview)!)") else { return }
+                
+                var request = URLRequest(url: url)
+                request.httpMethod = "POST"
+                
+                request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+                request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+                
+                let boundary = Requests().generateBoundary()
+                request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+                
+                let httpBody = Requests().createDataBody(withParameters: params, media: nil, boundary: boundary)
+                request.httpBody = httpBody
+                
+                let session = URLSession.shared
+                
+                session.dataTask(with: request){ (data, response, error) in
+                    if response != nil {}
+                    if let data = data {
+                        do {
+                            let serverResponse = try JSONDecoder().decode(ServerResponse.self, from: data)
+                            DispatchQueue.main.async {
+                                editReviewController.submitButton.isEnabled = true
+                                if serverResponse.type == "success" {
+                                    editReviewController.dismiss(animated: true, completion: nil)
+                                    Toast.makeToast(message: serverResponse.message, duration: Toast.MID_LENGTH_DURATION, style: .success)
+                                    self.loadRestaurantMenu()
+                                } else {
+                                    Toast.makeToast(message: serverResponse.message, duration: Toast.MID_LENGTH_DURATION, style: .error)
+                                }
+                            }
+                        } catch {}
+                    }
+                }.resume()
+                
+            } else {
+                Toast.makeToast(message: "Review Cannot Be Empty", duration: Toast.MID_LENGTH_DURATION, style: .error)
+            }
+        }
         self.present(editReviewController, animated: true, completion: nil)
     }
     

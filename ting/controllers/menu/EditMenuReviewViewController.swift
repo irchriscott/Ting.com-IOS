@@ -10,7 +10,7 @@ import UIKit
 
 class EditMenuReviewViewController: UIViewController, UITextViewDelegate {
 
-    var onDismiss : ((ServerResponse) -> Void)?
+    var onDismiss : ((Bool) -> Void)?
     let session = UserAuthentication().get()!
     
     var menu: RestaurantMenu? {
@@ -144,6 +144,7 @@ class EditMenuReviewViewController: UIViewController, UITextViewDelegate {
         
         cancelText.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(EditMenuReviewViewController.onCancel(_:))))
         
+        submitButton.addTarget(self, action: #selector(submitReview(_:)), for: .touchUpInside)
         submitButton.setTitle("Submit".uppercased(), for: .normal)
         submitButton.setLinearGradientBackgroundColor(colorOne: Colors.colorPrimary, colorTwo: Colors.colorPrimaryDark)
         
@@ -195,4 +196,6 @@ class EditMenuReviewViewController: UIViewController, UITextViewDelegate {
         }
         return true
     }
+    
+    @IBAction func submitReview(_ sender: Any?) { self.onDismiss!(true) }
 }
