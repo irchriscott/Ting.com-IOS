@@ -13,16 +13,67 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
     
     private let headerIdImage = "headerIdImage"
     private let cellIdPromotionDetails = "cellIdPromotionDetails"
+    private let tableViewCellId = "tableViewCellId"
+    private let restaurantMenuItemCellId = "restaurantMenuCellId"
     
     struct DataImageItem {
         let imageView: UIImageView
         let galleryItem: GalleryItem
     }
     
+    var promotedMenus: [RestaurantMenu]? {
+        didSet {}
+    }
+    
     var imageItems: [DataImageItem] = []
     
     var promotion: MenuPromotion? {
-        didSet {}
+        didSet {
+            if let promotion = self.promotion {
+                switch promotion.promotionItem.type.id {
+                case "00":
+                    if let branch = promotion.branch {
+                        self.promotedMenus = branch.menus.menus?.shuffled()
+                    }
+                    break
+                case "01":
+                    if let branch = promotion.branch {
+                        self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
+                            menu.type?.id == 1
+                            }).shuffled()
+                    }
+                    break
+                case "02":
+                    if let branch = promotion.branch {
+                        self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
+                            menu.type?.id == 2
+                            }).shuffled()
+                    }
+                    break
+                case "03":
+                    if let branch = promotion.branch {
+                        self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
+                            menu.type?.id == 3
+                            }).shuffled()
+                    }
+                    break
+                case "04":
+                    if let menu = promotion.promotionItem.menu {
+                        promotedMenus?.append(menu)
+                    }
+                    break
+                case "05":
+                    if let branch = promotion.branch, let category = promotion.promotionItem.category {
+                        self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
+                            menu.menu?.category?.id == category.id
+                            }).shuffled()
+                    }
+                    break
+                default: break
+                    
+                }
+            }
+        }
     }
     
     var promotionURL: String? {
@@ -44,6 +95,16 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
         view.isScrollEnabled = false
         return view
     }()
+    
+    lazy var promotedMenusView: UITableView = {
+        let view = UITableView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        view.dataSource = self
+        view.separatorStyle = .none
+        view.isScrollEnabled = false
+        return view
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,6 +120,9 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
         
         self.promotionDetailsView.register(PromotionMenuHeaderImageViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: self.headerIdImage)
         self.promotionDetailsView.register(PromotionMenuDetailsViewCell.self, forCellWithReuseIdentifier: self.cellIdPromotionDetails)
+        self.promotedMenusView.register(PromotedMenuViewCell.self, forCellReuseIdentifier: self.restaurantMenuItemCellId)
+        
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.tableViewCellId)
     }
     
     private func setupNavigationBar(){
@@ -125,15 +189,154 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: self.view.frame.width, height: 380)
-    }
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 0
+        return CGSize(width: self.view.frame.width, height: self.promotionDetailsCellHeight)
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        switch tableView {
+        case self.tableView:
+            return 2
+        case self.promotedMenusView:
+            return self.promotedMenus?.count ?? 0
+        default:
+            return 0
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch tableView {
+        case self.tableView:
+            switch indexPath.item {
+            case 0:
+                let promotionDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.tableViewCellId, for: indexPath)
+                promotionDetailsCell.addSubview(promotionDetailsView)
+                promotionDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: promotionDetailsView)
+                promotionDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: promotionDetailsView)
+                promotionDetailsCell.selectionStyle = .none
+                return promotionDetailsCell
+            case 1:
+                let promotedMenusCell = tableView.dequeueReusableCell(withIdentifier: self.tableViewCellId, for: indexPath)
+                promotedMenusCell.addSubview(promotedMenusView)
+                promotedMenusCell.addConstraintsWithFormat(format: "H:|[v0]|", views: promotedMenusView)
+                promotedMenusCell.addConstraintsWithFormat(format: "V:|[v0]|", views: promotedMenusView)
+                promotedMenusCell.selectionStyle = .none
+                return promotedMenusCell
+            default:
+                return tableView.dequeueReusableCell(withIdentifier: self.tableViewCellId, for: indexPath)
+            }
+        case self.promotedMenusView:
+            let promotedMenuCell = tableView.dequeueReusableCell(withIdentifier: self.restaurantMenuItemCellId, for: indexPath) as! PromotedMenuViewCell
+            promotedMenuCell.selectionStyle = .none
+            return promotedMenuCell
+        default:
+            return tableView.dequeueReusableCell(withIdentifier: self.tableViewCellId, for: indexPath)
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch tableView {
+        case self.tableView:
+            break
+        case self.promotedMenusView:
+            //Something must happen
+            break
+        default:
+            break
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch tableView {
+        case self.tableView:
+            return self.promotionDetailsCellHeight + 320
+        case self.promotedMenusView:
+            var height: CGFloat = 0
+            if self.promotedMenus?.count ?? 0 > 0 {
+                height += 50
+                if let menus = self.promotedMenus {
+                    for (index, _) in menus.enumerated() {
+                        height += self.promotedMenuCellHeight(index: index)
+                    }
+                    height -= 10
+                }
+            }
+            return height
+        default:
+            return 0
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        switch tableView {
+        case self.tableView:
+            return nil
+        case self.promotedMenusView:
+            let headerView: UIView = {
+                let view = UIView()
+                view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
+                view.backgroundColor = .white
+                return view
+            }()
+            
+            let titleLabel: UILabel = {
+                let view = UILabel()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.textColor = Colors.colorGray
+                view.text = "Promoted Menus".uppercased()
+                view.font = UIFont(name: "Poppins-Regular", size: 16)
+                return view
+            }()
+            
+            headerView.addSubview(titleLabel)
+            headerView.addConstraintsWithFormat(format: "H:|-12-[v0]", views: titleLabel)
+            headerView.addConstraintsWithFormat(format: "V:[v0]", views: titleLabel)
+            headerView.addConstraint(NSLayoutConstraint(item: headerView, attribute: .centerY, relatedBy: .equal, toItem: titleLabel, attribute: .centerY, multiplier: 1, constant: 0))
+            
+            return headerView
+        default:
+            return nil
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch tableView {
+        case self.tableView:
+            return 0
+        case self.promotedMenusView:
+            return 50
+        default:
+            return 0
+        }
+    }
+    
+    private func promotedMenuCellHeight(index: Int) -> CGFloat {
+        
+        let device = UIDevice.type
+        
+        var menuNameTextSize: CGFloat = 15
+        var menuDescriptionTextSize: CGFloat = 13
+        var menuImageConstant: CGFloat = 80
+        
+        let menu = self.promotedMenus![index]
+        let heightConstant: CGFloat = 95
+        
+        if UIDevice.smallDevices.contains(device) {
+            menuImageConstant = 55
+            menuNameTextSize = 14
+            menuDescriptionTextSize = 12
+        } else if UIDevice.mediumDevices.contains(device) {
+            menuImageConstant = 70
+            menuNameTextSize = 15
+            menuDescriptionTextSize = 12
+        }
+        
+        let frameWidth = view.frame.width - (60 + menuImageConstant)
+        
+        let menuNameRect = NSString(string: (menu.menu?.name!)!).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: menuNameTextSize)!], context: nil)
+        
+        let menuDescriptionRect = NSString(string: (menu.menu?.description!)!).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: menuDescriptionTextSize)!], context: nil)
+        
+        return heightConstant + menuNameRect.height + menuDescriptionRect.height
     }
     
     func provideDisplacementItem(atIndex index: Int) -> DisplaceableView? {
@@ -214,6 +417,57 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
         galleryViewController.landedPageAtIndexCompletion = { index in }
         
         self.presentImageGallery(galleryViewController)
+    }
+    
+    var promotionDetailsCellHeight: CGFloat {
+        
+        if let promotion = self.promotion {
+            
+            var promotionOccasionHeight: CGFloat = 28
+            var promotionPeriodHeight: CGFloat = 15
+            var promotionReductionHeight: CGFloat = 0
+            var promotionSupplementHeight: CGFloat = 0
+            let device = UIDevice.type
+            
+            var promotionOccationTextSize: CGFloat = 20
+            let promotionTextSize: CGFloat = 13
+            
+            let frameWidth = view.frame.width - 20
+            
+            if UIDevice.smallDevices.contains(device) {
+                promotionOccationTextSize = 15
+            } else if UIDevice.mediumDevices.contains(device) {
+                promotionOccationTextSize = 17
+            }
+            
+            let promotionOccationRect = NSString(string: promotion.occasionEvent).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: promotionOccationTextSize)!], context: nil)
+            
+            let promotionPeriodRect = NSString(string: promotion.period).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: promotionTextSize)!], context: nil)
+            
+            promotionOccasionHeight = promotionOccationRect.height
+            promotionPeriodHeight = promotionPeriodRect.height
+            
+            if promotion.reduction.hasReduction {
+                let reductionText = "Order this menu and get \(promotion.reduction.amount) \((promotion.reduction.reductionType)!) reduction"
+                let promotionReductionRect = NSString(string: reductionText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: promotionTextSize)!], context: nil)
+                promotionReductionHeight = promotionReductionRect.height
+            }
+            
+            if promotion.supplement.hasSupplement {
+                var supplementText: String!
+                if !promotion.supplement.isSame {
+                    supplementText = "Order \(promotion.supplement.minQuantity) of this menu and get \(promotion.supplement.quantity) free \((promotion.supplement.supplement?.menu?.name)!)"
+                } else {
+                    supplementText = "Order \(promotion.supplement.minQuantity) of this menu and get \(promotion.supplement.quantity) more for free"
+                }
+                let promotionSupplementRect = NSString(string: supplementText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: promotionTextSize)!], context: nil)
+                promotionSupplementHeight = promotionSupplementRect.height
+            }
+            
+            let extraHeight = (0.5 * 5) + (8 * 11) + 10
+            return promotionOccasionHeight + promotionSupplementHeight + promotionReductionHeight + promotionPeriodHeight + CGFloat(extraHeight)
+        }
+        return 380
     }
 
 }

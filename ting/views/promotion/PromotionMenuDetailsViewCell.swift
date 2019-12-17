@@ -19,7 +19,7 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
     var promotionSupplementHeight: CGFloat = 0
     let device = UIDevice.type
     
-    var promotionOccationTextSize: CGFloat = 10
+    var promotionOccationTextSize: CGFloat = 20
     let promotionTextSize: CGFloat = 13
     
     var locationManager = CLLocationManager()
@@ -242,8 +242,25 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
                 promotionOnView.text = promotion.promotionItem.type.name
                 
                 if promotion.promotionItem.category != nil {
-                    promotionCategoryView.text = (promotion.promotionItem.category?.name)!
+                    promotionCategoryView.text = "Promotion On \((promotion.promotionItem.category?.name)!)"
                     promotionCategoryView.imageURL = "\(URLs.hostEndPoint)\((promotion.promotionItem.category?.image)!)"
+                }
+                
+                if promotion.promotionItem.menu != nil {
+                    promotionCategoryView.text = "Promotion On \((promotion.promotionItem.menu?.menu?.name)!)"
+                    
+                    if let menu = promotion.promotionItem.menu {
+                        let images = menu.menu?.images?.images
+                        let imageIndex = Int.random(in: 0...images!.count - 1)
+                        let image = images![imageIndex]
+                        promotionCategoryView.imageURL = "\(URLs.hostEndPoint)\(image.image)"
+                    }
+                }
+                
+                if UIDevice.smallDevices.contains(device) {
+                    promotionOccationTextSize = 15
+                } else if UIDevice.mediumDevices.contains(device) {
+                    promotionOccationTextSize = 17
                 }
                 
                 let frameWidth = frame.width - 20
@@ -315,6 +332,7 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.promotionInterestView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(PromotionMenuDetailsViewCell.interestPromotionToggle)))
     }
     
     private func setup() {
@@ -519,6 +537,50 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
 
         addresses.addAction(UIAlertAction(title: "CANCEL", style: .cancel, handler: { (action) in }))
         self.parentController?.present(addresses, animated: true, completion: nil)
+    }
+    
+    @objc func interestPromotionToggle() {
+        
+        guard let url = URL(string: "\(URLs.hostEndPoint)\((promotion?.urls.apiInterest)!)") else { return }
+        let params: Parameters = ["promo": "\((promotion?.id)!)"]
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let boundary = Requests().generateBoundary()
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        let httpBody = Requests().createDataBody(withParameters: params, media: nil, boundary: boundary)
+        request.httpBody = httpBody
+        
+        let session = URLSession.shared
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let serverResponse = try JSONDecoder().decode(ServerResponse.self, from: data)
+                    if serverResponse.type == "success" {
+                        DispatchQueue.main.async {
+                            Toast.makeToast(message: serverResponse.message, duration: Toast.MID_LENGTH_DURATION, style: .success)
+                            if serverResponse.message.contains("Not") {
+                                self.promotionInterestImage.image =  UIImage(named: "icon_star_outline_25_gray")
+                            } else { self.promotionInterestImage.image =  UIImage(named: "icon_star_filled_25_gray") }
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            Toast.makeToast(message: serverResponse.message, duration: Toast.MID_LENGTH_DURATION, style: .error)
+                        }
+                    }
+                } catch {
+                    DispatchQueue.main.async {
+                        Toast.makeToast(message: error.localizedDescription, duration: Toast.MID_LENGTH_DURATION, style: .error)
+                    }
+                }
+            }
+        }.resume()
     }
     
     required init?(coder: NSCoder) {
