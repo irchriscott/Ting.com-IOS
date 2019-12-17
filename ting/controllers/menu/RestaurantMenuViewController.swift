@@ -34,6 +34,21 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     private let cellTableViewIdReview = "cellTableViewIdReview"
     private let cellTableViewIdReviews = "cellTableViewIdReviews"
     
+    var menuURL: String? {
+        didSet {
+            if let url = self.menuURL {
+                APIDataProvider.instance.getRestaurantMenu(url: url) { (restoMenu) in
+                    DispatchQueue.main.async {
+                        self.restaurantMenu = restoMenu
+                        self.restaurantDetailsView.reloadData()
+                        self.restaurantMenuReviewsView.reloadData()
+                        self.restaurantMenuPromotionsView.reloadData()
+                    }
+                }
+            }
+        }
+    }
+    
     var restaurantMenu: RestaurantMenu? {
         didSet {
             if let menu = self.restaurantMenu {
@@ -235,7 +250,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         switch collectionView {
         case self.restaurantDetailsView:
-            return CGSize(width: self.view.frame.width, height: 380)
+            return CGSize(width: self.view.frame.width, height: self.restaurantDetailsViewHeight - 300)
         default:
             return CGSize(width: self.view.frame.width, height: 0)
         }

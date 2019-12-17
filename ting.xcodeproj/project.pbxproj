@@ -28,6 +28,7 @@
 		8F13CAF42334EF3000E3D03D /* RestaurantMapInfoWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F13CAF32334EF3000E3D03D /* RestaurantMapInfoWindowView.swift */; };
 		8F13CAF62334FDB300E3D03D /* InlineIconTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F13CAF52334FDB300E3D03D /* InlineIconTextView.swift */; };
 		8F14F138233285D300844B63 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F14F137233285D300844B63 /* UIDeviceExtension.swift */; };
+		8F157C6323A8B146008C88E2 /* PromotionMenuDetailsViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C6223A8B146008C88E2 /* PromotionMenuDetailsViewCell.swift */; };
 		8F1D75E72331D507000B25C9 /* RestaurantMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D75E62331D507000B25C9 /* RestaurantMapView.swift */; };
 		8F1D75E92331F801000B25C9 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D75E82331F801000B25C9 /* UIApplicationExtension.swift */; };
 		8F1F112622FA23CC00CA4DD9 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1F112522FA23CC00CA4DD9 /* ResetPasswordViewController.swift */; };
@@ -103,6 +104,7 @@
 		8FB7B0162329092C002B1F60 /* UserControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B0152329092C002B1F60 /* UserControlView.swift */; };
 		8FB7B01823294FA7002B1F60 /* TouchRespondScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B01723294FA7002B1F60 /* TouchRespondScrollView.swift */; };
 		8FB7B20A2389034C00245012 /* EditMenuReviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B2092389034B00245012 /* EditMenuReviewViewController.swift */; };
+		8FB7B20C23A8A03C00245012 /* PromotionMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB7B20B23A8A03C00245012 /* PromotionMenuViewController.swift */; };
 		8FC6088622FA2EE5005D142B /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC6088522FA2EE5005D142B /* Toast.swift */; };
 		8FC6088822FBD361005D142B /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC6088722FBD361005D142B /* Functions.swift */; };
 		8FC6089222FCA7D3005D142B /* UITabBarViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC6089122FCA7D3005D142B /* UITabBarViewControllerExtension.swift */; };
@@ -135,6 +137,7 @@
 		8F13CAF32334EF3000E3D03D /* RestaurantMapInfoWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantMapInfoWindowView.swift; sourceTree = "<group>"; };
 		8F13CAF52334FDB300E3D03D /* InlineIconTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineIconTextView.swift; sourceTree = "<group>"; };
 		8F14F137233285D300844B63 /* UIDeviceExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDeviceExtension.swift; sourceTree = "<group>"; };
+		8F157C6223A8B146008C88E2 /* PromotionMenuDetailsViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromotionMenuDetailsViewCell.swift; sourceTree = "<group>"; };
 		8F1D75E62331D507000B25C9 /* RestaurantMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantMapView.swift; sourceTree = "<group>"; };
 		8F1D75E82331F801000B25C9 /* UIApplicationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtension.swift; sourceTree = "<group>"; };
 		8F1F112522FA23CC00CA4DD9 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
@@ -209,6 +212,7 @@
 		8FB7B0152329092C002B1F60 /* UserControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserControlView.swift; sourceTree = "<group>"; };
 		8FB7B01723294FA7002B1F60 /* TouchRespondScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchRespondScrollView.swift; sourceTree = "<group>"; };
 		8FB7B2092389034B00245012 /* EditMenuReviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMenuReviewViewController.swift; sourceTree = "<group>"; };
+		8FB7B20B23A8A03C00245012 /* PromotionMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromotionMenuViewController.swift; sourceTree = "<group>"; };
 		8FC6088522FA2EE5005D142B /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		8FC6088722FBD361005D142B /* Functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 		8FC6089122FCA7D3005D142B /* UITabBarViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITabBarViewControllerExtension.swift; sourceTree = "<group>"; };
@@ -241,6 +245,14 @@
 				F4863839C5BE4B747F8CCDFF /* Pods_ting.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8F157C6123A8ACEA008C88E2 /* promotion */ = {
+			isa = PBXGroup;
+			children = (
+				8F157C6223A8B146008C88E2 /* PromotionMenuDetailsViewCell.swift */,
+			);
+			path = promotion;
 			sourceTree = "<group>";
 		};
 		8F1F112922FA29E600CA4DD9 /* storyboards */ = {
@@ -313,6 +325,7 @@
 		8F30B20C22F9B81C000B66B7 /* controllers */ = {
 			isa = PBXGroup;
 			children = (
+				8FB7B20D23A8A04C00245012 /* promotion */,
 				8F36E7272336484C0028ECE6 /* menu */,
 				8F2F0514233534E500517F36 /* restaurant */,
 				8FEB1D9A232B67760024FF04 /* main */,
@@ -480,9 +493,18 @@
 			path = menu;
 			sourceTree = "<group>";
 		};
+		8FB7B20D23A8A04C00245012 /* promotion */ = {
+			isa = PBXGroup;
+			children = (
+				8FB7B20B23A8A03C00245012 /* PromotionMenuViewController.swift */,
+			);
+			path = promotion;
+			sourceTree = "<group>";
+		};
 		8FEB1D95232B660E0024FF04 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				8F157C6123A8ACEA008C88E2 /* promotion */,
 				8FB57B9B237862F300732D5A /* menu */,
 				8FEB1D97232B66520024FF04 /* restaurant */,
 				8FEB1D96232B664C0024FF04 /* user */,
@@ -701,6 +723,7 @@
 				8FDDF97C23741608000AA334 /* StringExtension.swift in Sources */,
 				8F49C10822F494C50084F3E7 /* MenuPromotion.swift in Sources */,
 				8F0D3577232A10A500B39825 /* CGRectExtension.swift in Sources */,
+				8F157C6323A8B146008C88E2 /* PromotionMenuDetailsViewCell.swift in Sources */,
 				8F3EA429230F2C7A00508E67 /* EditUserCollectionViewController.swift in Sources */,
 				8F07FFD12312F14100D0ACD5 /* Spinner.swift in Sources */,
 				8FDDF97A2372A737000AA334 /* RestaurantMenuViewController.swift in Sources */,
@@ -759,6 +782,7 @@
 				8FB57BA7237BF44200732D5A /* BarChartEntry.swift in Sources */,
 				8F43F3D022F79DC900545AC2 /* Media.swift in Sources */,
 				8F3E3CF6230B981C00D9BC1C /* CircularImageView.swift in Sources */,
+				8FB7B20C23A8A03C00245012 /* PromotionMenuViewController.swift in Sources */,
 				8F49C11022F4A7460084F3E7 /* SignUpViewController.swift in Sources */,
 				8FAA270822F8965300B0B05B /* InputTextField.swift in Sources */,
 				8F36E729233648D70028ECE6 /* BottomSheetMenuControllerView.swift in Sources */,
