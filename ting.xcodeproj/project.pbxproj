@@ -30,6 +30,14 @@
 		8F14F138233285D300844B63 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F14F137233285D300844B63 /* UIDeviceExtension.swift */; };
 		8F157C6323A8B146008C88E2 /* PromotionMenuDetailsViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C6223A8B146008C88E2 /* PromotionMenuDetailsViewCell.swift */; };
 		8F157C6523A8FCCF008C88E2 /* PromotedMenuViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C6423A8FCCF008C88E2 /* PromotedMenuViewCell.swift */; };
+		8F157C6723A9F6B0008C88E2 /* RestaurantHeaderViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C6623A9F6B0008C88E2 /* RestaurantHeaderViewCell.swift */; };
+		8F157C6923A9F806008C88E2 /* UserHeaderViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C6823A9F806008C88E2 /* UserHeaderViewCell.swift */; };
+		8F157C6B23A9F873008C88E2 /* UserTabContentViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C6A23A9F873008C88E2 /* UserTabContentViewCell.swift */; };
+		8F157C6F23AA214E008C88E2 /* RestaurantTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C6E23AA214E008C88E2 /* RestaurantTabViewController.swift */; };
+		8F157C7123AA232B008C88E2 /* RestaurantPromosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C7023AA232B008C88E2 /* RestaurantPromosViewController.swift */; };
+		8F157C7323AA2347008C88E2 /* RestaurantFoodsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C7223AA2347008C88E2 /* RestaurantFoodsViewController.swift */; };
+		8F157C7523AA2362008C88E2 /* RestaurantDrinksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C7423AA2362008C88E2 /* RestaurantDrinksViewController.swift */; };
+		8F157C7723AA237B008C88E2 /* RestaurantDishesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C7623AA237B008C88E2 /* RestaurantDishesViewController.swift */; };
 		8F1D75E72331D507000B25C9 /* RestaurantMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D75E62331D507000B25C9 /* RestaurantMapView.swift */; };
 		8F1D75E92331F801000B25C9 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D75E82331F801000B25C9 /* UIApplicationExtension.swift */; };
 		8F1F112622FA23CC00CA4DD9 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1F112522FA23CC00CA4DD9 /* ResetPasswordViewController.swift */; };
@@ -140,6 +148,14 @@
 		8F14F137233285D300844B63 /* UIDeviceExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDeviceExtension.swift; sourceTree = "<group>"; };
 		8F157C6223A8B146008C88E2 /* PromotionMenuDetailsViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromotionMenuDetailsViewCell.swift; sourceTree = "<group>"; };
 		8F157C6423A8FCCF008C88E2 /* PromotedMenuViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromotedMenuViewCell.swift; sourceTree = "<group>"; };
+		8F157C6623A9F6B0008C88E2 /* RestaurantHeaderViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantHeaderViewCell.swift; sourceTree = "<group>"; };
+		8F157C6823A9F806008C88E2 /* UserHeaderViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserHeaderViewCell.swift; sourceTree = "<group>"; };
+		8F157C6A23A9F873008C88E2 /* UserTabContentViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTabContentViewCell.swift; sourceTree = "<group>"; };
+		8F157C6E23AA214E008C88E2 /* RestaurantTabViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantTabViewController.swift; sourceTree = "<group>"; };
+		8F157C7023AA232B008C88E2 /* RestaurantPromosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantPromosViewController.swift; sourceTree = "<group>"; };
+		8F157C7223AA2347008C88E2 /* RestaurantFoodsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantFoodsViewController.swift; sourceTree = "<group>"; };
+		8F157C7423AA2362008C88E2 /* RestaurantDrinksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDrinksViewController.swift; sourceTree = "<group>"; };
+		8F157C7623AA237B008C88E2 /* RestaurantDishesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDishesViewController.swift; sourceTree = "<group>"; };
 		8F1D75E62331D507000B25C9 /* RestaurantMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantMapView.swift; sourceTree = "<group>"; };
 		8F1D75E82331F801000B25C9 /* UIApplicationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtension.swift; sourceTree = "<group>"; };
 		8F1F112522FA23CC00CA4DD9 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
@@ -271,7 +287,12 @@
 		8F2F0514233534E500517F36 /* restaurant */ = {
 			isa = PBXGroup;
 			children = (
+				8F157C6E23AA214E008C88E2 /* RestaurantTabViewController.swift */,
 				8F2F05152335352F00517F36 /* RestaurantViewController.swift */,
+				8F157C7023AA232B008C88E2 /* RestaurantPromosViewController.swift */,
+				8F157C7223AA2347008C88E2 /* RestaurantFoodsViewController.swift */,
+				8F157C7423AA2362008C88E2 /* RestaurantDrinksViewController.swift */,
+				8F157C7623AA237B008C88E2 /* RestaurantDishesViewController.swift */,
 			);
 			path = restaurant;
 			sourceTree = "<group>";
@@ -522,6 +543,8 @@
 				8F07FFCA2312828300D0ACD5 /* EditUserCollectionViewCell.swift */,
 				8F07FFD42313BDDC00D0ACD5 /* UserAddressesView.swift */,
 				8FB7B0152329092C002B1F60 /* UserControlView.swift */,
+				8F157C6823A9F806008C88E2 /* UserHeaderViewCell.swift */,
+				8F157C6A23A9F873008C88E2 /* UserTabContentViewCell.swift */,
 			);
 			path = user;
 			sourceTree = "<group>";
@@ -531,6 +554,7 @@
 			children = (
 				8FEB1D98232B66B10024FF04 /* RestaurantViewCell.swift */,
 				8F1D75E62331D507000B25C9 /* RestaurantMapView.swift */,
+				8F157C6623A9F6B0008C88E2 /* RestaurantHeaderViewCell.swift */,
 			);
 			path = restaurant;
 			sourceTree = "<group>";
@@ -721,7 +745,10 @@
 				8F3E3CFC230BABDF00D9BC1C /* UIImageViewExtension.swift in Sources */,
 				8FB7B20A2389034C00245012 /* EditMenuReviewViewController.swift in Sources */,
 				8F1095002330060700A7519B /* DateExtension.swift in Sources */,
+				8F157C7323AA2347008C88E2 /* RestaurantFoodsViewController.swift in Sources */,
 				8F13CAF42334EF3000E3D03D /* RestaurantMapInfoWindowView.swift in Sources */,
+				8F157C6923A9F806008C88E2 /* UserHeaderViewCell.swift in Sources */,
+				8F157C6B23A9F873008C88E2 /* UserTabContentViewCell.swift in Sources */,
 				8F49C10A22F496270084F3E7 /* Restaurant.swift in Sources */,
 				8FDDF97C23741608000AA334 /* StringExtension.swift in Sources */,
 				8F49C10822F494C50084F3E7 /* MenuPromotion.swift in Sources */,
@@ -743,6 +770,7 @@
 				8FB57BA12379351100732D5A /* MenuDishFoodViewCell.swift in Sources */,
 				8FB57B9F2378671C00732D5A /* MenuReviewViewCell.swift in Sources */,
 				8F0FB941232D3796003DAA86 /* IconTextView.swift in Sources */,
+				8F157C7523AA2362008C88E2 /* RestaurantDrinksViewController.swift in Sources */,
 				8F11988B232F5E3F00DA8C7D /* APIDataProvider.swift in Sources */,
 				8F43F3CE22F798E200545AC2 /* Requests.swift in Sources */,
 				8FB57BA5237BF3BC00732D5A /* ReviewsPercentsView.swift in Sources */,
@@ -752,6 +780,7 @@
 				8F49C0F922F2F7F60084F3E7 /* UIViewControllerExtension.swift in Sources */,
 				8F1F112622FA23CC00CA4DD9 /* ResetPasswordViewController.swift in Sources */,
 				8F3E3CF4230B903500D9BC1C /* HomeMenuViewController.swift in Sources */,
+				8F157C6723A9F6B0008C88E2 /* RestaurantHeaderViewCell.swift in Sources */,
 				8F49C10C22F497D80084F3E7 /* RestaurantMenu.swift in Sources */,
 				8F07FFCF2312AA8F00D0ACD5 /* CustomViews.swift in Sources */,
 				8F2F8B0D22F0BC2200FF5B59 /* LoginViewController.swift in Sources */,
@@ -784,9 +813,12 @@
 				8F3E3D0F230C5F6800D9BC1C /* UserViewController.swift in Sources */,
 				8F3E3D0D230BDA9000D9BC1C /* UserMenuNavigationController.swift in Sources */,
 				8FB57BA7237BF44200732D5A /* BarChartEntry.swift in Sources */,
+				8F157C7123AA232B008C88E2 /* RestaurantPromosViewController.swift in Sources */,
 				8F43F3D022F79DC900545AC2 /* Media.swift in Sources */,
 				8F3E3CF6230B981C00D9BC1C /* CircularImageView.swift in Sources */,
 				8FB7B20C23A8A03C00245012 /* PromotionMenuViewController.swift in Sources */,
+				8F157C7723AA237B008C88E2 /* RestaurantDishesViewController.swift in Sources */,
+				8F157C6F23AA214E008C88E2 /* RestaurantTabViewController.swift in Sources */,
 				8F49C11022F4A7460084F3E7 /* SignUpViewController.swift in Sources */,
 				8FAA270822F8965300B0B05B /* InputTextField.swift in Sources */,
 				8F36E729233648D70028ECE6 /* BottomSheetMenuControllerView.swift in Sources */,

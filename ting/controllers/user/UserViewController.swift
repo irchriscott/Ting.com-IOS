@@ -13,9 +13,12 @@ class UserViewController: UICollectionViewController, UICollectionViewDelegateFl
     let cellId = "cellId"
     let headerId = "headerId"
     var selectedTab: Int?
-    var user: User?
     
-    override var preferredStatusBarStyle: UIStatusBarStyle{
+    var user: User? {
+        didSet {}
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
         return .default
     }
     
@@ -30,7 +33,7 @@ class UserViewController: UICollectionViewController, UICollectionViewDelegateFl
         }
         
         collectionView.register(UserTabContentViewCell.self, forCellWithReuseIdentifier: cellId)
-        collectionView.register(UserHeaderCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
+        collectionView.register(UserHeaderViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
     }
     
     func setupNavigationBar(){
@@ -89,7 +92,7 @@ class UserViewController: UICollectionViewController, UICollectionViewDelegateFl
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! UserHeaderCell
+        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! UserHeaderViewCell
         header.namesLabel.text = user!.name
         header.addressLabel.text = "\(user!.town), \(user!.country)"
         header.profileImageView.load(url: URL(string: "\(URLs.uploadEndPoint)\(user!.image)")!)
@@ -97,163 +100,10 @@ class UserViewController: UICollectionViewController, UICollectionViewDelegateFl
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 275)
+        return CGSize(width: view.frame.width, height: 260)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0
-    }
-}
-
-
-class UserHeaderCell : UICollectionViewCell {
-    
-    let coverView: UIView = {
-        let view = UIView()
-        if let window = UIApplication.shared.keyWindow {
-            view.frame = CGRect(x: 0, y: 0, width: window.frame.width, height: 120)
-            view.translatesAutoresizingMaskIntoConstraints = false
-        }
-        view.setLinearGradientBackgroundColor(colorOne: Colors.colorPrimaryDark, colorTwo: Colors.colorPrimary)
-        return view
-    }()
-    
-    let profileImageView: UIImageView = {
-        let view = UIImageView()
-        view.frame = CGRect(x: 0, y: 0, width: 180, height: 180)
-        view.layer.cornerRadius = view.frame.size.height / 2
-        view.layer.masksToBounds = true
-        view.layer.borderColor = Colors.colorWhite.cgColor
-        view.layer.borderWidth = 4.0
-        view.image = UIImage(named: "default_user")
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    let namesLabel: UILabel = {
-        let view = UILabel()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.textAlignment = .center
-        view.font = UIFont(name: "Poppins-SemiBold", size: 24)
-        view.textColor = Colors.colorGray
-        return view
-    }()
-    
-    let addressLabel: UILabel = {
-        let view = UILabel()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.textAlignment = .center
-        view.font = UIFont(name: "Poppins-Regular", size: 15)
-        view.textColor = Colors.colorGray
-        return view
-    }()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.setup()
-    }
-    
-    func setup(){
-        addSubview(coverView)
-        addSubview(profileImageView)
-        addSubview(namesLabel)
-        addSubview(addressLabel)
-        
-        addConstraintsWithFormat(format: "H:|-0-[v0]-0-|", views: coverView)
-        addConstraintsWithFormat(format: "V:|[v0]|", views: coverView)
-        
-        addConstraintsWithFormat(format: "H:[v0(180)]", views: profileImageView)
-        addConstraintsWithFormat(format: "V:|-20-[v0(180)]", views: profileImageView)
-        addConstraint(NSLayoutConstraint.init(item: profileImageView, attribute: .centerX, relatedBy: .equal, toItem: coverView, attribute: .centerX, multiplier: 1, constant: 0))
-        
-        addConstraint(NSLayoutConstraint(item: namesLabel, attribute: .top, relatedBy: .equal, toItem: profileImageView, attribute: .bottom, multiplier: 1, constant: 10))
-        addConstraintsWithFormat(format: "H:|-15-[v0]-15-|", views: namesLabel)
-        addConstraintsWithFormat(format: "V:[v0(25)]", views: namesLabel)
-        
-        addConstraint(NSLayoutConstraint(item: addressLabel, attribute: .top, relatedBy: .equal, toItem: namesLabel, attribute: .bottom, multiplier: 1, constant: 6))
-        addConstraintsWithFormat(format: "H:|-15-[v0]-15-|", views: addressLabel)
-        addConstraintsWithFormat(format: "V:[v0(25)]", views: addressLabel)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class UserTabContentViewCell : UICollectionViewCell, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
-    
-    let cellId = "cellId"
-    
-    lazy var userTabLayout : UserTabLayoutView  = {
-        let view = UserTabLayoutView()
-        view.userTabContentView = self
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    lazy var userViewPager: UICollectionView = {
-        let layout =  UICollectionViewFlowLayout()
-        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.backgroundColor = Colors.colorWhite
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.dataSource = self
-        view.delegate = self
-        return view
-    }()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.setup()
-    }
-    
-    func setup(){
-        addSubview(userTabLayout)
-        addSubview(userViewPager)
-        
-        userViewPager.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
-        userViewPager.isPagingEnabled = true
-        
-        if let flowLayout = userViewPager.collectionViewLayout as? UICollectionViewFlowLayout {
-            flowLayout.scrollDirection = .horizontal
-            flowLayout.minimumLineSpacing = 0
-        }
-        
-        addConstraintsWithFormat(format: "H:|[v0]|", views: userTabLayout)
-        addConstraintsWithFormat(format: "V:|[v0(50)]", views: userTabLayout)
-        
-        addConstraintsWithFormat(format: "V:|-50-[v0]|", views: userViewPager)
-        addConstraintsWithFormat(format: "H:|[v0]|", views: userViewPager)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: frame.width, height: frame.height)
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        userTabLayout.selectorTabViewLeftAnchor?.constant = scrollView.contentOffset.x / 3
-    }
-    
-    func scrollToMenuAtIndex(menuIndex: Int){
-        let indexPath = IndexPath(item: menuIndex, section: 0)
-        userViewPager.scrollToItem(at: indexPath, at: .left, animated: true)
-    }
-    
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        let index = targetContentOffset.pointee.x / frame.width
-        let indexPath = IndexPath(item: Int(index), section: 0)
-        userTabLayout.collectionView.selectItem(at: indexPath, animated: true, scrollPosition: .top)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

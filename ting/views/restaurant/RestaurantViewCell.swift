@@ -13,6 +13,7 @@ import FittedSheets
 class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     
     let cellId = "cellId"
+    
     let numberFormatter = NumberFormatter()
     var restaurantNameHeight: CGFloat = 25
     var restaurantAddressHeight: CGFloat = 16

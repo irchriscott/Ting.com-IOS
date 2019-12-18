@@ -16,31 +16,6 @@
         </array>
     </customFonts>
     <scenes>
-        <!--Moments-->
-        <scene sceneID="G41-8D-CFT">
-            <objects>
-                <viewController id="zqC-ba-sRA" customClass="HomeMomentsViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="b0R-hW-U0e">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Moments" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uyO-6C-aqP">
-                                <rect key="frame" x="166" y="248" width="72" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <viewLayoutGuide key="safeArea" id="4ED-Oy-XlS"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" title="Moments" image="ic_moments" selectedImage="ic_moments" id="mcd-EQ-5R8"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="HgS-7J-EPn" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-303" y="606"/>
-        </scene>
         <!--Discovery-->
         <scene sceneID="6NR-Bh-Dx8">
             <objects>
@@ -82,7 +57,6 @@
                     <connections>
                         <segue destination="hYB-MA-usT" kind="relationship" relationship="viewControllers" id="4g6-uv-lBS"/>
                         <segue destination="ZHN-Em-l18" kind="relationship" relationship="viewControllers" id="kOX-IH-BKH"/>
-                        <segue destination="zqC-ba-sRA" kind="relationship" relationship="viewControllers" id="n71-rd-Fog"/>
                         <segue destination="DaR-rN-viP" kind="relationship" relationship="viewControllers" id="lbI-S6-Dpr"/>
                     </connections>
                 </tabBarController>
@@ -420,6 +394,118 @@
             </objects>
             <point key="canvasLocation" x="-1164" y="605.84707646176912"/>
         </scene>
+        <!--Restaurant Dishes View Controller-->
+        <scene sceneID="mhO-Bq-OyR">
+            <objects>
+                <tableViewController restorationIdentifier="RestaurantDishes" storyboardIdentifier="RestaurantDishes" id="fgl-nW-Y3I" customClass="RestaurantDishesViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="skP-jD-M5d">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="XXn-Yu-fsa">
+                                <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="XXn-Yu-fsa" id="QdD-qZ-E1W">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="fgl-nW-Y3I" id="7xR-rB-T26"/>
+                            <outlet property="delegate" destination="fgl-nW-Y3I" id="0vK-AV-96g"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cNc-IP-o4t" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2372" y="2091"/>
+        </scene>
+        <!--Restaurant Foods View Controller-->
+        <scene sceneID="HOZ-gH-Zcm">
+            <objects>
+                <tableViewController restorationIdentifier="RestaurantFoods" storyboardIdentifier="RestaurantFoods" id="tji-CT-uYL" customClass="RestaurantFoodsViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="UKo-pl-pIK">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="nWY-e0-9q5">
+                                <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nWY-e0-9q5" id="RFM-4U-7Wf">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="tji-CT-uYL" id="LPX-d7-weJ"/>
+                            <outlet property="delegate" destination="tji-CT-uYL" id="2Zw-vw-7tG"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qDu-SM-w15" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1586" y="2090"/>
+        </scene>
+        <!--Restaurant Drinks View Controller-->
+        <scene sceneID="wRP-aX-lqe">
+            <objects>
+                <tableViewController restorationIdentifier="RestaurantDrinks" storyboardIdentifier="RestaurantDrinks" id="cxl-vE-c7s" customClass="RestaurantDrinksViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="ojM-xv-u3Q">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="zq7-9Z-DL9">
+                                <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zq7-9Z-DL9" id="eyi-xe-OA5">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="cxl-vE-c7s" id="bIM-Ss-OEr"/>
+                            <outlet property="delegate" destination="cxl-vE-c7s" id="RPR-id-azq"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Byf-21-a8q" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-740" y="2089"/>
+        </scene>
+        <!--Restaurant Promos View Controller-->
+        <scene sceneID="J6M-H4-8Jy">
+            <objects>
+                <tableViewController restorationIdentifier="RestaurantPromos" storyboardIdentifier="RestaurantPromos" id="bqz-CG-Ui2" customClass="RestaurantPromosViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="1ZY-Z5-Qn0">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="80f-Yg-x58">
+                                <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="80f-Yg-x58" id="lHn-Ef-U4g">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="bqz-CG-Ui2" id="RUe-pa-ofP"/>
+                            <outlet property="delegate" destination="bqz-CG-Ui2" id="fiI-cw-OUS"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Zpl-P9-lMl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="82" y="2090"/>
+        </scene>
         <!--Restaurants-->
         <scene sceneID="lOv-RI-d2K">
             <objects>
@@ -550,7 +636,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="syB-H3-FC1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="433" y="606"/>
+            <point key="canvasLocation" x="-303" y="606"/>
         </scene>
         <!--Restaurant Menu View Controller-->
         <scene sceneID="boI-fM-TCf">
@@ -627,7 +713,6 @@
     <resources>
         <image name="default_user.jpg" width="200" height="200"/>
         <image name="ic_discovery" width="20" height="20"/>
-        <image name="ic_moments" width="20" height="22.5"/>
         <image name="ic_restaurants" width="20" height="20"/>
         <image name="ic_user_menu" width="20" height="26.5"/>
         <image name="icon_booking.png" width="128" height="128"/>

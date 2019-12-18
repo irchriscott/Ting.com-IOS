@@ -15,5 +15,4 @@ class UserMenuNavigationController: UINavigationController {
         self.navigationBar.setLinearGradientBackgroundColor(colorOne: Colors.colorPrimaryDark, colorTwo: Colors.colorPrimary)
         self.navigationBar.barTintColor = Colors.colorPrimary
     }
-
 }

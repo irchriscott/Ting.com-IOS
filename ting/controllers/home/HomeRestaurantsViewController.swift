@@ -304,8 +304,9 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     
     public func navigateToRestaurant(restaurant: Branch){
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
-        let userViewController = storyboard.instantiateViewController(withIdentifier: "RestaurantView") as! RestaurantViewController
-        self.navigationController?.pushViewController(userViewController, animated: true)
+        let restaurantViewController = storyboard.instantiateViewController(withIdentifier: "RestaurantView") as! RestaurantViewController
+        restaurantViewController.restaurant = restaurant
+        self.navigationController?.pushViewController(restaurantViewController, animated: true)
     }
 }
 
