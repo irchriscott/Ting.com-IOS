@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import XLPagerTabStrip
 
 class RestaurantViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
@@ -17,9 +18,17 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
         didSet {}
     }
     
-    let restaurantTabView: RestaurantTabViewController = {
-        let view = RestaurantTabViewController()
-        return view
+    lazy var restaurantTabViewControler: RestaurantTabViewController = {
+        let controller = RestaurantTabViewController()
+        controller.promosController.branch = self.restaurant
+        controller.foodsController.branch = self.restaurant
+        controller.drinksController.branch = self.restaurant
+        controller.dishesController.branch = self.restaurant
+        return controller
+    }()
+    
+    lazy var restaurantTabView: UIView = {
+        return self.restaurantTabViewControler.view
     }()
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -71,7 +80,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
         
-        let restaurantView = restaurantTabView.view!
+        let restaurantView = restaurantTabView
         restaurantView.translatesAutoresizingMaskIntoConstraints = false
         
         cell.addSubview(restaurantView)
@@ -102,14 +111,25 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
         let offsetY = scrollView.contentOffset.y
         let _ = scrollView.contentSize.height
         
-        let controller = restaurantTabView.viewControllers[restaurantTabView.currentIndex] as! UITableViewController
+        let _ = restaurantTabViewControler.viewControllers[restaurantTabViewControler.currentIndex] as! UITableViewController
         
-        if offsetY >= 345 {
-            scrollView.showsVerticalScrollIndicator = false
-            controller.tableView.showsVerticalScrollIndicator = true
-        } else {
-            scrollView.showsVerticalScrollIndicator = true
-            controller.tableView.showsVerticalScrollIndicator = false
+        switch scrollView {
+        case collectionView:
+            if offsetY >= 340 {
+                restaurantTabView.frame = CGRect(x: 0, y: 340 - offsetY, width: restaurantTabView.bounds.width, height: restaurantTabView.bounds.height)
+                scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 340 - offsetY, left: 0, bottom: 0, right: 0)
+            } else {
+                restaurantTabView.frame = CGRect(x: 0, y: 0, width: restaurantTabView.bounds.width, height: restaurantTabView.bounds.height)
+                scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            }
+        case restaurantTabViewControler.promosController.tableView:
+            if offsetY >= 340 {
+                restaurantTabViewControler.promosController.tableView.isScrollEnabled = true
+            } else {
+                restaurantTabViewControler.promosController.tableView.isScrollEnabled = false
+            }
+        default:
+            break
         }
     }
 }

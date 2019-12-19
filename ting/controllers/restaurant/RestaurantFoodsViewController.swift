@@ -10,9 +10,18 @@ import UIKit
 import XLPagerTabStrip
 
 class RestaurantFoodsViewController: UITableViewController, IndicatorInfoProvider {
+    
+    var branch: Branch? {
+        didSet {
+            if let branch = self.branch {
+                print(branch.name)
+            }
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.isScrollEnabled = false
     }
     
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {

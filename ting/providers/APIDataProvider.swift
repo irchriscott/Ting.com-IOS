@@ -95,4 +95,31 @@ class APIDataProvider: NSObject {
             }
         }.resume()
     }
+    
+    public func getRestaurantPromotions(url: String, completion: @escaping ([MenuPromotion]) -> ()){
+        
+        guard let url = URL(string: url) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let promotions = try JSONDecoder().decode([MenuPromotion].self, from: data)
+                    DispatchQueue.main.async { completion(promotions) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([])
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
 }
