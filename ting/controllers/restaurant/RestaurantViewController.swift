@@ -336,7 +336,78 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
         return heightConstant + menuNameRect.height + menuDescriptionRect.height + CGFloat(menuPriceHeight)
     }
     
+    let popupMenuOverLay: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let popupMenuView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = Colors.colorWhite
+        view.layer.borderColor = Colors.colorVeryLightGray.cgColor
+        view.layer.borderWidth = 2.0
+        return view
+    }()
+    
     @objc private func openMenu(_ sender: Any?) {
-        
+        if let window =  UIApplication.shared.keyWindow {
+            popupMenuOverLay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeMenu(_:))))
+            window.addSubview(popupMenuOverLay)
+            window.addConstraintsWithFormat(format: "H:|[v0]|", views: popupMenuOverLay)
+            window.addConstraintsWithFormat(format: "V:|[v0]|", views: popupMenuOverLay)
+            
+            var marginTop: CGFloat = 0
+            
+            if #available(iOS 13.0, *) {
+                marginTop = (window.windowScene?.statusBarManager?.statusBarFrame.height ?? 0.0) + 40
+            } else { marginTop = UIApplication.shared.statusBarFrame.size.height + 40 }
+            
+            let reviewsMenuView: MenuItemView = {
+                let view = MenuItemView()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.icon = UIImage(named: "icon_menu_reviews_32_gray")!
+                view.title = "Reviews"
+                return view
+            }()
+            
+            let likesMenuView: MenuItemView = {
+                let view = MenuItemView()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.icon = UIImage(named: "icon_menu_likes_32_gray")!
+                view.title = "Reviews"
+                return view
+            }()
+            
+            let aboutMenuView: MenuItemView = {
+                let view = MenuItemView()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.icon = UIImage(named: "icon_menu_about_32_gray")!
+                view.title = "About"
+                return view
+            }()
+            
+            popupMenuView.addSubview(reviewsMenuView)
+            popupMenuView.addSubview(likesMenuView)
+            popupMenuView.addSubview(aboutMenuView)
+            
+            popupMenuView.addConstraintsWithFormat(format: "H:|-16-[v0]-16-|", views: reviewsMenuView)
+            popupMenuView.addConstraintsWithFormat(format: "H:|-16-[v0]-16-|", views: likesMenuView)
+            popupMenuView.addConstraintsWithFormat(format: "H:|-16-[v0]-16-|", views: aboutMenuView)
+            
+            popupMenuView.addConstraintsWithFormat(format: "V:|-16-[v0(22)]-14-[v1(22)]-14-[v2(22)]-16-|", views: reviewsMenuView, likesMenuView, aboutMenuView)
+            
+            let menuHeight = (12 * 4) + (22 * 3) + 12
+            
+            window.addSubview(popupMenuView)
+            window.addConstraintsWithFormat(format: "H:[v0(175)]-18-|", views: popupMenuView)
+            window.addConstraintsWithFormat(format: "V:|-\(marginTop)-[v0(\(menuHeight))]", views: popupMenuView)
+        }
+    }
+    
+    @objc private func closeMenu(_ sender: Any?) {
+        popupMenuOverLay.removeFromSuperview()
+        popupMenuView.removeFromSuperview()
     }
 }

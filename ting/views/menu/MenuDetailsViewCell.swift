@@ -429,6 +429,7 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.restaurantDistanceView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(MenuDetailsViewCell.showUserAddresses)))
+        self.restaurantName.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(navigateToRestaurant(_:))))
         self.restaurantLikeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MenuDetailsViewCell.likeRestaurantMenuToggle)))
         self.restaurantDistanceView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openRestaurantMap)))
         self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeRestaurantMap)))
@@ -745,6 +746,15 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         mapView.removeFromSuperview()
         isMapOpened = false
         mapCenter = nil
+    }
+    
+    @objc func navigateToRestaurant(_ sender: Any?) {
+        if let branch = self.menu?.menu?.branch {
+            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+            let restaurantViewController = storyboard.instantiateViewController(withIdentifier: "RestaurantView") as! RestaurantViewController
+            restaurantViewController.restaurant = branch
+            self.parentController?.navigationController?.pushViewController(restaurantViewController, animated: true)
+        }
     }
 
     required init?(coder: NSCoder) {

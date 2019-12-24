@@ -259,7 +259,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch tableView {
         case self.tableView:
-            if promotions!.count > 0 {
+            if promotions?.count ?? 0 > 0 {
                 return (self.restaurantMenu?.type!.id)! == 3 ? 4 : 3
             } else { return (self.restaurantMenu?.type!.id)! == 3 ? 3 : 2 }
         case restaurantMenuDishFoodsView:
@@ -279,7 +279,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         
         switch tableView {
         case self.tableView:
-            if promotions!.count > 0 {
+            if promotions?.count ?? 0 > 0 {
                 if (self.restaurantMenu?.type!.id)! == 3 {
                     switch indexPath.item {
                     case 0:
@@ -501,7 +501,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         
         switch tableView {
         case self.tableView:
-            if promotions!.count > 0 {
+            if promotions?.count ?? 0 > 0 {
                 if (self.restaurantMenu?.type!.id)! == 3 {
                     switch indexPath.item {
                     case 0:

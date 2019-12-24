@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import FittedSheets
 
 class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
     
@@ -255,6 +256,7 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
                         let image = images![imageIndex]
                         promotionCategoryView.imageURL = "\(URLs.hostEndPoint)\(image.image)"
                         promotionCategoryView.text = "Promotion On \((menu.menu?.name)!)"
+                        promotionCategoryView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(navigatePromotedMenu(_:))))
                     }
                 }
                 
@@ -343,6 +345,7 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.promotionInterestView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(PromotionMenuDetailsViewCell.interestPromotionToggle)))
+        self.restaurantName.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(navigateToRestaurant(_:))))
         self.restaurantDistanceView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(PromotionMenuDetailsViewCell.showUserAddresses)))
         self.restaurantDistanceView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openRestaurantMap)))
         self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeRestaurantMap)))
@@ -627,6 +630,35 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
         mapView.removeFromSuperview()
         isMapOpened = false
         mapCenter = nil
+    }
+    
+    @objc func navigatePromotedMenu(_ sender: Any?) {
+        if promotion?.promotionItem.menu != nil && promotion?.promotionItem.type.id == "04" {
+            if let menu = promotion?.promotionItem.menu {
+                let storyboard = UIStoryboard(name: "Home", bundle: nil)
+                let menuController = storyboard.instantiateViewController(withIdentifier: "RestaurantMenuBottomView") as! BottomSheetMenuControllerView
+                menuController.menu = menu
+                menuController.controller = self.parentController
+                let sheetController = SheetViewController(controller: menuController, sizes: [.fixed(415), .fixed(640)])
+                sheetController.blurBottomSafeArea = false
+                sheetController.adjustForBottomSafeArea = true
+                sheetController.topCornersRadius = 8
+                sheetController.dismissOnBackgroundTap = true
+                sheetController.extendBackgroundBehindHandle = false
+                sheetController.willDismiss = {_ in }
+                sheetController.didDismiss = {_ in }
+                self.parentController?.present(sheetController, animated: false, completion: nil)
+            }
+        }
+    }
+    
+    @objc func navigateToRestaurant(_ sender: Any?) {
+        if let branch = promotion?.branch {
+            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+            let restaurantViewController = storyboard.instantiateViewController(withIdentifier: "RestaurantView") as! RestaurantViewController
+            restaurantViewController.restaurant = branch
+            self.parentController?.navigationController?.pushViewController(restaurantViewController, animated: true)
+        }
     }
     
     required init?(coder: NSCoder) {
