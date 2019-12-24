@@ -61,7 +61,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         }
     }
     
-    var controller: HomeRestaurantsViewController? {
+    var controller: UIViewController? {
         didSet {}
     }
     
@@ -1031,7 +1031,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             var restaurantMenuNameTextSize: CGFloat = 20
             var restaurantDescriptionTextSize: CGFloat = 13
             
-            var menuPriceHeight: CGFloat = 16
+            var menuPriceHeight: CGFloat = 8
             
             if UIDevice.smallDevices.contains(device) {
                 restaurantMenuNameTextSize = 15
@@ -1055,15 +1055,19 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                 restaurantMenuIngredientsHeight = menuIngredientsRect.height
             }
             
+            let priceRect = NSString(string: "UGX 10,000").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 27)!], context: nil)
+                           
+            let quantityRect = NSString(string: "2 packs / counts").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 12)!], context: nil)
+                           
+            let lastPriceRect = NSString(string: "UGX 6,000").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 12)!], context: nil)
+            
             if (menu.menu?.isCountable)! && Double((menu.menu?.price)!) != Double((menu.menu?.lastPrice)!) {
-                menuPriceHeight += 45
+                menuPriceHeight += priceRect.height + quantityRect.height + lastPriceRect.height
             } else if !(menu.menu?.isCountable)! && Double((menu.menu?.price)!) != Double((menu.menu?.lastPrice)!) {
-                menuPriceHeight += 38
+                menuPriceHeight += priceRect.height + lastPriceRect.height
             } else if (menu.menu?.isCountable)! && !(Double((menu.menu?.price)!) != Double((menu.menu?.lastPrice)!)){
-                menuPriceHeight += 35
-            } else {
-                menuPriceHeight += 25
-            }
+                menuPriceHeight += priceRect.height + quantityRect.height
+            } else { menuPriceHeight += priceRect.height }
             
             let margins: CGFloat = 8 * 14
             let separators: CGFloat = 0.5 * 5
@@ -1171,6 +1175,7 @@ class RestaurantMenuHeaderImageViewCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.contentMode = .scaleAspectFill
         view.image = UIImage(named: "default_meal")
+        view.clipsToBounds = true
         return view
     }()
     

@@ -36,13 +36,6 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         return view
     }()
     
-    lazy var mapView: RestaurantMapView = {
-        let view = RestaurantMapView()
-        //view.controller = self
-        //view.restaurant = self.selectedBranch
-        return view
-    }()
-    
     lazy var menuNameTextView: UILabel = {
         let view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -293,7 +286,7 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         didSet { self.setup() }
     }
     
-    var controller: HomeRestaurantsViewController? {
+    var controller: UIViewController? {
         didSet { self.setup() }
     }
     
@@ -328,10 +321,11 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
                 
                 if menu.menu?.dishTime != nil {
                     self.restaurantMenuGroupView.icon = UIImage(named: "ic_restaurants")!
-                    self.restaurantMenuGroupView.alpha = 0.4
+                    self.restaurantMenuGroupView.iconAlpha = 0.4
                     self.restaurantMenuGroupView.text = (menu.type?.name)!
                     
                     self.restaurantMenuTypeView.icon = UIImage(named: "icon_clock_25_black")!
+                    self.restaurantMenuTypeView.iconAlpha = 0.4
                     self.restaurantMenuTypeView.text = (menu.menu?.dishTime)!
                 }
                 
@@ -418,21 +412,33 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
                     let checkLike = likes.first { (like) -> Bool in like.user.id == session.id }
                     if checkLike != nil { restaurantLikeImage.image =  UIImage(named: "icon_heart_like_32_primary") }
                 }
+                
+                self.setRestaurantDistance()
             }
             self.setup()
         }
     }
     
+    lazy var mapView: RestaurantMapView = {
+        let view = RestaurantMapView()
+        view.controller = self.controller
+        view.restaurant = self.menu?.menu?.branch
+        return view
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.restaurantDistanceView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(MenuDetailsViewCell.showUserAddresses)))
         self.restaurantLikeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MenuDetailsViewCell.likeRestaurantMenuToggle)))
-    }
-    
-    private func setup() {
+        self.restaurantDistanceView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openRestaurantMap)))
+        self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeRestaurantMap)))
         
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
+    }
+    
+    private func setup() {
         
         restaurantMenuDescriptionView.addSubview(restaurantMenuDescriptionIcon)
         restaurantMenuDescriptionView.addSubview(restaurantMenuDescriptionText)
@@ -484,9 +490,15 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         restaurantMenuPriceView.addConstraintsWithFormat(format: "V:[v0(46)]", views: restaurantLikeView)
         restaurantMenuPriceView.addConstraint(NSLayoutConstraint(item: restaurantMenuPriceView, attribute: .centerY, relatedBy: .equal, toItem: restaurantLikeView, attribute: .centerY, multiplier: 1, constant: 0))
         
-        var menuPriceHeight: Int = 16
+        var menuPriceHeight: CGFloat = 0
         
         if let menu = self.menu {
+            
+            let priceRect = NSString(string: "UGX 10,000").boundingRect(with: CGSize(width: frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 27)!], context: nil)
+                           
+            let quantityRect = NSString(string: "2 packs / counts").boundingRect(with: CGSize(width: frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 12)!], context: nil)
+                           
+            let lastPriceRect = NSString(string: "UGX 6,000").boundingRect(with: CGSize(width: frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 14)!], context: nil)
             
             if Double((menu.menu?.price)!) != Double((menu.menu?.lastPrice)!) {
                 restaurantMenuPriceView.addSubview(restaurantMenuLastPriceTextView)
@@ -494,17 +506,17 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
             }
             
             if (menu.menu?.isCountable)! && Double((menu.menu?.price)!) != Double((menu.menu?.lastPrice)!) {
-                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0]-4-[v1]-4-[v2]|", views: restaurantMenuQuantityTextView, restaurantMenuPriceTextView, restaurantMenuLastPriceTextView)
-                menuPriceHeight += 45
+                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0(\(quantityRect.height))]-0-[v1(\(priceRect.height))]-0-[v2(\(lastPriceRect.height))]|", views: restaurantMenuQuantityTextView, restaurantMenuPriceTextView, restaurantMenuLastPriceTextView)
+                menuPriceHeight += priceRect.height + quantityRect.height + lastPriceRect.height
             } else if !(menu.menu?.isCountable)! && Double((menu.menu?.price)!) != Double((menu.menu?.lastPrice)!) {
-                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0]-4-[v1]|", views: restaurantMenuPriceTextView, restaurantMenuLastPriceTextView)
-                menuPriceHeight += 38
+                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0(\(priceRect.height))]-0-[v1(\(lastPriceRect.height))]|", views: restaurantMenuPriceTextView, restaurantMenuLastPriceTextView)
+                menuPriceHeight += priceRect.height + lastPriceRect.height
             } else if (menu.menu?.isCountable)! && !(Double((menu.menu?.price)!) != Double((menu.menu?.lastPrice)!)){
-                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0]-4-[v1]|", views: restaurantMenuQuantityTextView, restaurantMenuPriceTextView)
-                menuPriceHeight += 35
+                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0(\(quantityRect.height))]-0-[v1(\(priceRect.height))]|", views: restaurantMenuQuantityTextView, restaurantMenuPriceTextView)
+                menuPriceHeight += priceRect.height + quantityRect.height
             } else {
-                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuPriceTextView)
-                menuPriceHeight += 25
+                restaurantMenuPriceView.addConstraintsWithFormat(format: "V:|[v0(\(priceRect.height))]|", views: restaurantMenuPriceTextView)
+                menuPriceHeight += priceRect.height
             }
         }
         
@@ -552,7 +564,7 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorTwo)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuDataView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorThree)
-        addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantDataView)
+        addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: restaurantDataView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorFour)
         
         addConstraintsWithFormat(format: "V:|-8-[v0(\(restaurantMenuNameHeight - 5))]-8-[v1]-8-[v2(\(restaurantMenuDescriptionHeight))]-8-[v3(26)]-8-[v4(0.5)]-8-[v5(18)]-8-[v6(\(restaurantMenuIngredientsHeight))]-8-[v7(0.5)]-8-[v8(\(menuPriceHeight))]-8-[v9(0.5)]-8-[v10(26)]-8-[v11(0.5)]-8-[v12(60)]-8-[v13(0.5)]", views: menuNameTextView, restaurantMenuRating, restaurantMenuDescriptionView, restaurantMenuView, separatorZero, restaurantIngredientsTitleView, restaurantIngredientsView, separatorOne, restaurantMenuPriceView, separatorTwo, restaurantMenuDataView, separatorThree, restaurantDataView, separatorFour)
@@ -593,7 +605,13 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
+        guard let location = locations.last else {
+            let addresses = session.addresses?.addresses
+            let address = addresses![0]
+            self.selectedLocation = CLLocation(latitude: CLLocationDegrees(Double(address.latitude)!), longitude: CLLocationDegrees(Double(address.longitude)!))
+            self.setRestaurantDistance()
+            return
+        }
         self.selectedLocation = location
         self.setRestaurantDistance()
     }
@@ -701,6 +719,32 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
                 }
             }
         }.resume()
+    }
+    
+    @objc func openRestaurantMap() {
+        if let window = UIApplication.shared.keyWindow {
+            if var branch = self.menu?.menu?.branch, let location = self.selectedLocation {
+                let branchLocation = CLLocation(latitude: CLLocationDegrees(Double(branch.latitude)!), longitude: CLLocationDegrees(Double(branch.longitude)!))
+                branch.dist = Double(branchLocation.distance(from: location) / 1000).rounded(toPlaces: 2)
+                isMapOpened = true
+                window.windowLevel = UIWindow.Level.statusBar
+                mapView.frame = window.frame
+                mapView.center = window.center
+                mapView.mapCenter = branchLocation
+                mapView.selectedLocation = location
+                mapView.restaurant = branch
+                window.addSubview(mapView)
+            }
+        }
+    }
+    
+    @objc func closeRestaurantMap(){
+        UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
+        mapView.closeImageView.removeFromSuperview()
+        mapView.closeButtonView.removeFromSuperview()
+        mapView.removeFromSuperview()
+        isMapOpened = false
+        mapCenter = nil
     }
 
     required init?(coder: NSCoder) {

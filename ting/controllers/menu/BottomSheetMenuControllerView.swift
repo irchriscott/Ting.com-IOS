@@ -22,7 +22,7 @@ class BottomSheetMenuControllerView: UICollectionViewController, UICollectionVie
         }
     }
     
-    var controller: HomeRestaurantsViewController?
+    var controller: UIViewController?
     
     let cellId = "cellId"
     let headerId = "headerId"

@@ -8,6 +8,7 @@
 
 import UIKit
 import ImageViewer
+import FittedSheets
 
 class PromotionMenuViewController: UITableViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, GalleryDisplacedViewsDataSource, GalleryItemsDataSource, GalleryItemsDelegate {
     
@@ -33,28 +34,28 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
                 switch promotion.promotionItem.type.id {
                 case "00":
                     if let branch = promotion.branch {
-                        self.promotedMenus = branch.menus.menus?.shuffled()
+                        self.promotedMenus = branch.menus.menus
                     }
                     break
                 case "01":
                     if let branch = promotion.branch {
                         self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
                             menu.type?.id == 1
-                            }).shuffled()
+                            })
                     }
                     break
                 case "02":
                     if let branch = promotion.branch {
                         self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
                             menu.type?.id == 2
-                            }).shuffled()
+                            })
                     }
                     break
                 case "03":
                     if let branch = promotion.branch {
                         self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
                             menu.type?.id == 3
-                            }).shuffled()
+                            })
                     }
                     break
                 case "04":
@@ -66,21 +67,26 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
                     if let branch = promotion.branch, let category = promotion.promotionItem.category {
                         self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
                             menu.menu?.category?.id == category.id
-                            }).shuffled()
+                            })
                     }
                     break
                 default: break
                     
                 }
+                self.tableView.reloadData()
             }
         }
     }
     
     var promotionURL: String? {
-        didSet {}
+        didSet {
+            if let url = self.promotionURL {
+                self.getMenuPromotion(url: url)
+            }
+        }
     }
     
-    var controller: HomeRestaurantsViewController? {
+    var controller: UIViewController? {
         didSet {}
     }
     
@@ -110,6 +116,12 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
         super.viewDidLoad()
         self.setupNavigationBar()
         
+        self.tableView.separatorStyle = .none
+        
+        if let promo = self.promotion {
+            self.getMenuPromotion(url: promo.urls.apiGet)
+        }
+        
         if let promotion = self.promotion {
             let imageView = UIImageView()
             imageView.load(url: URL(string: "\(URLs.hostEndPoint)\(promotion.posterImage)")!)
@@ -123,6 +135,14 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
         self.promotedMenusView.register(PromotedMenuViewCell.self, forCellReuseIdentifier: self.restaurantMenuItemCellId)
         
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.tableViewCellId)
+    }
+    
+    private func getMenuPromotion(url: String) {
+        APIDataProvider.instance.getPromotionMenu(url: "\(URLs.hostEndPoint)\(url)") { (promo) in
+            DispatchQueue.main.async {
+                self.promotion = promo
+            }
+        }
     }
     
     private func setupNavigationBar(){
@@ -167,13 +187,12 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdPromotionDetails, for: indexPath) as! PromotionMenuDetailsViewCell
         cell.promotion = self.promotion
         cell.parentController = self
-        cell.controller = self.controller
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
-        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.headerIdImage, for: indexPath) as! RestaurantMenuHeaderImageViewCell
+        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.headerIdImage, for: indexPath) as! PromotionMenuHeaderImageViewCell
         if let promotion = self.promotion {
             let image = promotion.posterImage
             cell.imageURL = "\(URLs.hostEndPoint)\(image)"
@@ -227,6 +246,7 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
         case self.promotedMenusView:
             let promotedMenuCell = tableView.dequeueReusableCell(withIdentifier: self.restaurantMenuItemCellId, for: indexPath) as! PromotedMenuViewCell
             promotedMenuCell.selectionStyle = .none
+            promotedMenuCell.restaurantMenu = self.promotedMenus![indexPath.item]
             return promotedMenuCell
         default:
             return tableView.dequeueReusableCell(withIdentifier: self.tableViewCellId, for: indexPath)
@@ -238,7 +258,20 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
         case self.tableView:
             break
         case self.promotedMenusView:
-            //Something must happen
+            let menu = self.promotedMenus?[indexPath.item]
+            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+            let menuController = storyboard.instantiateViewController(withIdentifier: "RestaurantMenuBottomView") as! BottomSheetMenuControllerView
+            menuController.menu = menu
+            menuController.controller = self.controller
+            let sheetController = SheetViewController(controller: menuController, sizes: [.fixed(415), .fixed(640)])
+            sheetController.blurBottomSafeArea = false
+            sheetController.adjustForBottomSafeArea = true
+            sheetController.topCornersRadius = 8
+            sheetController.dismissOnBackgroundTap = true
+            sheetController.extendBackgroundBehindHandle = false
+            sheetController.willDismiss = {_ in }
+            sheetController.didDismiss = {_ in }
+            self.controller?.present(sheetController, animated: false, completion: nil)
             break
         default:
             break
@@ -248,19 +281,26 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch tableView {
         case self.tableView:
-            return self.promotionDetailsCellHeight + 320
-        case self.promotedMenusView:
-            var height: CGFloat = 0
-            if self.promotedMenus?.count ?? 0 > 0 {
-                height += 50
-                if let menus = self.promotedMenus {
-                    for (index, _) in menus.enumerated() {
-                        height += self.promotedMenuCellHeight(index: index)
+            switch indexPath.item {
+            case 0:
+                return self.promotionDetailsCellHeight + 320
+            case 1:
+                var height: CGFloat = 0
+                if self.promotedMenus?.count ?? 0 > 0 {
+                    height += 50
+                    if let menus = self.promotedMenus {
+                        for (index, _) in menus.enumerated() {
+                            height += self.promotedMenuCellHeight(index: index)
+                        }
+                        height += 2
                     }
-                    height -= 10
                 }
+                return height
+            default:
+                return 0
             }
-            return height
+        case self.promotedMenusView:
+            return self.promotedMenuCellHeight(index: indexPath.item)
         default:
             return 0
         }
@@ -464,8 +504,14 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
                 promotionSupplementHeight = promotionSupplementRect.height
             }
             
-            let extraHeight = (0.5 * 5) + (8 * 11) + 10
-            return promotionOccasionHeight + promotionSupplementHeight + promotionReductionHeight + promotionPeriodHeight + CGFloat(extraHeight)
+            var promotionMenuHeight = promotionOccasionHeight + 6 + 26 + 6 + 26 + 4
+            
+            if promotion.promotionItem.type.id == "04" || promotion.promotionItem.type.id == "05" {
+                promotionMenuHeight += 32
+            }
+            
+            let extraHeight = (0.5 * 5) + (8 * 13) + 60 + 32
+            return promotionMenuHeight + promotionSupplementHeight + promotionReductionHeight + promotionPeriodHeight + CGFloat(extraHeight)
         }
         return 380
     }
@@ -479,6 +525,7 @@ class PromotionMenuHeaderImageViewCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.contentMode = .scaleAspectFill
         view.image = UIImage(named: "default_meal")
+        view.clipsToBounds = true
         return view
     }()
     

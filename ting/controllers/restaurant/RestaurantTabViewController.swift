@@ -25,6 +25,14 @@ class RestaurantTabViewController: ButtonBarPagerTabStripViewController {
         return self.storyboardApp.instantiateViewController(withIdentifier: "RestaurantDishes") as! RestaurantDishesViewController
     }()
     
+    var branch: Branch? {
+        didSet {}
+    }
+    
+    var currentHeight: CGFloat = 300 {
+        didSet {  }
+    }
+    
     override func viewDidLoad() {
         
         self.settings.style.selectedBarHeight = 2
@@ -38,24 +46,6 @@ class RestaurantTabViewController: ButtonBarPagerTabStripViewController {
         
         changeCurrentIndex = {(oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, animated: Bool) -> Void in }
         
-        changeCurrentIndexProgressive = { (oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
-            guard changeCurrentIndex == true else { return }
-
-            oldCell?.label.textColor = Colors.colorPrimary
-            newCell?.label.textColor = Colors.colorPrimary
-            
-            if animated {
-                UIView.animate(withDuration: 0.1, animations: { () -> Void in
-                    newCell?.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-                    oldCell?.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-                })
-            }
-            else {
-                newCell?.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-                oldCell?.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-            }
-        }
-        
         super.viewDidLoad()
     }
     
@@ -64,10 +54,6 @@ class RestaurantTabViewController: ButtonBarPagerTabStripViewController {
     }
     
     override func moveToViewController(at index: Int, animated: Bool = true) {
-        print(index)
-    }
-    
-    override func moveTo(viewController: UIViewController, animated: Bool = true) {
-        
+        super.moveToViewController(at: index)
     }
 }

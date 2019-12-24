@@ -189,7 +189,13 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
+        guard let location = locations.last else {
+            let addresses = session.addresses?.addresses
+            let address = addresses![0]
+            self.selectedLocation = CLLocation(latitude: CLLocationDegrees(Double(address.latitude)!), longitude: CLLocationDegrees(Double(address.longitude)!))
+            self.getRestaurants(location: self.selectedLocation)
+            return
+        }
         self.selectedLocation = location
         self.getRestaurants(location: location)
     }

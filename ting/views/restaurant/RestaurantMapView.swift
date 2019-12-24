@@ -198,16 +198,20 @@ class RestaurantMapView: UIView, GMSMapViewDelegate {
         return view
     }()
     
-    open var controller: HomeRestaurantsViewController? {
-        didSet { self.setupRestaurantView() }
+    open var controller: UIViewController? {
+        didSet {}
     }
     
     open var cell: RestaurantViewCell? {
-        didSet { self.setupRestaurantView() }
+        didSet {}
     }
     
     open var mapCenter: CLLocation? {
-        didSet { self.setup() }
+        didSet {}
+    }
+    
+    open var selectedLocation: CLLocation? {
+        didSet {}
     }
     
     open var restaurants: [Branch] = [] {
@@ -257,10 +261,11 @@ class RestaurantMapView: UIView, GMSMapViewDelegate {
         self.walkingDirectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantMapView.onWalkingModeDirection)))
     }
     
-    private func setup(){
+    private func setup() {
         if let window = UIApplication.shared.keyWindow {
+            let parentController = self.controller as? HomeRestaurantsViewController
             let zoom: Float = self.mapCenter != nil ? 16 : 4
-            let center = controller?.mapCenter != nil ? GMSCameraPosition.camera(withLatitude: controller?.mapCenter!.coordinate.latitude ?? 0.00, longitude: controller?.mapCenter!.coordinate.longitude ?? 0.00, zoom: zoom) : GMSCameraPosition.camera(withLatitude: mapCenter?.coordinate.latitude ?? 0.00, longitude: mapCenter?.coordinate.longitude ?? 0.00, zoom: zoom)
+            let center = parentController?.mapCenter != nil ? GMSCameraPosition.camera(withLatitude: parentController?.mapCenter!.coordinate.latitude ?? 0.00, longitude: parentController?.mapCenter!.coordinate.longitude ?? 0.00, zoom: zoom) : GMSCameraPosition.camera(withLatitude: mapCenter?.coordinate.latitude ?? 0.00, longitude: mapCenter?.coordinate.longitude ?? 0.00, zoom: zoom)
             self.googleMapsView = GMSMapView.map(withFrame: window.frame, camera: center)
             self.googleMapsView.delegate = self
             self.googleMapsView.camera = center
@@ -337,11 +342,12 @@ class RestaurantMapView: UIView, GMSMapViewDelegate {
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
         let restaurantViewController = storyboard.instantiateViewController(withIdentifier: "RestaurantView") as! RestaurantViewController
         restaurantViewController.restaurant = branch
-        controller?.closeRestaurantMap()
+        let parentController = self.controller as? HomeRestaurantsViewController
+        parentController?.closeRestaurantMap()
         cell?.closeRestaurantMap()
-        controller?.isMapOpened = true
-        controller?.selectedBranch = branch
-        controller?.mapCenter = CLLocation(latitude: CLLocationDegrees(Double(branch.latitude)!), longitude: CLLocationDegrees(Double(branch.longitude)!))
+        parentController?.isMapOpened = true
+        parentController?.selectedBranch = branch
+        parentController?.mapCenter = CLLocation(latitude: CLLocationDegrees(Double(branch.latitude)!), longitude: CLLocationDegrees(Double(branch.longitude)!))
         controller?.navigationController?.pushViewController(restaurantViewController, animated: true)
     }
     
@@ -484,7 +490,8 @@ class RestaurantMapView: UIView, GMSMapViewDelegate {
     
     private func requestMapRoute(mode: String){
         if let branch = self.restaurant {
-            let origin = controller?.selectedLocation
+            let parentController = self.controller as? HomeRestaurantsViewController
+            let origin = self.selectedLocation != nil ? self.selectedLocation : parentController?.selectedLocation
             let destination = CLLocation(latitude: CLLocationDegrees(Double(branch.latitude)!), longitude: CLLocationDegrees(Double(branch.longitude)!))
             guard let url = Functions.googleMapsDirectornURL(origin: origin!, destination: destination, mode: mode) else { return }
             
@@ -546,7 +553,9 @@ class RestaurantMapView: UIView, GMSMapViewDelegate {
             restaurantMarker.tracksInfoWindowChanges = true
             restaurantMarker.map = self.googleMapsView
             
-            let userCoords = controller?.selectedLocation
+            let parentController = self.controller as? HomeRestaurantsViewController
+            
+            let userCoords = self.selectedLocation != nil ? self.selectedLocation : parentController?.selectedLocation
             let userMarkerView: CustomMapMarker = {
                 let view = CustomMapMarker()
                 view.frame = CGRect(x: 0, y: 0, width: 64, height: 64)

@@ -39,6 +39,7 @@
 		8F157C7523AA2362008C88E2 /* RestaurantDrinksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C7423AA2362008C88E2 /* RestaurantDrinksViewController.swift */; };
 		8F157C7723AA237B008C88E2 /* RestaurantDishesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C7623AA237B008C88E2 /* RestaurantDishesViewController.swift */; };
 		8F157C7923AB6D1F008C88E2 /* RestaurantPromotionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C7823AB6D1F008C88E2 /* RestaurantPromotionViewCell.swift */; };
+		8F157C7B23ADFB55008C88E2 /* RestaurantMenuViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F157C7A23ADFB55008C88E2 /* RestaurantMenuViewCell.swift */; };
 		8F1D75E72331D507000B25C9 /* RestaurantMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D75E62331D507000B25C9 /* RestaurantMapView.swift */; };
 		8F1D75E92331F801000B25C9 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1D75E82331F801000B25C9 /* UIApplicationExtension.swift */; };
 		8F1F112622FA23CC00CA4DD9 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1F112522FA23CC00CA4DD9 /* ResetPasswordViewController.swift */; };
@@ -158,6 +159,7 @@
 		8F157C7423AA2362008C88E2 /* RestaurantDrinksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDrinksViewController.swift; sourceTree = "<group>"; };
 		8F157C7623AA237B008C88E2 /* RestaurantDishesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDishesViewController.swift; sourceTree = "<group>"; };
 		8F157C7823AB6D1F008C88E2 /* RestaurantPromotionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantPromotionViewCell.swift; sourceTree = "<group>"; };
+		8F157C7A23ADFB55008C88E2 /* RestaurantMenuViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantMenuViewCell.swift; sourceTree = "<group>"; };
 		8F1D75E62331D507000B25C9 /* RestaurantMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantMapView.swift; sourceTree = "<group>"; };
 		8F1D75E82331F801000B25C9 /* UIApplicationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtension.swift; sourceTree = "<group>"; };
 		8F1F112522FA23CC00CA4DD9 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
@@ -558,6 +560,7 @@
 				8F1D75E62331D507000B25C9 /* RestaurantMapView.swift */,
 				8F157C6623A9F6B0008C88E2 /* RestaurantHeaderViewCell.swift */,
 				8F157C7823AB6D1F008C88E2 /* RestaurantPromotionViewCell.swift */,
+				8F157C7A23ADFB55008C88E2 /* RestaurantMenuViewCell.swift */,
 			);
 			path = restaurant;
 			sourceTree = "<group>";
@@ -750,6 +753,7 @@
 				8F1095002330060700A7519B /* DateExtension.swift in Sources */,
 				8F157C7323AA2347008C88E2 /* RestaurantFoodsViewController.swift in Sources */,
 				8F13CAF42334EF3000E3D03D /* RestaurantMapInfoWindowView.swift in Sources */,
+				8F157C7B23ADFB55008C88E2 /* RestaurantMenuViewCell.swift in Sources */,
 				8F157C6923A9F806008C88E2 /* UserHeaderViewCell.swift in Sources */,
 				8F157C6B23A9F873008C88E2 /* UserTabContentViewCell.swift in Sources */,
 				8F49C10A22F496270084F3E7 /* Restaurant.swift in Sources */,

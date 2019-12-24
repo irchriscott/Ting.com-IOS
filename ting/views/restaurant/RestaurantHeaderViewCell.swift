@@ -7,10 +7,18 @@
 //
 
 import UIKit
+import MapKit
 
-class RestaurantHeaderViewCell: UICollectionViewCell {
+class RestaurantHeaderViewCell: UICollectionViewCell, CLLocationManagerDelegate {
     
     let numberFormatter = NumberFormatter()
+    
+    var locationManager = CLLocationManager()
+    var selectedLocation: CLLocation?
+    
+    let session = UserAuthentication().get()!
+    var isMapOpened: Bool = false
+    var mapCenter: CLLocation?
     
     let coverView: UIView = {
         let view = UIView()
@@ -32,6 +40,7 @@ class RestaurantHeaderViewCell: UICollectionViewCell {
         view.image = UIImage(named: "default_restaurant")
         view.contentMode = .scaleAspectFill
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.clipsToBounds = true
         return view
     }()
     
@@ -103,14 +112,34 @@ class RestaurantHeaderViewCell: UICollectionViewCell {
                 addressLabel.text = branch.address
                 rateView.rating = Double(branch.reviews?.average ?? 0)
                 restaurantDistanceView.text = "\(numberFormatter.string(from: NSNumber(value: branch.dist ?? 0.00)) ?? "0.00") km"
+                
                 self.setTimeStatus()
+                self.setRestaurantDistance()
             }
             self.setup()
         }
     }
     
+    var controller: UIViewController? {
+        didSet {}
+    }
+    
+    lazy var mapView: RestaurantMapView = {
+        let view = RestaurantMapView()
+        view.controller = self.controller
+        view.restaurant = self.branch
+        return view
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.restaurantDistanceView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(showUserAddresses)))
+        self.restaurantDistanceView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openRestaurantMap)))
+        self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeRestaurantMap)))
+        
+        self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
     }
     
     private func setup(){
@@ -118,7 +147,7 @@ class RestaurantHeaderViewCell: UICollectionViewCell {
         restaurantStatusView.addSubview(restaurantDistanceView)
         restaurantStatusView.addSubview(restaurantTimeStatusView)
         
-        restaurantStatusView.addConstraintsWithFormat(format: "H:[v0]-8-[v1]", views: restaurantDistanceView, restaurantTimeStatusView)
+        restaurantStatusView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]|", views: restaurantDistanceView, restaurantTimeStatusView)
         restaurantStatusView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: restaurantDistanceView)
         restaurantStatusView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: restaurantTimeStatusView)
         
@@ -158,6 +187,69 @@ class RestaurantHeaderViewCell: UICollectionViewCell {
         }
     }
     
+    private func checkLocationAuthorization(status: CLAuthorizationStatus){
+        self.locationManager.delegate = self
+        switch status {
+        case .authorizedAlways:
+            self.locationManager.requestAlwaysAuthorization()
+            self.locationManager.startUpdatingLocation()
+            break
+        case .authorizedWhenInUse:
+            self.locationManager.requestAlwaysAuthorization()
+            self.locationManager.startUpdatingLocation()
+            break
+        case .denied:
+            let location = CLLocation(latitude: CLLocationDegrees(Double((session.addresses?.addresses[0].latitude)!)!), longitude: CLLocationDegrees(Double((session.addresses?.addresses[0].longitude)!)!))
+            self.selectedLocation = location
+            self.setRestaurantDistance()
+            let alert = UIAlertController(title: "Please, Go to settings and allow this app to use your location", message: nil, preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+            Toast.makeToast(message: "Please, Go to settings and allow this app to use your location", duration: Toast.MID_LENGTH_DURATION, style: .default)
+            break
+        case .notDetermined:
+            self.locationManager.requestWhenInUseAuthorization()
+            self.locationManager.startUpdatingLocation()
+            break
+        case .restricted:
+            let location = CLLocation(latitude: CLLocationDegrees(Double((session.addresses?.addresses[0].latitude)!)!), longitude: CLLocationDegrees(Double((session.addresses?.addresses[0].longitude)!)!))
+            self.selectedLocation = location
+            self.setRestaurantDistance()
+            let alert = UIAlertController(title: "Please, Go to settings and allow this app to use your location", message: nil, preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+            Toast.makeToast(message: "Please, Go to settings and allow this app to use your location", duration: Toast.MID_LENGTH_DURATION, style: .default)
+            break
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else {
+            let addresses = session.addresses?.addresses
+            let address = addresses![0]
+            self.selectedLocation = CLLocation(latitude: CLLocationDegrees(Double(address.latitude)!), longitude: CLLocationDegrees(Double(address.longitude)!))
+            self.setRestaurantDistance()
+            return
+        }
+        self.selectedLocation = location
+        self.setRestaurantDistance()
+    }
+    
+    private func setRestaurantDistance() {
+        if let branch = self.branch, let location = self.selectedLocation {
+            let branchLocation = CLLocation(latitude: CLLocationDegrees(exactly: Double(branch.latitude)!)!, longitude: CLLocationDegrees(exactly: Double(branch.longitude)!)!)
+            let distance = Double(branchLocation.distance(from: location) / 1000).rounded(toPlaces: 2)
+            restaurantDistanceView.text = "\(numberFormatter.string(from: NSNumber(value: distance))!) km"
+        } else if let branch = self.branch {
+            let address = session.addresses?.addresses[0]
+            let branchLocation = CLLocation(latitude: CLLocationDegrees(exactly: Double(branch.latitude)!)!, longitude: CLLocationDegrees(exactly: Double(branch.longitude)!)!)
+            self.selectedLocation = CLLocation(latitude: CLLocationDegrees(exactly: Double(address!.latitude)!)!, longitude: CLLocationDegrees(exactly: Double(address!.longitude)!)!)
+            
+            if let location = self.selectedLocation {
+                let distance = Double(branchLocation.distance(from: location) / 1000).rounded(toPlaces: 2)
+                restaurantDistanceView.text = "\(numberFormatter.string(from: NSNumber(value: distance))!) km"
+            }
+        }
+    }
+    
     @objc private func setTimeStatus() {
         if let branch = self.branch {
             if branch.isAvailable {
@@ -181,6 +273,51 @@ class RestaurantHeaderViewCell: UICollectionViewCell {
                 self.restaurantTimeStatusView.icon = UIImage(named: "icon_close_bold_25_white")!
             }
         }
+    }
+    
+    @objc func showUserAddresses() {
+        let addresses = UIAlertController(title: "Restaurants Near Location", message: nil, preferredStyle: .actionSheet)
+        addresses.addAction(UIAlertAction(title: "Current Location", style: .default) { (action) in
+            DispatchQueue.main.async { self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus()) }
+        })
+        session.addresses?.addresses.forEach({ (address) in
+            addresses.addAction(UIAlertAction(title: address.address, style: .default, handler: { (action) in
+                DispatchQueue.main.async {
+                    let location = CLLocation(latitude: CLLocationDegrees(Double(address.latitude)!), longitude: CLLocationDegrees(Double(address.longitude)!))
+                    self.selectedLocation = location
+                    self.setRestaurantDistance()
+                }
+            }))
+        })
+
+        addresses.addAction(UIAlertAction(title: "CANCEL", style: .cancel, handler: { (action) in }))
+        self.controller?.present(addresses, animated: true, completion: nil)
+    }
+    
+    @objc func openRestaurantMap() {
+        if let window = UIApplication.shared.keyWindow {
+            if var branch = self.branch, let location = self.selectedLocation {
+                let branchLocation = CLLocation(latitude: CLLocationDegrees(Double(branch.latitude)!), longitude: CLLocationDegrees(Double(branch.longitude)!))
+                branch.dist = Double(branchLocation.distance(from: location) / 1000).rounded(toPlaces: 2)
+                isMapOpened = true
+                window.windowLevel = UIWindow.Level.statusBar
+                mapView.frame = window.frame
+                mapView.center = window.center
+                mapView.mapCenter = branchLocation
+                mapView.selectedLocation = location
+                mapView.restaurant = branch
+                window.addSubview(mapView)
+            }
+        }
+    }
+    
+    @objc func closeRestaurantMap(){
+        UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
+        mapView.closeImageView.removeFromSuperview()
+        mapView.closeButtonView.removeFromSuperview()
+        mapView.removeFromSuperview()
+        isMapOpened = false
+        mapCenter = nil
     }
     
     required init?(coder aDecoder: NSCoder) {

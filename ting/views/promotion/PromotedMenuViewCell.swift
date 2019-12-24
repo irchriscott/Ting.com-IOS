@@ -86,7 +86,7 @@ class PromotedMenuViewCell: UITableViewCell {
         view.font = UIFont(name: "Poppins-Regular", size: 13)
         view.textColor = Colors.colorGray
         view.text = "Menu Description"
-        view.numberOfLines = 3
+        view.numberOfLines = 4
         return view
     }()
     
@@ -160,10 +160,11 @@ class PromotedMenuViewCell: UITableViewCell {
                 
                 if menu.menu?.dishTime != nil {
                     self.menuGroupView.icon = UIImage(named: "ic_restaurants")!
-                    self.menuGroupView.alpha = 0.4
+                    self.menuGroupView.iconAlpha = 0.4
                     self.menuGroupView.text = (menu.type?.name)!
                     
                     self.menuTypeView.icon = UIImage(named: "icon_clock_25_black")!
+                    self.menuTypeView.iconAlpha = 0.4
                     self.menuTypeView.text = (menu.menu?.dishTime)!
                 }
                 
@@ -195,6 +196,8 @@ class PromotedMenuViewCell: UITableViewCell {
                 
                 menuDescriptionHeight = menuDescriptionRect.height
                 menuNameHeight = menuNameRect.height
+                
+                print(menuDescriptionHeight)
             }
             self.setup()
         }
@@ -202,7 +205,6 @@ class PromotedMenuViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.setup()
     }
     
     private func setup() {
@@ -247,7 +249,7 @@ class PromotedMenuViewCell: UITableViewCell {
         
         viewCell.addConstraintsWithFormat(format: "H:|-12-[v0(\(menuImageConstant))]-12-[v1]-12-|", views: menuImageView, menuAboutView)
         viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(55)]", views: menuImageView)
-        viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(\(95 + menuDescriptionHeight + menuNameHeight))]", views: menuAboutView)
+        viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(\(69 + menuDescriptionHeight + menuNameHeight))]", views: menuAboutView)
     }
     
     required init?(coder: NSCoder) {

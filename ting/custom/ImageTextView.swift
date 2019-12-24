@@ -34,6 +34,7 @@ class ImageTextView: UIView {
     let iconView: UIImageView = {
         let view = UIImageView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.clipsToBounds = true
         return view
     }()
     
@@ -57,7 +58,7 @@ class ImageTextView: UIView {
         if let url = self.imageURL {
             self.iconView.load(url: URL(string: url)!)
         } else {
-            self.iconView.image = UIImage(named: "icon_like_outline_25_gray")!
+            self.iconView.image = UIImage(named: "default_restaurant")!
         }
         self.iconView.contentMode = .scaleAspectFill
         self.iconView.alpha = self.iconAlpha

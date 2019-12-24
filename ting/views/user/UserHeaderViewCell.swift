@@ -30,6 +30,7 @@ class UserHeaderViewCell : UICollectionViewCell {
         view.image = UIImage(named: "default_user")
         view.contentMode = .scaleAspectFill
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.clipsToBounds = true
         return view
     }()
     

@@ -171,12 +171,12 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
     lazy var mapView: RestaurantMapView = {
         let view = RestaurantMapView()
         view.restaurant = self.branch
-        view.controller = self.controller
+        view.controller = self.controller as? HomeRestaurantsViewController
         view.cell = self
         return view
     }()
     
-    var controller: HomeRestaurantsViewController? {
+    var controller: UIViewController? {
         didSet { self.setup() }
     }
     
@@ -374,6 +374,7 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
     
     @objc func openRestaurantMap(){
         if let window = UIApplication.shared.keyWindow {
+            let parentController = self.controller as? HomeRestaurantsViewController
             window.windowLevel = UIWindow.Level.statusBar
             mapView.mapCenter = CLLocation(latitude: CLLocationDegrees(Double(branch!.latitude)!), longitude: CLLocationDegrees(Double(branch!.longitude)!))
             mapView.frame = window.frame
@@ -381,9 +382,9 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
             mapView.restaurant = self.branch
             mapView.controller = self.controller
             mapView.cell = self
-            controller?.isMapOpened = true
-            controller?.mapCenter = CLLocation(latitude: CLLocationDegrees(Double(branch!.latitude)!), longitude: CLLocationDegrees(Double(branch!.longitude)!))
-            controller?.selectedBranch = self.branch
+            parentController?.isMapOpened = true
+            parentController?.mapCenter = CLLocation(latitude: CLLocationDegrees(Double(branch!.latitude)!), longitude: CLLocationDegrees(Double(branch!.longitude)!))
+            parentController?.selectedBranch = self.branch
             window.addSubview(mapView)
         }
     }
@@ -394,9 +395,11 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         self.mapView.closeButtonView.removeFromSuperview()
         self.mapView.restaurantView.removeFromSuperview()
         self.mapView.removeFromSuperview()
-        controller?.isMapOpened = false
-        controller?.mapCenter = nil
-        controller?.selectedBranch = nil
+        
+        let parentController = self.controller as? HomeRestaurantsViewController
+        parentController?.isMapOpened = false
+        parentController?.mapCenter = nil
+        parentController?.selectedBranch = nil
     }
     
     required init?(coder aDecoder: NSCoder) {

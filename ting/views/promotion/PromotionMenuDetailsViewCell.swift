@@ -167,6 +167,7 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
     let separatorTwo: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = Colors.colorVeryLightGray
         return view
     }()
     
@@ -183,6 +184,7 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
     let separatorThree: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = Colors.colorVeryLightGray
         return view
     }()
     
@@ -226,7 +228,7 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
         return view
     }()
     
-    var controller: HomeRestaurantsViewController? {
+    var controller: UIViewController? {
         didSet {}
     }
     
@@ -241,19 +243,18 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
                 promotionOccationView.text = promotion.occasionEvent
                 promotionOnView.text = promotion.promotionItem.type.name
                 
-                if promotion.promotionItem.category != nil {
+                if promotion.promotionItem.category != nil && promotion.promotionItem.type.id == "05" {
                     promotionCategoryView.text = "Promotion On \((promotion.promotionItem.category?.name)!)"
                     promotionCategoryView.imageURL = "\(URLs.hostEndPoint)\((promotion.promotionItem.category?.image)!)"
                 }
                 
-                if promotion.promotionItem.menu != nil {
-                    promotionCategoryView.text = "Promotion On \((promotion.promotionItem.menu?.menu?.name)!)"
-                    
+                if promotion.promotionItem.menu != nil && promotion.promotionItem.type.id == "04" {
                     if let menu = promotion.promotionItem.menu {
                         let images = menu.menu?.images?.images
                         let imageIndex = Int.random(in: 0...images!.count - 1)
                         let image = images![imageIndex]
                         promotionCategoryView.imageURL = "\(URLs.hostEndPoint)\(image.image)"
+                        promotionCategoryView.text = "Promotion On \((menu.menu?.name)!)"
                     }
                 }
                 
@@ -325,20 +326,33 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
                 
                 let checkInterest = interests.first { (interest) -> Bool in interest.user.id == session.id }
                 if checkInterest != nil { promotionInterestImage.image =  UIImage(named: "icon_star_filled_25_gray") }
+                
+                self.setRestaurantDistance()
             }
             self.setup()
         }
     }
     
+    lazy var mapView: RestaurantMapView = {
+        let view = RestaurantMapView()
+        view.controller = self.controller
+        view.restaurant = self.promotion?.branch
+        return view
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.promotionInterestView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(PromotionMenuDetailsViewCell.interestPromotionToggle)))
-    }
-    
-    private func setup() {
+        self.restaurantDistanceView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(PromotionMenuDetailsViewCell.showUserAddresses)))
+        self.restaurantDistanceView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openRestaurantMap)))
+        self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeRestaurantMap)))
         
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
+    }
+    
+    private func setup() {
         
         promotionInterestView.addSubview(promotionInterestImage)
         promotionInterestView.addConstraintsWithFormat(format: "H:[v0(28)]", views: promotionInterestImage)
@@ -354,21 +368,21 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
         promotionMenuView.addConstraintsWithFormat(format: "H:|[v0]", views: promotionOccationView)
         promotionMenuView.addConstraintsWithFormat(format: "H:|[v0]", views: promotionOnView)
         promotionMenuView.addConstraintsWithFormat(format: "H:|[v0]", views: promotionAvailabilityView)
-        promotionMenuView.addConstraintsWithFormat(format: "H:[v0]|", views: promotionInterestView)
+        promotionMenuView.addConstraintsWithFormat(format: "H:[v0(46)]|", views: promotionInterestView)
         
-        promotionMenuView.addConstraintsWithFormat(format: "V:|[v0(46)]", views: promotionInterestView)
+        promotionMenuView.addConstraintsWithFormat(format: "V:|-4-[v0(46)]", views: promotionInterestView)
         
-        var promotionMenuHeight = promotionOccasionHeight + 4 + 26 + 4
+        var promotionMenuHeight = promotionOccasionHeight + 6 + 26 + 6 + 26 + 4
         
-        if self.promotion?.promotionItem.category != nil || self.promotion?.promotionItem.menu != nil {
+        if promotion?.promotionItem.type.id == "04" || promotion?.promotionItem.type.id == "05" {
             promotionMenuView.addSubview(promotionCategoryView)
             promotionMenuView.addConstraintsWithFormat(format: "H:|[v0]", views: promotionCategoryView)
             
-            promotionMenuHeight += 30
+            promotionMenuHeight += 32
             
-            promotionMenuView.addConstraintsWithFormat(format: "V:|[v0(\(promotionOccasionHeight))]-4-[v1(26)]-4-[v2(26)]-4-[v3(26)]", views: promotionOccationView, promotionOnView, promotionCategoryView, promotionAvailabilityView)
+            promotionMenuView.addConstraintsWithFormat(format: "V:|[v0(\(promotionOccasionHeight))]-6-[v1(26)]-6-[v2(26)]-6-[v3(26)]", views: promotionOccationView, promotionOnView, promotionCategoryView, promotionAvailabilityView)
         } else {
-            promotionMenuView.addConstraintsWithFormat(format: "V:|[v0(\(promotionOccasionHeight))]-4-[v1(26)]-4-[v2(26)]", views: promotionOccationView, promotionOnView, promotionAvailabilityView)
+            promotionMenuView.addConstraintsWithFormat(format: "V:|[v0(\(promotionOccasionHeight))]-6-[v1(26)]-6-[v2(26)]", views: promotionOccationView, promotionOnView, promotionAvailabilityView)
         }
         
         promotionAboutView.addSubview(promotionPeriodView)
@@ -424,7 +438,7 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
         addSubview(restaurantDataView)
         addSubview(separatorFour)
         
-        addConstraintsWithFormat(format: "H:|-8-[v0]", views: promotionMenuView)
+        addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: promotionMenuView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorZero)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: promotionAboutView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorOne)
@@ -432,7 +446,7 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorTwo)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: promotionDataView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorThree)
-        addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantDataView)
+        addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: restaurantDataView)
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorFour)
         
         addConstraintsWithFormat(format: "V:|-8-[v0(\(promotionMenuHeight))]-8-[v1(0.5)]-8-[v2(\(promotionAboutHeight))]-8-[v3(0.5)]-8-[v4(20)]-8-[v5(0.5)]-8-[v6(26)]-8-[v7(0.5)]-8-[v8(\(26 + 8 + 26))]-8-[v9(0.5)]", views: promotionMenuView, separatorZero, promotionAboutView, separatorOne, promotionDescriptionView, separatorTwo, promotionDataView, separatorThree, restaurantDataView, separatorFour)
@@ -473,7 +487,13 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
+        guard let location = locations.last else {
+            let addresses = session.addresses?.addresses
+            let address = addresses![0]
+            self.selectedLocation = CLLocation(latitude: CLLocationDegrees(Double(address.latitude)!), longitude: CLLocationDegrees(Double(address.longitude)!))
+            self.setRestaurantDistance()
+            return
+        }
         self.selectedLocation = location
         self.setRestaurantDistance()
     }
@@ -581,6 +601,32 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
                 }
             }
         }.resume()
+    }
+    
+    @objc func openRestaurantMap() {
+        if let window = UIApplication.shared.keyWindow {
+            if var branch = self.promotion?.branch, let location = self.selectedLocation {
+                let branchLocation = CLLocation(latitude: CLLocationDegrees(Double(branch.latitude)!), longitude: CLLocationDegrees(Double(branch.longitude)!))
+                branch.dist = Double(branchLocation.distance(from: location) / 1000).rounded(toPlaces: 2)
+                isMapOpened = true
+                window.windowLevel = UIWindow.Level.statusBar
+                mapView.frame = window.frame
+                mapView.center = window.center
+                mapView.mapCenter = branchLocation
+                mapView.selectedLocation = location
+                mapView.restaurant = branch
+                window.addSubview(mapView)
+            }
+        }
+    }
+    
+    @objc func closeRestaurantMap(){
+        UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
+        mapView.closeImageView.removeFromSuperview()
+        mapView.closeButtonView.removeFromSuperview()
+        mapView.removeFromSuperview()
+        isMapOpened = false
+        mapCenter = nil
     }
     
     required init?(coder: NSCoder) {

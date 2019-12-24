@@ -22,6 +22,8 @@ class RestaurantPromotionViewCell: UITableViewCell {
     let promotionTextSize: CGFloat = 13
     var promotionPosterConstant: CGFloat = 80
     
+    var promotionTypeViewHeight: CGFloat = 0
+    
     let viewCell: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -149,19 +151,27 @@ class RestaurantPromotionViewCell: UITableViewCell {
                 promotionOnView.text = promotion.promotionItem.type.name
                 promotionPeriodView.text = promotion.period
                 
-                if promotion.promotionItem.category != nil {
+                let dateFormatterGet = DateFormatter()
+                dateFormatterGet.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+                let dateFormatterPrint = DateFormatter()
+                dateFormatterPrint.dateFormat = "MMM dd,yyyy"
+
+                let date = dateFormatterGet.date(from: promotion.updatedAt)
+                promotionDateView.text = dateFormatterPrint.string(from: date!)
+                
+                if promotion.promotionItem.category != nil && promotion.promotionItem.type.id == "05" {
                     promotionCategoryView.text = "Promotion On \((promotion.promotionItem.category?.name)!)"
                     promotionCategoryView.imageURL = "\(URLs.hostEndPoint)\((promotion.promotionItem.category?.image)!)"
                 }
                 
-                if promotion.promotionItem.menu != nil {
-                    promotionCategoryView.text = "Promotion On \((promotion.promotionItem.menu?.menu?.name)!)"
-                    
+                if promotion.promotionItem.menu != nil && promotion.promotionItem.type.id == "04" {
                     if let menu = promotion.promotionItem.menu {
                         let images = menu.menu?.images?.images
                         let imageIndex = Int.random(in: 0...images!.count - 1)
                         let image = images![imageIndex]
                         promotionCategoryView.imageURL = "\(URLs.hostEndPoint)\(image.image)"
+                        promotionCategoryView.text = "Promotion On \((menu.menu?.name)!)"
                     }
                 }
                 
@@ -183,7 +193,7 @@ class RestaurantPromotionViewCell: UITableViewCell {
                 promotionPeriodHeight = promotionPeriodRect.height
                 
                 if promotion.reduction.hasReduction {
-                    let reductionText = "Order this menu and get \(promotion.reduction.amount) \((promotion.reduction.reductionType)!) reduction"
+                    let reductionText = "Order a menu and get \(promotion.reduction.amount) \((promotion.reduction.reductionType)!) reduction"
                     promotionReductionView.text = reductionText
                     let promotionReductionRect = NSString(string: reductionText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: promotionTextSize)!], context: nil)
                     promotionReductionHeight = promotionReductionRect.height
@@ -192,9 +202,9 @@ class RestaurantPromotionViewCell: UITableViewCell {
                 if promotion.supplement.hasSupplement {
                     var supplementText: String!
                     if !promotion.supplement.isSame {
-                        supplementText = "Order \(promotion.supplement.minQuantity) of this menu and get \(promotion.supplement.quantity) free \((promotion.supplement.supplement?.menu?.name)!)"
+                        supplementText = "Order \(promotion.supplement.minQuantity) of a menu and get \(promotion.supplement.quantity) free \((promotion.supplement.supplement?.menu?.name)!)"
                     } else {
-                        supplementText = "Order \(promotion.supplement.minQuantity) of this menu and get \(promotion.supplement.quantity) more for free"
+                        supplementText = "Order \(promotion.supplement.minQuantity) of a menu and get \(promotion.supplement.quantity) more for free"
                     }
                     promotionSupplementView.text = supplementText
                     let promotionSupplementRect = NSString(string: supplementText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: promotionTextSize)!], context: nil)
@@ -224,7 +234,7 @@ class RestaurantPromotionViewCell: UITableViewCell {
     private func setup(){
         addSubview(viewCell)
         
-        addConstraintsWithFormat(format: "V:|[v0]-12-|", views: viewCell)
+        addConstraintsWithFormat(format: "V:|-12-[v0]|", views: viewCell)
         addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: viewCell)
         
         promotionDataView.addSubview(promotionInterestsView)
@@ -234,22 +244,20 @@ class RestaurantPromotionViewCell: UITableViewCell {
         promotionDataView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: promotionInterestsView)
         promotionDataView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: promotionDateView)
         
-        var promotionTypeViewHeight = 0
-        
         promotionTypeView.addSubview(promotionOnView)
-        promotionTypeView.addSubview(promotionCategoryView)
         promotionTypeView.addSubview(promotionAvailabilityView)
         
         promotionTypeView.addConstraintsWithFormat(format: "H:|[v0]", views: promotionOnView)
-        promotionTypeView.addConstraintsWithFormat(format: "H:|[v0]", views: promotionCategoryView)
         promotionTypeView.addConstraintsWithFormat(format: "H:|[v0]", views: promotionAvailabilityView)
         
-        if promotion?.promotionItem.category != nil || promotion?.promotionItem.menu != nil {
-            promotionTypeViewHeight = 86
-            promotionTypeView.addConstraintsWithFormat(format: "V:|[v0(26)]-4-[v1(26)]-4-[v2(26)]|", views: promotionOnView, promotionCategoryView, promotionAvailabilityView)
+        if promotion?.promotionItem.type.id == "04" || promotion?.promotionItem.type.id == "05" {
+            promotionTypeViewHeight = 90
+            promotionTypeView.addSubview(promotionCategoryView)
+            promotionTypeView.addConstraintsWithFormat(format: "H:|[v0]", views: promotionCategoryView)
+            promotionTypeView.addConstraintsWithFormat(format: "V:|[v0(26)]-6-[v1(26)]-6-[v2(26)]|", views: promotionOnView, promotionCategoryView, promotionAvailabilityView)
         } else {
-            promotionTypeViewHeight = 56
-            promotionTypeView.addConstraintsWithFormat(format: "V:|[v0(26)]-4-[v1(26)]|", views: promotionOnView, promotionAvailabilityView)
+            promotionTypeViewHeight = 58
+            promotionTypeView.addConstraintsWithFormat(format: "V:|[v0(26)]-6-[v1(26)]|", views: promotionOnView, promotionAvailabilityView)
         }
         
         promotionAboutView.addSubview(promotionOccasionView)
@@ -276,13 +284,13 @@ class RestaurantPromotionViewCell: UITableViewCell {
         promotionAboutView.addConstraintsWithFormat(format: "H:|[v0]|", views: promotionDataView)
         
         if (promotion?.reduction.hasReduction)! && (promotion?.supplement.hasSupplement)! {
-            promotionAboutView.addConstraintsWithFormat(format: "V:|[v0(\(promotionOccasionHeight))]-4-[v1(\(promotionTypeViewHeight))]-4-[v2(\(promotionPeriodHeight))]-4-[v3(\(promotionReductionHeight))]-4-[v4(\(promotionSupplementHeight))]-8-[v5(26)]", views: promotionOccasionView, promotionTypeView, promotionPeriodView, promotionReductionView, promotionSupplementView, promotionDataView)
+            promotionAboutView.addConstraintsWithFormat(format: "V:|[v0(\(promotionOccasionHeight))]-4-[v1(\(promotionTypeViewHeight))]-8-[v2(\(promotionPeriodHeight))]-4-[v3(\(promotionReductionHeight))]-4-[v4(\(promotionSupplementHeight))]-8-[v5(26)]", views: promotionOccasionView, promotionTypeView, promotionPeriodView, promotionReductionView, promotionSupplementView, promotionDataView)
         } else if (promotion?.reduction.hasReduction)! && !(promotion?.supplement.hasSupplement)! {
-            promotionAboutView.addConstraintsWithFormat(format: "V:|[v0(\(promotionOccasionHeight))]-4-[v1(\(promotionTypeViewHeight))]-4-[v2(\(promotionPeriodHeight))]-4-[v3(\(promotionReductionHeight))]-8-[v4(26)]", views: promotionOccasionView, promotionTypeView, promotionPeriodView, promotionReductionView, promotionDataView)
+            promotionAboutView.addConstraintsWithFormat(format: "V:|[v0(\(promotionOccasionHeight))]-4-[v1(\(promotionTypeViewHeight))]-8-[v2(\(promotionPeriodHeight))]-4-[v3(\(promotionReductionHeight))]-8-[v4(26)]", views: promotionOccasionView, promotionTypeView, promotionPeriodView, promotionReductionView, promotionDataView)
         } else if !(promotion?.reduction.hasReduction)! && (promotion?.supplement.hasSupplement)! {
-             promotionAboutView.addConstraintsWithFormat(format: "V:|[v0(\(promotionOccasionHeight))]-4-[v1(\(promotionTypeViewHeight))]-4-[v2(\(promotionPeriodHeight))]-4-[v3(\(promotionSupplementHeight))]-8-[v4(26)]", views: promotionOccasionView, promotionAboutView, promotionPeriodView, promotionSupplementView, promotionDataView)
+             promotionAboutView.addConstraintsWithFormat(format: "V:|[v0(\(promotionOccasionHeight))]-4-[v1(\(promotionTypeViewHeight))]-8-[v2(\(promotionPeriodHeight))]-4-[v3(\(promotionSupplementHeight))]-8-[v4(26)]", views: promotionOccasionView, promotionTypeView, promotionPeriodView, promotionSupplementView, promotionDataView)
         } else {
-             promotionAboutView.addConstraintsWithFormat(format: "V:|[v0(\(promotionOccasionHeight))]-[v1(\(promotionTypeViewHeight))]-4-[v2(\(promotionPeriodHeight))]-8-[v3(26)]", views: promotionOccasionView, promotionAboutView, promotionPeriodView, promotionDataView)
+             promotionAboutView.addConstraintsWithFormat(format: "V:|[v0(\(promotionOccasionHeight))]-4-[v1(\(promotionTypeViewHeight))]-8-[v2(\(promotionPeriodHeight))]-8-[v3(26)]", views: promotionOccasionView, promotionTypeView, promotionPeriodView, promotionDataView)
         }
         
         viewCell.addSubview(promotionPosterView)
@@ -290,7 +298,7 @@ class RestaurantPromotionViewCell: UITableViewCell {
         
         viewCell.addConstraintsWithFormat(format: "H:|-12-[v0(\(promotionPosterConstant))]-12-[v1]-12-|", views: promotionPosterView, promotionAboutView)
         viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(55)]", views: promotionPosterView)
-        viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(\(40 + 26 + promotionOccasionHeight + promotionPeriodHeight + promotionReductionHeight + promotionSupplementHeight))]-12-|", views: promotionAboutView)
+        viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(\(40 + 30 + promotionOccasionHeight + promotionPeriodHeight + promotionReductionHeight + promotionSupplementHeight + promotionTypeViewHeight))]-12-|", views: promotionAboutView)
     }
     
     required init?(coder: NSCoder) {

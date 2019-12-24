@@ -178,7 +178,6 @@ class MenuDishFoodViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        self.setup()
     }
     
     private func setup() {
@@ -223,7 +222,7 @@ class MenuDishFoodViewCell: UITableViewCell {
         
         viewCell.addConstraintsWithFormat(format: "H:|-12-[v0(\(menuImageConstant))]-12-[v1]-12-|", views: menuImageView, menuAboutView)
         viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(55)]", views: menuImageView)
-        viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(\(95 + menuDescriptionHeight + menuNameHeight))]", views: menuAboutView)
+        viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(\(69 + menuDescriptionHeight + menuNameHeight))]", views: menuAboutView)
     }
     
     required init?(coder: NSCoder) {
