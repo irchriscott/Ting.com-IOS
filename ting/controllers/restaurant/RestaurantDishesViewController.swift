@@ -134,7 +134,7 @@ class RestaurantDishesViewController: UITableViewController, IndicatorInfoProvid
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if self.menus?.count ?? 0 > 0 {
-            return self.restaurantmenuCellHeight(index: indexPath.item)
+            return self.restaurantMenuCellHeight(index: indexPath.item)
         } else {
             let emptyTextRect = NSString(string: "No Menu Dish To Show").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
             return 30 + 90 + 12 + emptyTextRect.height + 30
@@ -162,7 +162,7 @@ class RestaurantDishesViewController: UITableViewController, IndicatorInfoProvid
         return IndicatorInfo(title: "DISHES")
     }
     
-    private func restaurantmenuCellHeight(index: Int) -> CGFloat {
+    private func restaurantMenuCellHeight(index: Int) -> CGFloat {
         
         let device = UIDevice.type
         

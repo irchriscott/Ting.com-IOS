@@ -110,7 +110,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
                                 self.restaurantTabViewController.foodsController.menus = menus
                                 if menus.count > 0 {
                                     for menu in menus {
-                                        self.foodsViewHeight += self.restaurantmenuCellHeight(menu: menu)
+                                        self.foodsViewHeight += self.restaurantMenuCellHeight(menu: menu)
                                     }
                                     self.foodsViewHeight += 60
                                     self.currentHeight = self.foodsViewHeight
@@ -128,7 +128,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
                                 self.restaurantTabViewController.drinksController.menus = menus
                                 if menus.count > 0 {
                                     for menu in menus {
-                                        self.drinksViewHeight += self.restaurantmenuCellHeight(menu: menu)
+                                        self.drinksViewHeight += self.restaurantMenuCellHeight(menu: menu)
                                     }
                                     self.drinksViewHeight += 60
                                     self.currentHeight = self.drinksViewHeight
@@ -146,7 +146,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
                                 self.restaurantTabViewController.dishesController.menus = menus
                                 if menus.count > 0 {
                                     for menu in menus {
-                                        self.dishesViewHeight += self.restaurantmenuCellHeight(menu: menu)
+                                        self.dishesViewHeight += self.restaurantMenuCellHeight(menu: menu)
                                     }
                                     self.dishesViewHeight += 60
                                     self.currentHeight = self.dishesViewHeight
@@ -291,7 +291,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
         return staticValue + promotionOccasionHeight + promotionPeriodHeight + promotionReductionHeight
     }
     
-    private func restaurantmenuCellHeight(menu: RestaurantMenu) -> CGFloat {
+    private func restaurantMenuCellHeight(menu: RestaurantMenu) -> CGFloat {
         
         let device = UIDevice.type
         
@@ -346,8 +346,10 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = Colors.colorWhite
-        view.layer.borderColor = Colors.colorVeryLightGray.cgColor
-        view.layer.borderWidth = 2.0
+        view.layer.borderColor = Colors.colorLightGray.cgColor
+        view.layer.borderWidth = 1.5
+        view.layer.cornerRadius = 2.0
+        view.layer.masksToBounds = true
         return view
     }()
     
@@ -361,8 +363,8 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
             var marginTop: CGFloat = 0
             
             if #available(iOS 13.0, *) {
-                marginTop = (window.windowScene?.statusBarManager?.statusBarFrame.height ?? 0.0) + 40
-            } else { marginTop = UIApplication.shared.statusBarFrame.size.height + 40 }
+                marginTop = window.windowScene?.statusBarManager?.statusBarFrame.height ?? 0.0 + 8
+            } else { marginTop = UIApplication.shared.statusBarFrame.size.height + 8 }
             
             let reviewsMenuView: MenuItemView = {
                 let view = MenuItemView()
@@ -376,7 +378,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
                 let view = MenuItemView()
                 view.translatesAutoresizingMaskIntoConstraints = false
                 view.icon = UIImage(named: "icon_menu_likes_32_gray")!
-                view.title = "Reviews"
+                view.title = "Likes"
                 return view
             }()
             
@@ -387,6 +389,10 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
                 view.title = "About"
                 return view
             }()
+            
+            reviewsMenuView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(navigateToRestaurantReviews(_:))))
+            likesMenuView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(navigateToRestaurantLikes(_:))))
+            aboutMenuView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(navigateToRestaurantAbout(_:))))
             
             popupMenuView.addSubview(reviewsMenuView)
             popupMenuView.addSubview(likesMenuView)
@@ -401,7 +407,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
             let menuHeight = (12 * 4) + (22 * 3) + 12
             
             window.addSubview(popupMenuView)
-            window.addConstraintsWithFormat(format: "H:[v0(175)]-18-|", views: popupMenuView)
+            window.addConstraintsWithFormat(format: "H:[v0(175)]-4-|", views: popupMenuView)
             window.addConstraintsWithFormat(format: "V:|-\(marginTop)-[v0(\(menuHeight))]", views: popupMenuView)
         }
     }
@@ -409,5 +415,29 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
     @objc private func closeMenu(_ sender: Any?) {
         popupMenuOverLay.removeFromSuperview()
         popupMenuView.removeFromSuperview()
+    }
+    
+    @objc private func navigateToRestaurantReviews(_ sender: Any?) {
+        self.closeMenu(nil)
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let reviewsController = storyboard.instantiateViewController(withIdentifier: "RestaurantReviews") as! RestaurantReviewsController
+        reviewsController.branch = self.restaurant
+        self.navigationController?.pushViewController(reviewsController, animated: true)
+    }
+    
+    @objc private func navigateToRestaurantLikes(_ sender: Any?) {
+        self.closeMenu(nil)
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let likesController = storyboard.instantiateViewController(withIdentifier: "RestaurantLikes") as! RestaurantLikesController
+        likesController.branch = self.restaurant
+        self.navigationController?.pushViewController(likesController, animated: true)
+    }
+    
+    @objc private func navigateToRestaurantAbout(_ sender: Any?) {
+        self.closeMenu(nil)
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let aboutController = storyboard.instantiateViewController(withIdentifier: "RestaurantAbout") as! RestaurantAboutController
+        aboutController.branch = self.restaurant
+        self.navigationController?.pushViewController(aboutController, animated: true)
     }
 }

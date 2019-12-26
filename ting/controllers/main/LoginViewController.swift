@@ -147,5 +147,17 @@ class LoginViewController: UIViewController {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
     }
+    
+    @IBAction func signupNow(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let signupController = storyboard.instantiateViewController(withIdentifier: "SignUp") as! SignUpViewController
+        self.present(signupController, animated: true, completion: nil)
+    }
+    
+    @IBAction func resetPassword(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let resetPasswordController = storyboard.instantiateViewController(withIdentifier: "ResetPassword") as! ResetPasswordViewController
+        self.present(resetPasswordController, animated: true, completion: nil)
+    }
 }
 

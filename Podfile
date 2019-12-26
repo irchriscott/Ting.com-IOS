@@ -11,4 +11,5 @@ source 'https://github.com/CocoaPods/Specs.git'
     pod 'ImageViewer', :git => 'https://github.com/Krisiacik/ImageViewer.git'
     pod 'Charts'
     pod 'XLPagerTabStrip'
+    pod 'GradientLoadingBar'
 end

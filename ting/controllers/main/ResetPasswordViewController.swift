@@ -18,10 +18,26 @@ class ResetPasswordViewController: UIViewController {
     
     @IBOutlet var scrollView: UIScrollView!
     
+    @IBOutlet weak var cancelLabel: UIButton!
+    
+    let cancelText: UILabel = {
+        let view = UILabel()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.text = "Cancel".uppercased()
+        view.textColor = Colors.colorPrimary
+        view.font = UIFont(name: "Poppins-Regular", size: 16)!
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShowNotification(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handlekeyboardWillHideNotification(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        self.view.addSubview(cancelText)
+        self.view.addConstraintsWithFormat(format: "V:|-16-[v0]", views: cancelText)
+        self.view.addConstraintsWithFormat(format: "H:[v0]-20-|", views: cancelText)
     }
     
     @IBAction func done(_ sender: UITextField) {
@@ -83,5 +99,11 @@ class ResetPasswordViewController: UIViewController {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
+    }
+    
+    @IBAction func onCancel(_ sender: UIButton){
+        self.resignFirstResponder()
+        self.view.endEditing(true)
+        self.dismiss(animated: true, completion: nil)
     }
 }

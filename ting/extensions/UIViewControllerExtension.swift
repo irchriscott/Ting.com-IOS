@@ -36,7 +36,7 @@ extension UIViewController {
     }
     
     func showViewAnimateLeftToRight(fromView: UIView, toView: UIView, scrollView: UIScrollView){
-        toView.frame.size.width = self.view.frame.width - 50
+        toView.frame.size.width = self.view.frame.width - 24
         toView.center = self.view.center
         scrollView.addSubview(toView)
         toView.transform = CGAffineTransform(translationX: self.view.frame.size.width, y: 0)
@@ -104,5 +104,4 @@ extension UIViewController {
         }
         return self.presentedViewController!.topMostViewController()
     }
-
 }

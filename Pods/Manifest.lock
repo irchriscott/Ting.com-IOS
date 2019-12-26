@@ -20,6 +20,8 @@ PODS:
     - AppAuth (~> 1.2)
     - GTMAppAuth (~> 1.0)
     - GTMSessionFetcher/Core (~> 1.1)
+  - GradientLoadingBar (2.0.0):
+    - LightweightObservable (~> 1.0)
   - GTMAppAuth (1.0.0):
     - AppAuth/Core (~> 1.0)
     - GTMSessionFetcher (~> 1.1)
@@ -32,6 +34,7 @@ PODS:
   - Kingfisher (5.12.0):
     - Kingfisher/Core (= 5.12.0)
   - Kingfisher/Core (5.12.0)
+  - LightweightObservable (1.0.3)
   - ReachabilitySwift (5.0.0)
   - XLPagerTabStrip (9.0.0)
 
@@ -42,6 +45,7 @@ DEPENDENCIES:
   - GoogleMaps
   - GooglePlaces
   - GoogleSignIn
+  - GradientLoadingBar
   - ImageViewer (from `https://github.com/Krisiacik/ImageViewer.git`)
   - Kingfisher
   - ReachabilitySwift
@@ -56,9 +60,11 @@ SPEC REPOS:
     - GoogleMaps
     - GooglePlaces
     - GoogleSignIn
+    - GradientLoadingBar
     - GTMAppAuth
     - GTMSessionFetcher
     - Kingfisher
+    - LightweightObservable
     - ReachabilitySwift
     - XLPagerTabStrip
 
@@ -79,13 +85,15 @@ SPEC CHECKSUMS:
   GoogleMaps: 55da829c68aa931f3ae982b9e341cc2f3d89c587
   GooglePlaces: a62077320f9d64239245af63aa1aa136393ebeb6
   GoogleSignIn: 7137d297ddc022a7e0aa4619c86d72c909fa7213
+  GradientLoadingBar: b46dffa5b505dd0b20ec65b80d178da600d815bb
   GTMAppAuth: 4deac854479704f348309e7b66189e604cf5e01e
   GTMSessionFetcher: 43b8b64263023d4f32caa0b40f4c8bfa3c5f36d8
   ImageViewer: cb88ef1c0ba19161bc10702adfdcebc116a7a59d
   Kingfisher: dc6e0f53bb5b12c3e75bedb0e01bbd7a640eea69
+  LightweightObservable: 8687e8e1e2940ae2f64d7f71fe78c036d89c966f
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
 
-PODFILE CHECKSUM: d5b098a5574e7d12bad9c6622ca540b4dfedb3ef
+PODFILE CHECKSUM: 357cf416629878b3eebc9f9c745e381dc86fd7a8
 
 COCOAPODS: 1.8.4

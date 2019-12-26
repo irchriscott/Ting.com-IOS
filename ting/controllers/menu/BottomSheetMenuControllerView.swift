@@ -338,10 +338,11 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
                 
                 if menu.menu?.dishTime != nil {
                     self.restaurantMenuGroupView.icon = UIImage(named: "ic_restaurants")!
-                    self.restaurantMenuGroupView.alpha = 0.4
+                    self.restaurantMenuGroupView.iconAlpha = 0.4
                     self.restaurantMenuGroupView.text = (menu.type?.name)!
                     
                     self.restaurantMenuTypeView.icon = UIImage(named: "icon_clock_25_black")!
+                    self.restaurantMenuTypeView.iconAlpha = 0.4
                     self.restaurantMenuTypeView.text = (menu.menu?.dishTime)!
                 }
                 

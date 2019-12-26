@@ -41,18 +41,34 @@ class SignUpViewController: UIViewController, UIPickerViewDataSource, UIPickerVi
     @IBOutlet weak var signUpPasswordInput: UITextField!
     @IBOutlet weak var signUpConfirmPasswordInput: UITextField!
     
+    @IBOutlet weak var cancelLabel: UIButton!
+    
     var otherAddressType: String?
     
     let mapOverlay = UIView()
     var locationManager = CLLocationManager()
     var googleMapsView: GMSMapView!
     
+    let cancelText: UILabel = {
+        let view = UILabel()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.text = "Cancel".uppercased()
+        view.textColor = Colors.colorPrimary
+        view.font = UIFont(name: "Poppins-Regular", size: 16)!
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.scrollView.contentSize = CGSize(width: self.view.frame.size.width, height: self.view.frame.size.height)
-        self.signUpIdentityFormView.frame.size.width = self.view.frame.width - 50
+        self.signUpIdentityFormView.frame.size.width = self.view.frame.width - 24
         self.signUpIdentityFormView.center = self.view.center
         self.scrollView.addSubview(self.signUpIdentityFormView)
+        
+        self.view.addSubview(cancelText)
+        self.view.addConstraintsWithFormat(format: "V:|-16-[v0]", views: cancelText)
+        self.view.addConstraintsWithFormat(format: "H:[v0]-20-|", views: cancelText)
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShowNotification(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handlekeyboardWillHideNotification(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -504,23 +520,23 @@ class SignUpViewController: UIViewController, UIPickerViewDataSource, UIPickerVi
                                         })
                                     } catch {}
                                 }
-                            } else {
-                                self.showErrorMessage(message: serverResponse.message)
-                            }
-                        } catch {
-                            self.showErrorMessage(message: error.localizedDescription)
-                        }
+                            } else { self.showErrorMessage(message: serverResponse.message) }
+                            
+                        } catch { self.showErrorMessage(message: error.localizedDescription) }
                     }
                 }.resume()
-            } else {
-                self.showErrorMessage(message: "Passwords Didnt Match")
-            }
-        } else {
-            self.showErrorMessage(message: "Please Fill All The Fields")
-        }
+            } else { self.showErrorMessage(message: "Passwords Didnt Match") }
+            
+        } else { self.showErrorMessage(message: "Please Fill All The Fields") }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
+    }
+    
+    @IBAction func onCancel(_ sender: UIButton){
+        self.resignFirstResponder()
+        self.view.endEditing(true)
+        self.dismiss(animated: true, completion: nil)
     }
 }

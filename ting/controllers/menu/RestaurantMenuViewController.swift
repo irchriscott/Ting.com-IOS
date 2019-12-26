@@ -412,7 +412,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                     view.translatesAutoresizingMaskIntoConstraints = false
                     view.image = UIImage(named: "icon_bubble_chat_96_gray")!
                     view.contentMode = .scaleAspectFill
-                    view.alpha = 0.6
+                    view.alpha = 0.2
                     return view
                 }()
                 

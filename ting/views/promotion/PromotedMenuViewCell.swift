@@ -196,8 +196,6 @@ class PromotedMenuViewCell: UITableViewCell {
                 
                 menuDescriptionHeight = menuDescriptionRect.height
                 menuNameHeight = menuNameRect.height
-                
-                print(menuDescriptionHeight)
             }
             self.setup()
         }

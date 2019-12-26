@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import GradientLoadingBar
 
 class HomeRestaurantsViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CLLocationManagerDelegate {
     
@@ -25,6 +26,8 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     var isMapOpened: Bool = false
     var mapCenter: CLLocation?
     var selectedBranch: Branch?
+    
+    let gradientLoadingBar = GradientLoadingBar(height: 4.0, isRelativeToSafeArea: false)
     
     let mapFloatingButton: FloatingButton = {
         let view = FloatingButton()
@@ -90,6 +93,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     private func getRestaurants(location: CLLocation?){
         self.spinnerViewHeight = 100
         self.restaurants = []
+        self.gradientLoadingBar.fadeIn()
         APIDataProvider.instance.getRestaurants(url: URLs.restaurantsGlobal) { (branches) in
             DispatchQueue.main.async {
                 if !branches.isEmpty {
@@ -107,6 +111,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                 self.spinnerViewHeight = 0
                 self.collectionView.reloadData()
                 self.refresherLoadingView.endRefreshing()
+                self.gradientLoadingBar.fadeOut()
             }
         }
     }

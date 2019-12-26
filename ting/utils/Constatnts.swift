@@ -63,6 +63,7 @@ struct URLs {
     //RESTAURANT
     
     static let restaurantsGlobal        = "\(endPoint)usr/g/restaurants/all/"
+    static let checkRestaurantReview    = "\(endPoint)usr/g/restaurants/reviews/check/"
     
     //MENU
     
