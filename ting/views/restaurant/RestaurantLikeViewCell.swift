@@ -16,7 +16,7 @@ class RestaurantLikeViewCell: UITableViewCell {
         
     let userNameTextSize: CGFloat = 14
     let restaurantAddressTextSize: CGFloat = 13
-    let userImageConstant: CGFloat = 74
+    let userImageConstant: CGFloat = 70
         
     let viewCell: UIView = {
         let view = UIView()
@@ -33,7 +33,7 @@ class RestaurantLikeViewCell: UITableViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 4
         view.layer.masksToBounds = true
-        view.frame = CGRect(x: 0, y: 0, width: 74, height: 74)
+        view.frame = CGRect(x: 0, y: 0, width: 70, height: 70)
         view.image = UIImage(named: "default_user")!
         view.contentMode = .scaleAspectFill
         return view
