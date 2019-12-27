@@ -108,4 +108,5 @@ struct BranchUrls: Codable {
     let apiReviews: String
     let apiAddReview: String
     let apiLikes: String
+    let apiAddLike: String
 }

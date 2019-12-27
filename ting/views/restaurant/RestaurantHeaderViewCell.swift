@@ -41,6 +41,7 @@ class RestaurantHeaderViewCell: UICollectionViewCell, CLLocationManagerDelegate 
         view.contentMode = .scaleAspectFill
         view.translatesAutoresizingMaskIntoConstraints = false
         view.clipsToBounds = true
+        view.isUserInteractionEnabled = true
         return view
     }()
     
@@ -136,6 +137,10 @@ class RestaurantHeaderViewCell: UICollectionViewCell, CLLocationManagerDelegate 
         self.restaurantDistanceView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(showUserAddresses)))
         self.restaurantDistanceView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openRestaurantMap)))
         self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeRestaurantMap)))
+        
+        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(likeRestaurantToggle(_sender:)))
+        doubleTap.numberOfTapsRequired = 2
+        self.profileImageView.addGestureRecognizer(doubleTap)
         
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -318,6 +323,78 @@ class RestaurantHeaderViewCell: UICollectionViewCell, CLLocationManagerDelegate 
         mapView.removeFromSuperview()
         isMapOpened = false
         mapCenter = nil
+    }
+    
+    @objc func likeRestaurantToggle(_sender: Any?) {
+        
+        if let branch = self.branch, let restaurant = self.branch?.restaurant {
+            
+            guard let url = URL(string: "\(URLs.hostEndPoint)\(branch.urls.apiAddLike)") else { return }
+            let params: Parameters = ["restaurant": "\(restaurant.id)"]
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            
+            request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+            request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+            
+            let boundary = Requests().generateBoundary()
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            
+            let httpBody = Requests().createDataBody(withParameters: params, media: nil, boundary: boundary)
+            request.httpBody = httpBody
+            
+            let session = URLSession.shared
+            session.dataTask(with: request){ (data, response, error) in
+                if response != nil {}
+                if let data = data {
+                    do {
+                        let serverResponse = try JSONDecoder().decode(ServerResponse.self, from: data)
+                        if serverResponse.type == "success" {
+                            DispatchQueue.main.async {
+                                Toast.makeToast(message: serverResponse.message, duration: Toast.MID_LENGTH_DURATION, style: .success)
+                                
+                                let imageLikeView: UIImageView = {
+                                    let view =  UIImageView()
+                                    view.translatesAutoresizingMaskIntoConstraints = false
+                                    view.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+                                    view.alpha = 0.0
+                                    view.contentMode = .scaleAspectFill
+                                    return view
+                                }()
+                                
+                                if serverResponse.message.contains("Disliked") {
+                                    imageLikeView.image = UIImage(named: "icon_like_filled_100_gray")!
+                                } else { imageLikeView.image = UIImage(named: "icon_like_filled_100_primary")! }
+                                
+                                self.profileImageView.addSubview(imageLikeView)
+                                self.profileImageView.addConstraintsWithFormat(format: "H:[v0(100)]", views: imageLikeView)
+                                self.profileImageView.addConstraintsWithFormat(format: "V:[v0(100)]", views: imageLikeView)
+                                
+                                self.profileImageView.addConstraint(NSLayoutConstraint(item: self.profileImageView, attribute: .centerX, relatedBy: .equal, toItem: imageLikeView, attribute: .centerX, multiplier: 1, constant: 0))
+                                self.profileImageView.addConstraint(NSLayoutConstraint(item: self.profileImageView, attribute: .centerY, relatedBy: .equal, toItem: imageLikeView, attribute: .centerY, multiplier: 1, constant: 0))
+                                
+                                UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseInOut, animations: {
+                                    imageLikeView.alpha = 0.6
+                                }) { (success) in
+                                    imageLikeView.alpha = 0.0
+                                    imageLikeView.removeFromSuperview()
+                                }
+                            }
+                        } else {
+                            DispatchQueue.main.async {
+                                Toast.makeToast(message: serverResponse.message, duration: Toast.MID_LENGTH_DURATION, style: .error)
+                            }
+                        }
+                    } catch {
+                        DispatchQueue.main.async {
+                            Toast.makeToast(message: error.localizedDescription, duration: Toast.MID_LENGTH_DURATION, style: .error)
+                        }
+                    }
+                }
+            }.resume()
+            
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {

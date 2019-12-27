@@ -192,7 +192,7 @@ class RestaurantLikesController: UITableViewController {
                 
             let userNameTextSize: CGFloat = 14
             let restaurantAddressTextSize: CGFloat = 13
-            let userImageConstant: CGFloat = 50
+            let userImageConstant: CGFloat = 74
             
             let frameWidth = view.frame.width - (60 + userImageConstant)
             
