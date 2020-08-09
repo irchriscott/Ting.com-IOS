@@ -224,7 +224,6 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! RestaurantViewCell
         let restaurant = self.restaurants[indexPath.item]
         cell.branch = restaurant
-        cell.menus = restaurant.menus.menus
         cell.controller = self
         return cell
     }
@@ -274,7 +273,23 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             if branchNameRect.height > 25 { valueToAdd += 8 }
             if branchAddressRect.height > 25 { valueToAdd += 8 }
             
-            let cellHeight: CGFloat = 2 + 20 + 4 + 8 + 45 + 8 + 26 + 8 + 26 + branchNameRect.height + branchAddressRect.height + 16 + valueToAdd
+            var restaurantCuisinesText: String
+            
+            if let cuisines = branch.restaurant?.foodCategories?.categories {
+                restaurantCuisinesText = cuisines.map { (cuisine) -> String in cuisine.name! }.joined(separator: ", ")
+            } else {
+                restaurantCuisinesText = " - "
+            }
+            
+            let restaurantCategoriesText = branch.categories.categories.map { (category) -> String in
+                category.name
+            }.joined(separator: ", ")
+            
+            let restaurantCuisinesRect = NSString(string: restaurantCuisinesText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+            
+            let restaurantCategoriesRect = NSString(string: restaurantCategoriesText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+            
+            let cellHeight: CGFloat = 2 + 20 + 4 + 8 + 45 + 8 + 26 + 8 + 26 + branchNameRect.height + branchAddressRect.height + 16 + restaurantCuisinesRect.height + restaurantCategoriesRect.height + 12 + valueToAdd
             
             return CGSize(width: view.frame.width, height: cellHeight)
         }

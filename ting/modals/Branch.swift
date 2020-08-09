@@ -22,8 +22,10 @@ struct Branch: Codable {
     let email: String
     let phone: String
     let isAvailable: Bool
+    let categories: RestaurantCategories
     let tables: BranchTables
     let specials: [BranchSpecials]
+    let services: [BranchSpecials]
     let menus: BranchMenus
     let promotions: BranchPromotions?
     let reviews: BranchReviews?
@@ -91,7 +93,7 @@ struct BranchReviews: Codable {
 
 struct BranchLikes: Codable {
     let count: Int
-    let likes: [UserRestaurant]?
+    let likes: [Int]?
 }
 
 struct BranchUrls: Codable {
@@ -109,4 +111,14 @@ struct BranchUrls: Codable {
     let apiAddReview: String
     let apiLikes: String
     let apiAddLike: String
+}
+
+struct TableLocation : Codable {
+    let id: Int
+    let name: String
+}
+
+struct BranchTableLocations : Codable {
+    let locations: [TableLocation]
+    let tables: [Int]
 }

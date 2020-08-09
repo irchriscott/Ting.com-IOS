@@ -23,6 +23,9 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
     var restaurantAddressTextSize: CGFloat = 13
     var restaurantImageConstant: CGFloat = 80
     
+    var restaurantCuisinesHeight: CGFloat = 0
+    var restaurantCategoriesHeight: CGFloat = 0
+    
     let viewCell: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -112,6 +115,23 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         return view
     }()
     
+    let restaurantCuisines: InlineIconTextView = {
+        let view = InlineIconTextView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.icon = UIImage(named: "icon_cuisines_36_gray")!
+        view.size = .small
+        view.text = " - "
+        return view
+    }()
+    
+    let restaurantCategories: InlineIconTextView = {
+        let view = InlineIconTextView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.icon = UIImage(named: "icon_categories_36_gray")!
+        view.size = .small
+        view.text = " - "
+        return view
+    }()
     
     let restaurantStatusView: UIView = {
         let view = UIView()
@@ -181,11 +201,20 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
     }
     
     var menus: [RestaurantMenu]? {
-        didSet {}
+        didSet {
+            if let menus = self.menus {
+                self.shuffeledMenus = menus.filter({ (m) -> Bool in m.type?.id == 3 })
+                self.setup()
+                self.restaurantMenusView.reloadData()
+            }
+        }
     }
     
     var shuffeledMenus: [RestaurantMenu]? {
-        didSet {}
+        didSet {
+            self.setup()
+            self.restaurantMenusView.reloadData()
+        }
     }
     
     var branch: Branch? {
@@ -202,6 +231,22 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
                 self.restaurantReviewsView.text = numberFormatter.string(from: NSNumber(value: branch.reviews!.count)) ?? "0"
                 self.restaurantSpecialsView.text = String(branch.specials.count)
                 self.setTimeStatus()
+                
+                let restaurantCuisinesText = branch.categories.categories.map { (cuisine) -> String in
+                    cuisine.name
+                }.joined(separator: ", ")
+                
+                restaurantCuisines.text = restaurantCuisinesText
+                
+                var restaurantCategoriesText: String
+                
+                if let categories = branch.restaurant?.foodCategories?.categories {
+                    restaurantCategoriesText = categories.map { (category) -> String in category.name! }.joined(separator: ", ")
+                } else {
+                    restaurantCategoriesText = " - "
+                }
+                
+                restaurantCategories.text = restaurantCategoriesText
                 
                 if UIDevice.smallDevices.contains(device) {
                     restaurantImageConstant = 55
@@ -221,7 +266,20 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
                 restaurantAddressHeight = branchAddressRect.height
                 restaurantNameHeight = branchNameRect.height
                 
-                self.shuffeledMenus = (branch.menus.menus)!.filter({ (m) -> Bool in m.type?.id == 3 })
+                let restaurantCuisinesRect = NSString(string: restaurantCuisinesText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+                
+                let restaurantCategoriesRect = NSString(string: restaurantCategoriesText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+                
+                restaurantCuisinesHeight = restaurantCuisinesRect.height
+                restaurantCategoriesHeight = restaurantCategoriesRect.height
+                
+                APIDataProvider.instance.getRestaurantToMenus(branch: branch.id) { (menus) in
+                    DispatchQueue.main.async {
+                        if !menus.isEmpty {
+                            self.menus = menus
+                        }
+                    }
+                }
             }
             self.setup()
         }
@@ -292,6 +350,8 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         restaurantProfileView.addSubview(restaurantRating)
         restaurantProfileView.addSubview(restaurantAddressView)
         restaurantProfileView.addSubview(restaurantMenusView)
+        restaurantProfileView.addSubview(restaurantCuisines)
+        restaurantProfileView.addSubview(restaurantCategories)
         restaurantProfileView.addSubview(restaurantStatusView)
         restaurantProfileView.addSubview(restaurantDataView)
         
@@ -301,9 +361,11 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantRating)
         restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantAddressView)
         restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenusView)
+        restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantCuisines)
+        restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantCategories)
         restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantStatusView)
         restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDataView)
-        restaurantProfileView.addConstraintsWithFormat(format: "V:|[v0(\(restaurantNameHeight))]-2-[v1]-4-[v2(\(restaurantAddressHeight))]-8-[v3(45)]-8-[v4(26)]-8-[v5(26)]-12-|", views: restaurantName, restaurantRating, restaurantAddressView, restaurantMenusView, restaurantStatusView, restaurantDataView)
+        restaurantProfileView.addConstraintsWithFormat(format: "V:|[v0(\(restaurantNameHeight))]-2-[v1]-4-[v2(\(restaurantAddressHeight))]-8-[v3(45)]-8-[v4(\(restaurantCuisinesHeight))]-4-[v5(\(restaurantCategoriesHeight))]-8-[v6(26)]-8-[v7(26)]-12-|", views: restaurantName, restaurantRating, restaurantAddressView, restaurantMenusView, restaurantCuisines, restaurantCategories, restaurantStatusView, restaurantDataView)
         
         viewCell.addSubview(restaurantImageView)
         viewCell.addSubview(restaurantProfileView)

@@ -325,9 +325,7 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
                 }
                 
                 let interests = promotion.interests.interests
-                
-                let checkInterest = interests.first { (interest) -> Bool in interest.user.id == session.id }
-                if checkInterest != nil { promotionInterestImage.image =  UIImage(named: "icon_star_filled_25_gray") }
+                if interests.contains(session.id) { promotionInterestImage.image =  UIImage(named: "icon_star_filled_25_gray") }
                 
                 self.setRestaurantDistance()
             }

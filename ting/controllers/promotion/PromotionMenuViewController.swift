@@ -33,29 +33,23 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
             if let promotion = self.promotion {
                 switch promotion.promotionItem.type.id {
                 case "00":
-                    if let branch = promotion.branch {
-                        self.promotedMenus = branch.menus.menus
+                    if let menus = promotion.menus.menus {
+                        self.promotedMenus = menus
                     }
                     break
                 case "01":
-                    if let branch = promotion.branch {
-                        self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
-                            menu.type?.id == 1
-                            })
+                    if let menus = promotion.menus.menus {
+                        self.promotedMenus = menus
                     }
                     break
                 case "02":
-                    if let branch = promotion.branch {
-                        self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
-                            menu.type?.id == 2
-                            })
+                    if let menus = promotion.menus.menus {
+                        self.promotedMenus = menus
                     }
                     break
                 case "03":
-                    if let branch = promotion.branch {
-                        self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
-                            menu.type?.id == 3
-                            })
+                    if let menus = promotion.menus.menus {
+                        self.promotedMenus = menus
                     }
                     break
                 case "04":
@@ -64,16 +58,16 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
                     }
                     break
                 case "05":
-                    if let branch = promotion.branch, let category = promotion.promotionItem.category {
-                        self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
-                            menu.menu?.category?.id == category.id
-                            })
+                    if let menus = promotion.menus.menus {
+                        self.promotedMenus = menus
                     }
                     break
                 default: break
                     
                 }
                 self.tableView.reloadData()
+                self.promotionDetailsView.reloadData()
+                self.promotedMenusView.reloadData()
             }
         }
     }

@@ -16,6 +16,7 @@ struct MenuPromotion: Codable {
     let uuid: String
     let uuidUrl: String
     let promotionItem: PromotionItem
+    let menus: PromotionMenus
     let reduction: PromotionReduction
     let supplement: PromotionSupplement
     let period: String
@@ -63,7 +64,7 @@ struct PromotionInterest: Codable {
 
 struct PromotionInterests: Codable {
     let count: Int
-    let interests: [PromotionInterest]
+    let interests: [Int]
 }
 
 struct PromotionUrls: Codable {
@@ -71,4 +72,17 @@ struct PromotionUrls: Codable {
     let interest: String
     let apiGet: String
     let apiInterest: String
+}
+
+struct PromotionMenus : Codable {
+    let count: Int
+    let menus: [RestaurantMenu]?
+}
+
+struct PromotionDataString : Codable {
+    let id: Int
+    let occasionEvent: String
+    let posterImage: String
+    let supplement: String?
+    let reduction: String?
 }

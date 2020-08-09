@@ -40,9 +40,11 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                 APIDataProvider.instance.getRestaurantMenu(url: url) { (restoMenu) in
                     DispatchQueue.main.async {
                         self.restaurantMenu = restoMenu
+                        self.tableView.reloadData()
                         self.restaurantDetailsView.reloadData()
                         self.restaurantMenuReviewsView.reloadData()
                         self.restaurantMenuPromotionsView.reloadData()
+                        self.restaurantMenuDishFoodsView.reloadData()
                     }
                 }
             }
@@ -187,9 +189,11 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             APIDataProvider.instance.getRestaurantMenu(url: "\(URLs.hostEndPoint)\((menu.urls?.apiGet)!)") { (restoMenu) in
                 DispatchQueue.main.async {
                     self.restaurantMenu = restoMenu
+                    self.tableView.reloadData()
                     self.restaurantDetailsView.reloadData()
                     self.restaurantMenuReviewsView.reloadData()
                     self.restaurantMenuPromotionsView.reloadData()
+                    self.restaurantMenuDishFoodsView.reloadData()
                 }
             }
         }
@@ -260,10 +264,10 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         switch tableView {
         case self.tableView:
             if promotions?.count ?? 0 > 0 {
-                return (self.restaurantMenu?.type!.id)! == 3 ? 4 : 3
-            } else { return (self.restaurantMenu?.type!.id)! == 3 ? 3 : 2 }
+                return self.restaurantMenu?.type!.id == 3 ? 4 : 3
+            } else { return self.restaurantMenu?.type!.id == 3 ? 3 : 2 }
         case restaurantMenuDishFoodsView:
-            return (self.restaurantMenu?.type!.id)! == 3 ? (self.restaurantMenu?.menu?.foods!.count)! : 0
+            return self.restaurantMenu?.type!.id == 3 ? (self.restaurantMenu?.menu?.foods!.count)! : 0
         case restaurantMenuPromotionsView:
             return self.promotions?.count ?? 0
         case restaurantMenuReviewsView:
@@ -280,7 +284,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         switch tableView {
         case self.tableView:
             if promotions?.count ?? 0 > 0 {
-                if (self.restaurantMenu?.type!.id)! == 3 {
+                if self.restaurantMenu?.type!.id == 3 {
                     switch indexPath.item {
                     case 0:
                         let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
@@ -337,7 +341,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                     }
                 }
             } else {
-                if (self.restaurantMenu?.type!.id)! == 3 {
+                if self.restaurantMenu?.type!.id == 3 {
                     switch indexPath.item {
                     case 0:
                         let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
@@ -393,7 +397,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             cell.selectionStyle = .none
             return cell
         case restaurantMenuReviewsView:
-            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+            if self.restaurantMenu?.menu?.reviews?.reviews?.count ?? 0 > 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReview, for: indexPath) as! MenuReviewViewCell
                 cell.selectionStyle = .none
                 cell.review = self.restaurantMenu?.menu?.reviews?.reviews![indexPath.item]
@@ -502,7 +506,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         switch tableView {
         case self.tableView:
             if promotions?.count ?? 0 > 0 {
-                if (self.restaurantMenu?.type!.id)! == 3 {
+                if self.restaurantMenu?.type!.id == 3 {
                     switch indexPath.item {
                     case 0:
                         return self.restaurantDetailsViewHeight
@@ -602,7 +606,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
                     }
                 }
             } else {
-                if (self.restaurantMenu?.type!.id)! == 3 {
+                if self.restaurantMenu?.type!.id == 3 {
                     switch indexPath.item {
                     case 0:
                         return self.restaurantDetailsViewHeight

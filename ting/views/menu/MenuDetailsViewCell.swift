@@ -114,6 +114,13 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         return view
     }()
     
+    let restaurantMenuCuisineView: ImageTextView = {
+        let view = ImageTextView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.text = "Fast Food"
+        return view
+    }()
+    
     let separatorZero: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -301,6 +308,9 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
                 if menu.type?.id != 2 {
                     self.restaurantMenuCategoryView.imageURL = "\(URLs.hostEndPoint)\((menu.menu?.category?.image)!)"
                     self.restaurantMenuCategoryView.text = (menu.menu?.category?.name)!
+                    
+                    self.restaurantMenuCuisineView.imageURL = "\(URLs.hostEndPoint)\((menu.menu?.cuisine?.image)!)"
+                    self.restaurantMenuCuisineView.text = (menu.menu?.cuisine?.name)!
                 }
                 
                 if menu.menu?.foodType != nil {
@@ -409,8 +419,7 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
                 }
                 
                 if let likes = menu.menu?.likes?.likes {
-                    let checkLike = likes.first { (like) -> Bool in like.user.id == session.id }
-                    if checkLike != nil { restaurantLikeImage.image =  UIImage(named: "icon_heart_like_32_primary") }
+                    if likes.contains(session.id) { restaurantLikeImage.image =  UIImage(named: "icon_heart_like_32_primary") }
                 }
                 
                 self.setRestaurantDistance()
@@ -452,19 +461,21 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         
         if menu?.type?.id != 2 {
             restaurantMenuView.addSubview(restaurantMenuCategoryView)
+            restaurantMenuView.addSubview(restaurantMenuCuisineView)
         }
         
         restaurantMenuView.addSubview(restaurantMenuGroupView)
         restaurantMenuView.addSubview(restaurantMenuTypeView)
         
         if menu?.type?.id != 2 {
-            restaurantMenuView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]-8-[v2]", views: restaurantMenuCategoryView, restaurantMenuGroupView, restaurantMenuTypeView)
+            restaurantMenuView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]-8-[v2]-8-[v3]", views: restaurantMenuCategoryView, restaurantMenuGroupView, restaurantMenuTypeView, restaurantMenuCuisineView)
         } else {
             restaurantMenuView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]", views: restaurantMenuGroupView, restaurantMenuTypeView)
         }
         
         if menu?.type?.id != 2 {
             restaurantMenuView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: restaurantMenuCategoryView)
+            restaurantMenuView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: restaurantMenuCuisineView)
         }
         
         restaurantMenuView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: restaurantMenuGroupView)

@@ -167,6 +167,17 @@ class APIDataProvider: NSObject {
                 do {
                     let promotion = try JSONDecoder().decode(MenuPromotion.self, from: data)
                     DispatchQueue.main.async { completion(promotion) }
+                } catch let DecodingError.dataCorrupted(context) {
+                print(context)
+                } catch let DecodingError.keyNotFound(key, context) {
+                print("Key '\(key)' not found:", context.debugDescription)
+                print("codingPath:", context.codingPath)
+                } catch let DecodingError.valueNotFound(value, context) {
+                print("Value '\(value)' not found:", context.debugDescription)
+                print("codingPath:", context.codingPath)
+                } catch let DecodingError.typeMismatch(type, context)  {
+                print("Type '\(type)' mismatch:", context.debugDescription)
+                print("codingPath:", context.codingPath)
                 } catch {
                     DispatchQueue.main.async {
                         completion(nil)
@@ -221,6 +232,33 @@ class APIDataProvider: NSObject {
                 do {
                     let likes = try JSONDecoder().decode([UserRestaurant].self, from: data)
                     DispatchQueue.main.async { completion(likes) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([])
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
+    
+    public func getRestaurantToMenus(branch: Int, completion: @escaping ([RestaurantMenu]) -> ()) {
+        
+        guard let url = URL(string: String(format: URLs.restaurantTopMenus, arguments: [branch])) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let menus = try JSONDecoder().decode([RestaurantMenu].self, from: data)
+                    DispatchQueue.main.async { completion(menus) }
                 } catch {
                     DispatchQueue.main.async {
                         completion([])

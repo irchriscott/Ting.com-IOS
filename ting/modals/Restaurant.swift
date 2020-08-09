@@ -52,7 +52,7 @@ struct RestaurantConfig: Codable {
 
 struct RestaurantCategories: Codable {
     let count: Int
-    let categories: [CategoryRestaurant]
+    let categories: [RestaurantCategory]
 }
 
 struct RestaurantBranches: Codable {
@@ -73,12 +73,13 @@ struct RestaurantImages: Codable {
 
 struct RestaurantFoodCategories: Codable {
     let count: Int
-    let foodCategories: [FoodCategory]?
+    let categories: [FoodCategory]?
 }
 
 struct RestaurantCategory: Codable {
     let name: String
     let country: String
+    let image: String
     let createdAt: String
     let updatedAt: String
 }
