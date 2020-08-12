@@ -167,17 +167,6 @@ class APIDataProvider: NSObject {
                 do {
                     let promotion = try JSONDecoder().decode(MenuPromotion.self, from: data)
                     DispatchQueue.main.async { completion(promotion) }
-                } catch let DecodingError.dataCorrupted(context) {
-                print(context)
-                } catch let DecodingError.keyNotFound(key, context) {
-                print("Key '\(key)' not found:", context.debugDescription)
-                print("codingPath:", context.codingPath)
-                } catch let DecodingError.valueNotFound(value, context) {
-                print("Value '\(value)' not found:", context.debugDescription)
-                print("codingPath:", context.codingPath)
-                } catch let DecodingError.typeMismatch(type, context)  {
-                print("Type '\(type)' mismatch:", context.debugDescription)
-                print("codingPath:", context.codingPath)
                 } catch {
                     DispatchQueue.main.async {
                         completion(nil)
@@ -262,6 +251,62 @@ class APIDataProvider: NSObject {
                 } catch {
                     DispatchQueue.main.async {
                         completion([])
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
+    
+    public func getCuisines(completion: @escaping ([RestaurantCategory]) -> ()){
+        
+        guard let url = URL(string: URLs.cuisineGlobal) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let cuisines = try JSONDecoder().decode([RestaurantCategory].self, from: data)
+                    LocalData.instance.saveCuisines(data: data)
+                    DispatchQueue.main.async { completion(cuisines) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([])
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
+    
+    public func getFilters(completion: @escaping (RestaurantFilters?) -> ()){
+        
+        guard let url = URL(string: URLs.cuisineGlobal) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let filters = try JSONDecoder().decode(RestaurantFilters.self, from: data)
+                    LocalData.instance.saveFilters(data: data)
+                    DispatchQueue.main.async { completion(filters) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion(nil)
                         self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
                     }
                 }

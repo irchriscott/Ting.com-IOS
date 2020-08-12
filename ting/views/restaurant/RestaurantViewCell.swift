@@ -277,6 +277,7 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
                     DispatchQueue.main.async {
                         if !menus.isEmpty {
                             self.menus = menus
+                            self.restaurantMenusView.reloadData()
                         }
                     }
                 }
@@ -293,6 +294,7 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
     }
     
     private func setup(){
+        
         addSubview(viewCell)
         
         numberFormatter.numberStyle = .decimal
@@ -379,12 +381,14 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.menus?.count ?? 0 >= 4 ? 4 : self.menus?.count ?? 0
+        return self.menus?.count ?? 0 >= 4 ? 4 : self.menus?.count ?? 4
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! RestaurantViewCellMenuViewCell
-        cell.menu = self.menus?[indexPath.item]
+        if let menus = self.menus {
+            cell.menu = menus[indexPath.item]
+        }
         return cell
     }
     
@@ -490,15 +494,31 @@ class RestaurantViewCellMenuViewCell: UICollectionViewCell {
                 self.menuImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(image.image)")!)
                 self.menuImageView.alpha = 1.0
                 self.menuImageView.contentMode = .scaleAspectFill
+                windless.end()
             }
+            self.setup()
         }
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.setup()
+    }
+    
+    private func setup() {
         addSubview(menuImageView)
         addConstraintsWithFormat(format: "H:|[v0(\(frame.width))]|", views: menuImageView)
         addConstraintsWithFormat(format: "V:|[v0(\(frame.height))]|", views: menuImageView)
+        
+//        if menu == nil {
+//            windless.setupWindlessableViews([menuImageView]).apply({ (config) in
+//                config.animationLayerOpacity = 0.6
+//                config.direction = .right
+//                config.duration = 2.0
+//                config.pauseDuration = 0.5
+//                config.animationLayerColor = Colors.colorLightGray
+//            }).start()
+//        }
     }
     
     required init?(coder aDecoder: NSCoder) {

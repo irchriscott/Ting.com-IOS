@@ -64,7 +64,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
                     })
                     if promotions.count > 0 {
                         for promo in promotions {
-                            self.promotionViewHeight += self.menuPromotionViewCellHeight(promotion: promo)
+                            self.promotionViewHeight += self.menuPromotionViewCellHeight(promotion: promo) + 3
                         }
                         self.promotionViewHeight += CGFloat(12 * promotions.count)
                         self.currentHeight = self.promotionViewHeight
@@ -91,7 +91,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
                                     })
                                     if promotions.count > 0 {
                                         for promo in promotions {
-                                            self.promotionViewHeight += self.menuPromotionViewCellHeight(promotion: promo)
+                                            self.promotionViewHeight += self.menuPromotionViewCellHeight(promotion: promo) + 3
                                         }
                                         self.promotionViewHeight += 60
                                         self.currentHeight = self.promotionViewHeight
@@ -346,9 +346,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = Colors.colorWhite
-        view.layer.borderColor = Colors.colorLightGray.cgColor
-        view.layer.borderWidth = 1.5
-        view.layer.cornerRadius = 2.0
+        view.layer.cornerRadius = 3.0
         view.layer.masksToBounds = true
         return view
     }()
@@ -365,6 +363,14 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
             if #available(iOS 13.0, *) {
                 marginTop = window.windowScene?.statusBarManager?.statusBarFrame.height ?? 0.0 + 8
             } else { marginTop = UIApplication.shared.statusBarFrame.size.height + 8 }
+            
+            let specificationsMenuView: MenuItemView = {
+                let view = MenuItemView()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.icon = UIImage(named: "icon_specifications_25_gray")!
+                view.title = "Specifications"
+                return view
+            }()
             
             let reviewsMenuView: MenuItemView = {
                 let view = MenuItemView()
@@ -390,24 +396,27 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
                 return view
             }()
             
+            specificationsMenuView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(navigateToRestaurantSpecifications(_:))))
             reviewsMenuView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(navigateToRestaurantReviews(_:))))
             likesMenuView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(navigateToRestaurantLikes(_:))))
             aboutMenuView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(navigateToRestaurantAbout(_:))))
             
+            popupMenuView.addSubview(specificationsMenuView)
             popupMenuView.addSubview(reviewsMenuView)
             popupMenuView.addSubview(likesMenuView)
             popupMenuView.addSubview(aboutMenuView)
             
-            popupMenuView.addConstraintsWithFormat(format: "H:|-16-[v0]-16-|", views: reviewsMenuView)
-            popupMenuView.addConstraintsWithFormat(format: "H:|-16-[v0]-16-|", views: likesMenuView)
-            popupMenuView.addConstraintsWithFormat(format: "H:|-16-[v0]-16-|", views: aboutMenuView)
+            popupMenuView.addConstraintsWithFormat(format: "H:|-12-[v0]-16-|", views: specificationsMenuView)
+            popupMenuView.addConstraintsWithFormat(format: "H:|-12-[v0]-16-|", views: reviewsMenuView)
+            popupMenuView.addConstraintsWithFormat(format: "H:|-12-[v0]-16-|", views: likesMenuView)
+            popupMenuView.addConstraintsWithFormat(format: "H:|-12-[v0]-16-|", views: aboutMenuView)
             
-            popupMenuView.addConstraintsWithFormat(format: "V:|-16-[v0(22)]-14-[v1(22)]-14-[v2(22)]-16-|", views: reviewsMenuView, likesMenuView, aboutMenuView)
+            popupMenuView.addConstraintsWithFormat(format: "V:|-12-[v0(22)]-18-[v1(22)]-18-[v2(22)]-18-[v3(22)]-12-|", views: specificationsMenuView, reviewsMenuView, likesMenuView, aboutMenuView)
             
-            let menuHeight = (12 * 4) + (22 * 3) + 12
+            let menuHeight = (12 * 2) + (22 * 4) + (18 * 3)
             
             window.addSubview(popupMenuView)
-            window.addConstraintsWithFormat(format: "H:[v0(175)]-4-|", views: popupMenuView)
+            window.addConstraintsWithFormat(format: "H:[v0(195)]-4-|", views: popupMenuView)
             window.addConstraintsWithFormat(format: "V:|-\(marginTop)-[v0(\(menuHeight))]", views: popupMenuView)
         }
     }
@@ -439,5 +448,13 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
         let aboutController = storyboard.instantiateViewController(withIdentifier: "RestaurantAbout") as! RestaurantAboutController
         aboutController.branch = self.restaurant
         self.navigationController?.pushViewController(aboutController, animated: true)
+    }
+    
+    @objc private func navigateToRestaurantSpecifications(_ sender: Any?) {
+        self.closeMenu(nil)
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let specificationsController = storyboard.instantiateViewController(withIdentifier: "RestaurantSpecifications") as! RestaurantSpecificationsViewController
+        specificationsController.branch = self.restaurant
+        self.navigationController?.pushViewController(specificationsController, animated: true)
     }
 }

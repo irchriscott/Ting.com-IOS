@@ -121,6 +121,13 @@ class RestaurantMenuViewCell: UITableViewCell {
         return view
     }()
     
+    let menuCuisineView: ImageTextView = {
+        let view = ImageTextView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.text = "Fast Food"
+        return view
+    }()
+    
     let separatorOne: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -233,6 +240,11 @@ class RestaurantMenuViewCell: UITableViewCell {
                     self.menuCategoryView.imageURL = "\(URLs.hostEndPoint)\(category.image!)"
                 }
                 
+                if let cuisine = menu.menu?.cuisine {
+                    self.menuCuisineView.imageURL = "\(URLs.hostEndPoint)\(cuisine.image)"
+                    self.menuCuisineView.text = cuisine.name
+                }
+                
                 if menu.menu?.isCountable ?? false {
                     switch menu.type?.id {
                     case 1:
@@ -334,7 +346,9 @@ class RestaurantMenuViewCell: UITableViewCell {
         
         if self.restaurantMenu?.type?.id != 2 {
             menuClassView.addSubview(menuCategoryView)
-            menuClassView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]", views: menuCategoryView, menuTypeView)
+            menuClassView.addSubview(menuCuisineView)
+            menuClassView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]-8-[v2]", views: menuCategoryView, menuTypeView, menuCuisineView)
+            menuClassView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: menuCuisineView)
             menuClassView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: menuCategoryView)
         } else { menuClassView.addConstraintsWithFormat(format: "H:|[v0]", views: menuTypeView) }
         

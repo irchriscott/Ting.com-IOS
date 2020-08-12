@@ -65,10 +65,14 @@ struct URLs {
     static let restaurantsGlobal        = "\(endPoint)usr/g/restaurants/all/"
     static let checkRestaurantReview    = "\(endPoint)usr/g/restaurants/reviews/check/"
     static let restaurantTopMenus       = "\(endPoint)usr/g/restaurants/get/%d/menus/top/"
+    static let restaurantFilters        = "\(endPoint)usr/g/restaurants/filters/"
     
     //MENU
     
     static let checkMenuReview          = "\(endPoint)usr/menu/reviews/check/"
+    
+    //CUISINE
+    static let cuisineGlobal            = "\(endPoint)usr/g/cuisines/all/"
 }
 
 struct StaticData {

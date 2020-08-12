@@ -232,6 +232,7 @@ class RestaurantAboutController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
         let view: UIView = {
             let view = UIView()
             view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)

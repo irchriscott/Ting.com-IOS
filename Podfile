@@ -1,5 +1,5 @@
 source 'https://github.com/CocoaPods/Specs.git'
-    target 'ting' do
+target 'ting' do
     pod 'GoogleMaps'
     pod 'GooglePlaces'
     pod 'GoogleSignIn'
@@ -12,4 +12,8 @@ source 'https://github.com/CocoaPods/Specs.git'
     pod 'Charts'
     pod 'XLPagerTabStrip'
     pod 'GradientLoadingBar'
+    pod 'FaveButton'
+    pod 'Windless'
+    pod 'LoadingShimmer'
+    pod 'ShimmerSwift'
 end

@@ -10,7 +10,7 @@ import Foundation
 
 class UserAuthentication : NSObject {
     
-    let SESSION_USER_KEY = "session_user"
+    private let SESSION_USER_KEY = "session_user"
     
     override init() {
         super.init()
@@ -36,5 +36,4 @@ class UserAuthentication : NSObject {
         let data = UserDefaults.standard.data(forKey: SESSION_USER_KEY)
         do { return try JSONDecoder().decode(User.self, from: data!) } catch { return nil }
     }
-    
 }

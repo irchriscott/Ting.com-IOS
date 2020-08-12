@@ -41,4 +41,12 @@ extension UIView {
         }
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: format, options: NSLayoutConstraint.FormatOptions(), metrics: nil, views: viewsDictionary))
     }
+    
+    func addBlackGradientLayer(frame: CGRect){
+        let gradient = CAGradientLayer()
+        gradient.frame = frame
+        gradient.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.4).cgColor]
+        gradient.locations = [0.0, 0.6]
+        self.layer.insertSublayer(gradient, at: 0)
+    }
 }

@@ -9,14 +9,34 @@
 import UIKit
 import MapKit
 import GradientLoadingBar
+import ShimmerSwift
 
 class HomeRestaurantsViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CLLocationManagerDelegate {
     
-    let headerId = "headerId"
+    typealias FilterGroup = [Any]
+    
     let cellId = "cellId"
+    
+    let cellIdCuisine = "cellIdCuisine"
+    let cellIdFilter = "cellIdFilter"
+    let cellIdShimmer = "cellIdShimmer"
+    let cellIdRestaurant = "cellIdRestaurant"
+    
+    var cuisines: [RestaurantCategory] = []
+    var filters: [FilterGroup] = [
+        [0, "icon_marker_25_gray", "Distance"],
+        [1, "icon_clock_25_gray", "Availability"],
+        [2, "icon_cuisines_36_gray", "Cuisines"],
+        [3, "icon_glass_100_gray", "Services"],
+        [4, "icon_wifi_25_gray", "Specials"],
+        [5, "icon_categories_36_gray", "Types"],
+        [6, "icon_menu_reviews_32_gray", "Reviews"]
+    ]
     
     var spinnerViewHeight: CGFloat = 100
     var restaurants: [Branch] = []
+    
+    var footerSpinnerHeight: CGFloat = 0
     
     var locationManager = CLLocationManager()
     var refresherLoadingView = UIRefreshControl()
@@ -48,6 +68,56 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         view.backgroundColor = Colors.colorDarkTransparent
         return view
     }()
+    
+    private lazy var cuisinesCollectionView: UICollectionView = {
+        let layout =  UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 12
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        view.dataSource = self
+        view.showsVerticalScrollIndicator = false
+        view.showsHorizontalScrollIndicator = false
+        view.backgroundColor = .white
+        return view
+    }()
+    
+    private lazy var filtersCollectionView: UICollectionView = {
+        let layout =  UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 12
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        view.dataSource = self
+        view.showsVerticalScrollIndicator = false
+        view.showsHorizontalScrollIndicator = false
+        view.backgroundColor = .white
+        return view
+    }()
+    
+    private lazy var restaurantsShimmerCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        view.dataSource = self
+        view.isScrollEnabled = false
+        view.backgroundColor = .white
+        return view
+    }()
+    
+    private lazy var restaurantsCollectionView: UICollectionView = {
+        let layout =  UICollectionViewFlowLayout()
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        view.dataSource = self
+        view.isScrollEnabled = false
+        view.backgroundColor = .white
+        return view
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,8 +133,15 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
         
-        collectionView.register(SpinnerViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
-        collectionView.register(RestaurantViewCell.self, forCellWithReuseIdentifier: cellId)
+        self.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
+        self.cuisinesCollectionView.register(CuisineViewCell.self, forCellWithReuseIdentifier: cellIdCuisine)
+        self.filtersCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellIdFilter)
+        self.restaurantsShimmerCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellIdShimmer)
+        self.restaurantsCollectionView.register(RestaurantViewCell.self, forCellWithReuseIdentifier: cellIdRestaurant)
+        
+        self.cuisines = LocalData.instance.getCuisines()
+        self.cuisinesCollectionView.reloadData()
+        self.getCuisines()
         
         let tabBarHeight = self.tabBarController?.tabBar.frame.height ?? 50
         
@@ -90,6 +167,18 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         self.setupNavigationBar()
     }
     
+    private func getCuisines() {
+        APIDataProvider.instance.getCuisines { (restaurantCategories) in
+            DispatchQueue.main.async {
+                if self.cuisines.isEmpty {
+                    self.cuisines = restaurantCategories
+                    self.collectionView.reloadData()
+                    self.cuisinesCollectionView.reloadData()
+                }
+            }
+        }
+    }
+    
     private func getRestaurants(location: CLLocation?){
         self.spinnerViewHeight = 100
         self.restaurants = []
@@ -110,6 +199,8 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                 self.restaurants = self.restaurants.sorted(by: { $0.dist! < $1.dist! })
                 self.spinnerViewHeight = 0
                 self.collectionView.reloadData()
+                self.restaurantsCollectionView.reloadData()
+                self.restaurantsShimmerCollectionView.reloadData()
                 self.refresherLoadingView.endRefreshing()
                 self.gradientLoadingBar.fadeOut()
             }
@@ -139,6 +230,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     }
     
     func setupNavigationBar(){
+        
         self.navigationController?.navigationBar.backgroundColor = Colors.colorWhite
         self.navigationController?.navigationBar.barTintColor = Colors.colorWhite
         self.navigationController?.navigationBar.isTranslucent = false
@@ -217,87 +309,162 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return restaurants.count
+        switch collectionView {
+        case self.collectionView:
+            return 3
+        case self.cuisinesCollectionView:
+            return self.cuisines.isEmpty ? 4 : self.cuisines.count
+        case self.filtersCollectionView:
+            return self.filters.count
+        case self.restaurantsShimmerCollectionView:
+            return restaurants.count > 0 ? 0 : 3
+        case self.restaurantsCollectionView:
+            return restaurants.count
+        default:
+            return 0
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! RestaurantViewCell
-        let restaurant = self.restaurants[indexPath.item]
-        cell.branch = restaurant
-        cell.controller = self
-        return cell
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! SpinnerViewCell
+        switch collectionView {
+        case self.collectionView:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
+            cell.backgroundColor = Colors.colorWhite
+            switch indexPath.item {
+            case 0:
+                cell.addSubview(cuisinesCollectionView)
+                cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: cuisinesCollectionView)
+                cell.addConstraintsWithFormat(format: "V:|[v0]|", views: cuisinesCollectionView)
+                break
+            case 1:
+                cell.addSubview(filtersCollectionView)
+                cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: filtersCollectionView)
+                cell.addConstraintsWithFormat(format: "V:|[v0]|", views: filtersCollectionView)
+                break
+            case 2:
+                cell.addSubview(restaurantsCollectionView)
+                cell.addSubview(restaurantsShimmerCollectionView)
+                cell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantsCollectionView)
+                cell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantsShimmerCollectionView)
+                cell.addConstraintsWithFormat(format: "V:|[v0]-[v1]|", views: restaurantsShimmerCollectionView, restaurantsCollectionView)
+                break
+            default:
+                break
+            }
+            return cell
+        case self.cuisinesCollectionView:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdCuisine, for: indexPath) as! CuisineViewCell
+            if self.cuisines.isEmpty {
+                let shimmerView = ShimmeringView(frame: CGRect(x: 0, y: 0, width: 125, height: 160))
+                cell.addSubview(shimmerView)
+                
+                shimmerView.contentView = view
+                shimmerView.shimmerAnimationOpacity = 0.4
+                shimmerView.shimmerSpeed = 250
+                shimmerView.isShimmering = true
+            } else {
+                cell.cuisine = self.cuisines[indexPath.item]
+            }
+            return cell
+        case self.filtersCollectionView:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: cellIdFilter, for: indexPath)
+        case self.restaurantsShimmerCollectionView:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdShimmer, for: indexPath)
+            let view: RowShimmerView = {
+                let view = RowShimmerView()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                return view
+            }()
+            cell.addSubview(view)
+            cell.addConstraintsWithFormat(format: "V:|[v0]|", views: view)
+            cell.addConstraintsWithFormat(format: "H:|[v0]|", views: view)
+            let shimmerView = ShimmeringView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 94))
+            cell.addSubview(shimmerView)
+            
+            shimmerView.contentView = view
+            shimmerView.shimmerAnimationOpacity = 0.4
+            shimmerView.shimmerSpeed = 250
+            shimmerView.isShimmering = true
+            return cell
+        case self.restaurantsCollectionView:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdRestaurant, for: indexPath) as! RestaurantViewCell
+            let restaurant = self.restaurants[indexPath.item]
+            cell.branch = restaurant
+            cell.backgroundColor = .white
+            cell.controller = self
+            return cell
+        default:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let branch = self.restaurants[indexPath.item]
-        let storyboard = UIStoryboard(name: "Home", bundle: nil)
-        let restaurantViewController = storyboard.instantiateViewController(withIdentifier: "RestaurantView") as! RestaurantViewController
-        restaurantViewController.restaurant = branch
-        self.navigationController?.pushViewController(restaurantViewController, animated: true)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: self.view.frame.width, height: self.spinnerViewHeight)
+        switch collectionView {
+        case cuisinesCollectionView:
+            break
+        case filtersCollectionView:
+            break
+        case restaurantsCollectionView:
+            let branch = self.restaurants[indexPath.item]
+            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+            let restaurantViewController = storyboard.instantiateViewController(withIdentifier: "RestaurantView") as! RestaurantViewController
+            restaurantViewController.restaurant = branch
+            self.navigationController?.pushViewController(restaurantViewController, animated: true)
+            break
+        default:
+            break
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if !self.restaurants.isEmpty {
-            
-            let branch = self.restaurants[indexPath.item]
-            let device = UIDevice.type
-            
-            var restaurantNameTextSize: CGFloat = 16
-            var restaurantAddressTextSize: CGFloat = 13
-            var restaurantImageConstant: CGFloat = 80
-            
-            if UIDevice.smallDevices.contains(device) {
-                restaurantImageConstant = 55
-                restaurantNameTextSize = 14
-                restaurantAddressTextSize = 12
-            } else if UIDevice.mediumDevices.contains(device) {
-                restaurantImageConstant = 70
-                restaurantNameTextSize = 15
+        switch collectionView {
+        case self.collectionView:
+            switch indexPath.item {
+            case 0:
+                return CGSize(width: view.frame.width, height: 160)
+            case 1:
+                return CGSize(width: view.frame.width, height: 40)
+            case 2:
+                var height = self.spinnerViewHeight
+                if self.restaurants.count > 0 {
+                    height += 12
+                    for (index, _) in self.restaurants.enumerated() {
+                        height += self.restaurantCellViewHeight(index: index) + 14
+                    }
+                } else {
+                    height += (94 * 3)
+                }
+                return CGSize(width: view.frame.width, height: height)
+            default:
+                return CGSize(width: view.frame.width, height: 0)
             }
-            
-            let frameWidth = view.frame.width - (60 + restaurantImageConstant)
-            
-            let branchNameRect = NSString(string: "\(branch.name), \(branch.restaurant!.name)").boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: restaurantNameTextSize)!], context: nil)
-            
-            let branchAddressRect = NSString(string: branch.address).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: restaurantAddressTextSize)!], context: nil)
-            
-            var valueToAdd: CGFloat = 0
-            if branchNameRect.height > 25 { valueToAdd += 8 }
-            if branchAddressRect.height > 25 { valueToAdd += 8 }
-            
-            var restaurantCuisinesText: String
-            
-            if let cuisines = branch.restaurant?.foodCategories?.categories {
-                restaurantCuisinesText = cuisines.map { (cuisine) -> String in cuisine.name! }.joined(separator: ", ")
-            } else {
-                restaurantCuisinesText = " - "
+        case self.cuisinesCollectionView:
+            return CGSize(width: 125, height: 160)
+        case self.filtersCollectionView:
+            let data = self.filters[indexPath.item]
+            let filterRect = NSString(string: data[2] as! String).boundingRect(with: CGSize(width: view.frame.width, height: 26), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Medium", size: 12)!], context: nil)
+            return CGSize(width: filterRect.width + 37, height: 26)
+        case self.restaurantsShimmerCollectionView:
+            return CGSize(width: view.frame.width, height: 94)
+        case self.restaurantsCollectionView:
+            if !self.restaurants.isEmpty {
+                return CGSize(width: view.frame.width, height: self.restaurantCellViewHeight(index: indexPath.item))
             }
-            
-            let restaurantCategoriesText = branch.categories.categories.map { (category) -> String in
-                category.name
-            }.joined(separator: ", ")
-            
-            let restaurantCuisinesRect = NSString(string: restaurantCuisinesText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
-            
-            let restaurantCategoriesRect = NSString(string: restaurantCategoriesText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
-            
-            let cellHeight: CGFloat = 2 + 20 + 4 + 8 + 45 + 8 + 26 + 8 + 26 + branchNameRect.height + branchAddressRect.height + 16 + restaurantCuisinesRect.height + restaurantCategoriesRect.height + 12 + valueToAdd
-            
-            return CGSize(width: view.frame.width, height: cellHeight)
+            return CGSize(width: view.frame.width, height: 210)
+        default:
+            return CGSize(width: view.frame.width, height: 0)
         }
-        return CGSize(width: view.frame.width, height: 210)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0)
+        switch collectionView {
+        case self.cuisinesCollectionView:
+            return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
+        case self.filtersCollectionView:
+            return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
+        default:
+            return UIEdgeInsets(top: 12, left: 0, bottom: 0, right: 0)
+        }
     }
     
     @objc func openRestaurantMap(){
@@ -333,6 +500,55 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         let restaurantViewController = storyboard.instantiateViewController(withIdentifier: "RestaurantView") as! RestaurantViewController
         restaurantViewController.restaurant = restaurant
         self.navigationController?.pushViewController(restaurantViewController, animated: true)
+    }
+    
+    private func restaurantCellViewHeight(index: Int) -> CGFloat {
+        
+        let branch = self.restaurants[index]
+        let device = UIDevice.type
+        
+        var restaurantNameTextSize: CGFloat = 16
+        var restaurantAddressTextSize: CGFloat = 13
+        var restaurantImageConstant: CGFloat = 80
+        
+        if UIDevice.smallDevices.contains(device) {
+            restaurantImageConstant = 55
+            restaurantNameTextSize = 14
+            restaurantAddressTextSize = 12
+        } else if UIDevice.mediumDevices.contains(device) {
+            restaurantImageConstant = 70
+            restaurantNameTextSize = 15
+        }
+        
+        let frameWidth = view.frame.width - (60 + restaurantImageConstant)
+        
+        let branchNameRect = NSString(string: "\(branch.name), \(branch.restaurant!.name)").boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: restaurantNameTextSize)!], context: nil)
+        
+        let branchAddressRect = NSString(string: branch.address).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: restaurantAddressTextSize)!], context: nil)
+        
+        var valueToAdd: CGFloat = 0
+        if branchNameRect.height > 25 { valueToAdd += 8 }
+        if branchAddressRect.height > 25 { valueToAdd += 8 }
+        
+        var restaurantCuisinesText: String
+        
+        if let cuisines = branch.restaurant?.foodCategories?.categories {
+            restaurantCuisinesText = cuisines.map { (cuisine) -> String in cuisine.name! }.joined(separator: ", ")
+        } else {
+            restaurantCuisinesText = " - "
+        }
+        
+        let restaurantCategoriesText = branch.categories.categories.map { (category) -> String in
+            category.name
+        }.joined(separator: ", ")
+        
+        let restaurantCuisinesRect = NSString(string: restaurantCuisinesText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+        
+        let restaurantCategoriesRect = NSString(string: restaurantCategoriesText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+        
+        let cellHeight: CGFloat = 2 + 20 + 4 + 8 + 45 + 8 + 26 + 8 + 26 + branchNameRect.height + branchAddressRect.height + 16 + restaurantCuisinesRect.height + restaurantCategoriesRect.height + 12 + valueToAdd
+        
+        return cellHeight
     }
 }
 
