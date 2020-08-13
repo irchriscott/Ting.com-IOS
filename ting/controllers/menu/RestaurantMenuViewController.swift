@@ -994,7 +994,13 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             promotionSupplementHeight = promotionSupplementRect.height
         }
         
-        return 40 + promotionOccasionHeight + promotionPeriodHeight + promotionReductionHeight + promotionSupplementHeight + 12 + 32
+        var valueToAdd: CGFloat = 0
+        
+        if promotion.reduction.hasReduction && promotion.supplement.hasSupplement {
+            valueToAdd = 4
+        }
+        
+        return 40 + promotionOccasionHeight + promotionPeriodHeight + promotionReductionHeight + promotionSupplementHeight + 12 + 32 + valueToAdd
     }
     
     private func menuReviewViewCellHeight(index: Int) -> CGFloat {

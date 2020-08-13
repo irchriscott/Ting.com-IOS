@@ -67,6 +67,9 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
                             self.promotionViewHeight += self.menuPromotionViewCellHeight(promotion: promo) + 3
                         }
                         self.promotionViewHeight += CGFloat(12 * promotions.count)
+                        if promotions.count <= 2 {
+                            self.promotionViewHeight += 30
+                        }
                         self.currentHeight = self.promotionViewHeight
                     } else { self.currentHeight = 400 }
                 }

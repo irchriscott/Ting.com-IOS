@@ -218,8 +218,14 @@ class RestaurantPromosViewController: UITableViewController, IndicatorInfoProvid
             promotionTypeViewHeight = 58
         }
         
+        var valueToAdd: CGFloat = 0
+        
+        if promotion.reduction.hasReduction && promotion.supplement.hasSupplement {
+            valueToAdd = 4
+        }
+        
         let staticValue = CGFloat(40 + 12 + 36) + promotionSupplementHeight + CGFloat(promotionTypeViewHeight)
         
-        return staticValue + promotionOccasionHeight + promotionPeriodHeight + promotionReductionHeight
+        return staticValue + promotionOccasionHeight + promotionPeriodHeight + promotionReductionHeight + valueToAdd
     }
 }

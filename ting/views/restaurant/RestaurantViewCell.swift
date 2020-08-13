@@ -112,6 +112,7 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         view.translatesAutoresizingMaskIntoConstraints = false
         view.dataSource = self
         view.delegate = self
+        view.isUserInteractionEnabled = true
         return view
     }()
     
