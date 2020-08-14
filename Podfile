@@ -16,4 +16,5 @@ target 'ting' do
     pod 'Windless'
     pod 'LoadingShimmer'
     pod 'ShimmerSwift'
+    pod 'ViewPager-Swift'
 end

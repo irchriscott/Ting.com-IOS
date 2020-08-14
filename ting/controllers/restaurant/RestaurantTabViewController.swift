@@ -47,6 +47,12 @@ class RestaurantTabViewController: ButtonBarPagerTabStripViewController {
         changeCurrentIndex = {(oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, animated: Bool) -> Void in }
         
         super.viewDidLoad()
+        
+        self.buttonBarView.layer.shadowColor = Colors.colorLightGray.cgColor
+        self.buttonBarView.layer.shadowOpacity = 0.3
+        self.buttonBarView.layer.shadowOffset = CGSize(width: 0, height: 3)
+        self.buttonBarView.layer.shadowRadius = 3
+        self.buttonBarView.layer.masksToBounds = false
     }
     
     override public func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {

@@ -8,8 +8,9 @@
 
 import UIKit
 import XLPagerTabStrip
+import ViewPager_Swift
 
-class RestaurantViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class RestaurantViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, ViewPagerDelegate, ViewPagerDataSource {
     
     let cellId = "cellRestaurantId"
     let headerId = "headerRestaurantId"
@@ -17,6 +18,23 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
     var restaurant: Branch? {
         didSet {}
     }
+    
+    let storyboardApp = UIStoryboard(name: "Home", bundle: nil)
+    
+    lazy var promosController: RestaurantPromosViewController = {
+        return self.storyboardApp.instantiateViewController(withIdentifier: "RestaurantPromos") as! RestaurantPromosViewController
+    }()
+    lazy var foodsController: RestaurantFoodsViewController = {
+        return self.storyboardApp.instantiateViewController(withIdentifier: "RestaurantFoods") as! RestaurantFoodsViewController
+    }()
+    lazy var drinksController: RestaurantDrinksViewController = {
+        return self.storyboardApp.instantiateViewController(withIdentifier: "RestaurantDrinks") as! RestaurantDrinksViewController
+    }()
+    lazy var dishesController: RestaurantDishesViewController = {
+        return self.storyboardApp.instantiateViewController(withIdentifier: "RestaurantDishes") as! RestaurantDishesViewController
+    }()
+    
+    private var viewPagerPages: [UIViewController]!
     
     lazy var restaurantTabViewController: RestaurantTabViewController = {
         let controller = RestaurantTabViewController()
@@ -50,9 +68,13 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
     }
     
     var canGoToZero: Bool = false
-
+    
+    private var restaurantViewPager: ViewPager!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        viewPagerPages = [promosController, foodsController, drinksController, dishesController]
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "icon_menu_25_white"), style: .plain, target: self, action: #selector(openMenu(_:)))
         
@@ -66,7 +88,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
                         for promo in promotions {
                             self.promotionViewHeight += self.menuPromotionViewCellHeight(promotion: promo) + 3
                         }
-                        self.promotionViewHeight += CGFloat(12 * promotions.count)
+                        self.promotionViewHeight += CGFloat(12 * promotions.count) + 10
                         if promotions.count <= 2 {
                             self.promotionViewHeight += 30
                         }
@@ -79,88 +101,13 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
         self.restaurantTabViewController.changeCurrentIndexProgressive = { (oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
             guard changeCurrentIndex == true else { return }
             
-            if let branch = self.restaurant {
-
-                switch self.restaurantTabViewController.currentIndex {
-                case 0:
-                    self.collectionView.contentOffset.y = 0
-                    if self.canGoToZero {
-                        if self.promotionViewHeight > 0 { self.currentHeight = self.promotionViewHeight }
-                        else {
-                            APIDataProvider.instance.getRestaurantPromotions(url: "\(URLs.hostEndPoint)\(branch.urls.apiPromotions)") { (promotions) in
-                                DispatchQueue.main.async {
-                                    self.restaurantTabViewController.promosController.promotions = promotions.sorted(by: { (promo, _) -> Bool in
-                                        return promo.isOn && promo.isOnToday
-                                    })
-                                    if promotions.count > 0 {
-                                        for promo in promotions {
-                                            self.promotionViewHeight += self.menuPromotionViewCellHeight(promotion: promo) + 3
-                                        }
-                                        self.promotionViewHeight += 60
-                                        self.currentHeight = self.promotionViewHeight
-                                    } else { self.currentHeight = 400 }
-                                }
-                            }
-                        }
-                    }
-                case 1:
-                    self.canGoToZero = true
-                    self.collectionView.contentOffset.y = 0
-                    if self.foodsViewHeight > 0 { self.currentHeight = self.foodsViewHeight }
-                    else {
-                        APIDataProvider.instance.getRestaurantMenus(url: "\(URLs.hostEndPoint)\(branch.urls.apiFoods)") { (menus) in
-                            DispatchQueue.main.async {
-                                self.restaurantTabViewController.foodsController.menus = menus
-                                if menus.count > 0 {
-                                    for menu in menus {
-                                        self.foodsViewHeight += self.restaurantMenuCellHeight(menu: menu)
-                                    }
-                                    self.foodsViewHeight += 60
-                                    self.currentHeight = self.foodsViewHeight
-                                } else { self.currentHeight = 400 }
-                            }
-                        }
-                    }
-                case 2:
-                    self.canGoToZero = true
-                    self.collectionView.contentOffset.y = 0
-                    if self.drinksViewHeight > 0 { self.currentHeight = self.drinksViewHeight }
-                    else {
-                        APIDataProvider.instance.getRestaurantMenus(url: "\(URLs.hostEndPoint)\(branch.urls.apiDrinks)") { (menus) in
-                            DispatchQueue.main.async {
-                                self.restaurantTabViewController.drinksController.menus = menus
-                                if menus.count > 0 {
-                                    for menu in menus {
-                                        self.drinksViewHeight += self.restaurantMenuCellHeight(menu: menu)
-                                    }
-                                    self.drinksViewHeight += 60
-                                    self.currentHeight = self.drinksViewHeight
-                                } else { self.currentHeight = 400 }
-                            }
-                        }
-                    }
-                case 3:
-                    self.canGoToZero = true
-                    self.collectionView.contentOffset.y = 0
-                    if self.dishesViewHeight > 0 { self.currentHeight = self.dishesViewHeight }
-                    else {
-                        APIDataProvider.instance.getRestaurantMenus(url: "\(URLs.hostEndPoint)\(branch.urls.apiDishes)") { (menus) in
-                            DispatchQueue.main.async {
-                                self.restaurantTabViewController.dishesController.menus = menus
-                                if menus.count > 0 {
-                                    for menu in menus {
-                                        self.dishesViewHeight += self.restaurantMenuCellHeight(menu: menu)
-                                    }
-                                    self.dishesViewHeight += 60
-                                    self.currentHeight = self.dishesViewHeight
-                                } else { self.currentHeight = 400 }
-                            }
-                        }
-                    }
-                default:
-                    break
-                }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.updateHeightForIndex(index: self.restaurantTabViewController.currentIndex)
             }
+        }
+        
+        self.restaurantTabViewController.changeCurrentIndex = {(oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, animated: Bool) -> Void in
+            self.updateHeightForIndex(index: self.restaurantTabViewController.currentIndex)
         }
         
         collectionView.register(RestaurantHeaderViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
@@ -211,6 +158,26 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
         cell.addSubview(restaurantView)
         cell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantView)
         cell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantView)
+        
+        let options = ViewPagerOptions()
+        options.isTabBarShadowAvailable = true
+        options.shadowColor = Colors.colorVeryLightGray
+        options.tabIndicatorViewBackgroundColor = Colors.colorPrimary
+        options.tabType = .basic
+        options.distribution = .segmented
+        options.tabIndicatorViewHeight = 2.0
+        options.tabViewBackgroundDefaultColor = Colors.colorWhite
+        options.tabViewTextDefaultColor = Colors.colorPrimary
+        options.tabViewTextFont = UIFont(name: "Poppins-Medium", size: 15)!
+        options.tabViewTextHighlightColor = Colors.colorPrimary
+        options.tabViewHeight = 60
+        options.tabViewBackgroundHighlightColor = Colors.colorWhite
+        
+        restaurantViewPager = ViewPager(viewController: self, containerView: cell)
+        restaurantViewPager.setDelegate(delegate: self)
+        restaurantViewPager.setDataSource(dataSource: self)
+        restaurantViewPager.setOptions(options: options)
+        
         return cell
     }
     
@@ -234,6 +201,123 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
     }
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) { }
+    
+    func numberOfPages() -> Int {
+        return 4
+    }
+    
+    func viewControllerAtPosition(position: Int) -> UIViewController {
+        return viewPagerPages[position]
+    }
+    
+    func tabsForPages() -> [ViewPagerTab] {
+        return [
+                ViewPagerTab(title: "PROMOS", image: nil),
+                ViewPagerTab(title: "FOODS", image: nil),
+                ViewPagerTab(title: "DRINKS", image: nil),
+                ViewPagerTab(title: "DISHES", image: nil)
+        ]
+    }
+    
+    func startViewPagerAtIndex() -> Int {
+        return 0
+    }
+    
+    func willMoveToControllerAtIndex(index: Int) {
+        self.updateHeightForIndex(index: index)
+    }
+    
+    func didMoveToControllerAtIndex(index: Int) {
+        self.updateHeightForIndex(index: index)
+    }
+    
+    private func updateHeightForIndex(index: Int) {
+        if let branch = self.restaurant {
+
+            switch index {
+            case 0:
+                self.collectionView.contentOffset.y = 0
+                if self.canGoToZero {
+                    if self.promotionViewHeight > 0 { self.currentHeight = self.promotionViewHeight }
+                    else {
+                        APIDataProvider.instance.getRestaurantPromotions(url: "\(URLs.hostEndPoint)\(branch.urls.apiPromotions)") { (promotions) in
+                            DispatchQueue.main.async {
+                                self.restaurantTabViewController.promosController.promotions = promotions.sorted(by: { (promo, _) -> Bool in
+                                    return promo.isOn && promo.isOnToday
+                                })
+                                if promotions.count > 0 {
+                                    for promo in promotions {
+                                        self.promotionViewHeight += self.menuPromotionViewCellHeight(promotion: promo) + 3
+                                    }
+                                    self.promotionViewHeight += 60 + 10
+                                    if promotions.count <= 2 {
+                                        self.promotionViewHeight += 30
+                                    }
+                                    self.currentHeight = self.promotionViewHeight
+                                } else { self.currentHeight = 400 }
+                            }
+                        }
+                    }
+                }
+            case 1:
+                self.canGoToZero = true
+                self.collectionView.contentOffset.y = 0
+                if self.foodsViewHeight > 0 { self.currentHeight = self.foodsViewHeight }
+                else {
+                    APIDataProvider.instance.getRestaurantMenus(url: "\(URLs.hostEndPoint)\(branch.urls.apiFoods)") { (menus) in
+                        DispatchQueue.main.async {
+                            self.restaurantTabViewController.foodsController.menus = menus
+                            if menus.count > 0 {
+                                for menu in menus {
+                                    self.foodsViewHeight += self.restaurantMenuCellHeight(menu: menu)
+                                }
+                                self.foodsViewHeight += 60 + 10
+                                self.currentHeight = self.foodsViewHeight
+                            } else { self.currentHeight = 400 }
+                        }
+                    }
+                }
+            case 2:
+                self.canGoToZero = true
+                self.collectionView.contentOffset.y = 0
+                if self.drinksViewHeight > 0 { self.currentHeight = self.drinksViewHeight }
+                else {
+                    APIDataProvider.instance.getRestaurantMenus(url: "\(URLs.hostEndPoint)\(branch.urls.apiDrinks)") { (menus) in
+                        DispatchQueue.main.async {
+                            self.restaurantTabViewController.drinksController.menus = menus
+                            if menus.count > 0 {
+                                for menu in menus {
+                                    self.drinksViewHeight += self.restaurantMenuCellHeight(menu: menu)
+                                }
+                                self.drinksViewHeight += 60 + 10
+                                self.currentHeight = self.drinksViewHeight
+                            } else { self.currentHeight = 400 }
+                        }
+                    }
+                }
+            case 3:
+                self.canGoToZero = true
+                self.collectionView.contentOffset.y = 0
+                if self.dishesViewHeight > 0 { self.currentHeight = self.dishesViewHeight }
+                else {
+                    APIDataProvider.instance.getRestaurantMenus(url: "\(URLs.hostEndPoint)\(branch.urls.apiDishes)") { (menus) in
+                        DispatchQueue.main.async {
+                            self.restaurantTabViewController.dishesController.menus = menus
+                            if menus.count > 0 {
+                                for menu in menus {
+                                    self.dishesViewHeight += self.restaurantMenuCellHeight(menu: menu)
+                                }
+                                self.dishesViewHeight += 60 + 10
+                                self.currentHeight = self.dishesViewHeight
+                            } else { self.currentHeight = 400 }
+                        }
+                    }
+                }
+            default:
+                break
+            }
+        }
+    }
     
     private func menuPromotionViewCellHeight(promotion: MenuPromotion) -> CGFloat {
         

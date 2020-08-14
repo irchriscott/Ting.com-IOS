@@ -35,6 +35,8 @@ class RestaurantPromosViewController: UITableViewController, IndicatorInfoProvid
         tableView.isScrollEnabled = false
         tableView.separatorStyle = .none
         
+        tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
+        
         tableView.register(RestaurantPromotionViewCell.self, forCellReuseIdentifier: self.cellId)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.defaultCellId)
     }
