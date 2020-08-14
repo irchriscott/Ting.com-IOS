@@ -9,8 +9,9 @@
 import UIKit
 import MapKit
 import FittedSheets
+import FaveButton
 
-class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
+class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, FaveButtonDelegate {
     
     let numberFormatter = NumberFormatter()
     
@@ -92,6 +93,15 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
         view.frame = CGRect(x: 0, y: 0, width: 28, height: 28)
         view.contentMode = .scaleAspectFill
         view.image = UIImage(named: "icon_star_outline_25_gray")
+        return view
+    }()
+    
+    lazy var faveButtonInterest: FaveButton = {
+        let view = FaveButton(frame: CGRect(x: 0, y: 0, width: 28, height: 28), faveIconNormal: UIImage(named: "icon_star_filled_25_gray"))
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        view.selectedColor = Colors.colorPrimary
+        view.normalColor = Colors.colorGray
         return view
     }()
     
@@ -325,7 +335,10 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
                 }
                 
                 let interests = promotion.interests.interests
-                if interests.contains(session.id) { promotionInterestImage.image =  UIImage(named: "icon_star_filled_25_gray") }
+                if interests.contains(session.id) {
+                    promotionInterestImage.image =  UIImage(named: "icon_star_filled_25_gray")
+                    faveButtonInterest.setSelected(selected: true, animated: true)
+                }
                 
                 self.setRestaurantDistance()
             }
@@ -355,11 +368,11 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
     
     private func setup() {
         
-        promotionInterestView.addSubview(promotionInterestImage)
-        promotionInterestView.addConstraintsWithFormat(format: "H:[v0(28)]", views: promotionInterestImage)
-        promotionInterestView.addConstraintsWithFormat(format: "V:[v0(28)]", views: promotionInterestImage)
-        promotionInterestView.addConstraint(NSLayoutConstraint(item: promotionInterestView, attribute: .centerX, relatedBy: .equal, toItem: promotionInterestImage, attribute: .centerX, multiplier: 1, constant: 0))
-        promotionInterestView.addConstraint(NSLayoutConstraint(item: promotionInterestView, attribute: .centerY, relatedBy: .equal, toItem: promotionInterestImage, attribute: .centerY, multiplier: 1, constant: 0))
+        promotionInterestView.addSubview(faveButtonInterest)
+        promotionInterestView.addConstraintsWithFormat(format: "H:[v0(28)]", views: faveButtonInterest)
+        promotionInterestView.addConstraintsWithFormat(format: "V:[v0(28)]", views: faveButtonInterest)
+        promotionInterestView.addConstraint(NSLayoutConstraint(item: promotionInterestView, attribute: .centerX, relatedBy: .equal, toItem: faveButtonInterest, attribute: .centerX, multiplier: 1, constant: 0))
+        promotionInterestView.addConstraint(NSLayoutConstraint(item: promotionInterestView, attribute: .centerY, relatedBy: .equal, toItem: faveButtonInterest, attribute: .centerY, multiplier: 1, constant: 0))
         
         promotionMenuView.addSubview(promotionOccationView)
         promotionMenuView.addSubview(promotionOnView)
@@ -558,6 +571,29 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
 
         addresses.addAction(UIAlertAction(title: "CANCEL", style: .cancel, handler: { (action) in }))
         self.parentController?.present(addresses, animated: true, completion: nil)
+    }
+    
+    func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
+        interestPromotionToggle()
+    }
+    
+    func color(_ rgbColor: Int) -> UIColor {
+        return UIColor(
+            red:   CGFloat((rgbColor & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbColor & 0x00FF00) >> 8 ) / 255.0,
+            blue:  CGFloat((rgbColor & 0x0000FF) >> 0 ) / 255.0,
+            alpha: CGFloat(1.0)
+        )
+    }
+    
+    func faveButtonDotColors(_ faveButton: FaveButton) -> [DotColors]? {
+        return [
+            DotColors(first: color(0x7DC2F4), second: color(0xE2264D)),
+            DotColors(first: color(0xF8CC61), second: color(0x9BDFBA)),
+            DotColors(first: color(0xAF90F4), second: color(0x90D1F9)),
+            DotColors(first: color(0xE9A966), second: color(0xF8C852)),
+            DotColors(first: color(0xF68FA7), second: color(0xF6A2B8))
+        ]
     }
     
     @objc func interestPromotionToggle() {

@@ -9,8 +9,9 @@
 import Foundation
 import UIKit
 import MapKit
+import FaveButton
 
-class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
+class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, FaveButtonDelegate {
     
     let numberFormatter = NumberFormatter()
     
@@ -200,6 +201,15 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         view.frame = CGRect(x: 0, y: 0, width: 28, height: 28)
         view.contentMode = .scaleAspectFill
         view.image = UIImage(named: "icon_heart_like_32_gray")
+        return view
+    }()
+    
+    lazy var faveButtonLike: FaveButton = {
+        let view = FaveButton(frame: CGRect(x: 0, y: 0, width: 28, height: 28), faveIconNormal: UIImage(named: "icon_heart_fill_25_gray"))
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        view.selectedColor = Colors.colorPrimary
+        view.normalColor = Colors.colorGray
         return view
     }()
     
@@ -419,7 +429,10 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
                 }
                 
                 if let likes = menu.menu?.likes?.likes {
-                    if likes.contains(session.id) { restaurantLikeImage.image =  UIImage(named: "icon_heart_like_32_primary") }
+                    if likes.contains(session.id) {
+                        restaurantLikeImage.image =  UIImage(named: "icon_heart_like_32_primary")
+                        faveButtonLike.setSelected(selected: true, animated: true)
+                    }
                 }
                 
                 self.setRestaurantDistance()
@@ -491,11 +504,11 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         restaurantMenuPriceView.addSubview(restaurantMenuPriceTextView)
         restaurantMenuPriceView.addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuPriceTextView)
 
-        restaurantLikeView.addSubview(restaurantLikeImage)
-        restaurantLikeView.addConstraintsWithFormat(format: "H:[v0(28)]", views: restaurantLikeImage)
-        restaurantLikeView.addConstraintsWithFormat(format: "V:[v0(28)]", views: restaurantLikeImage)
-        restaurantLikeView.addConstraint(NSLayoutConstraint(item: restaurantLikeView, attribute: .centerX, relatedBy: .equal, toItem: restaurantLikeImage, attribute: .centerX, multiplier: 1, constant: 0))
-        restaurantLikeView.addConstraint(NSLayoutConstraint(item: restaurantLikeView, attribute: .centerY, relatedBy: .equal, toItem: restaurantLikeImage, attribute: .centerY, multiplier: 1, constant: 0))
+        restaurantLikeView.addSubview(faveButtonLike)
+        restaurantLikeView.addConstraintsWithFormat(format: "H:[v0(28)]", views: faveButtonLike)
+        restaurantLikeView.addConstraintsWithFormat(format: "V:[v0(28)]", views: faveButtonLike)
+        restaurantLikeView.addConstraint(NSLayoutConstraint(item: restaurantLikeView, attribute: .centerX, relatedBy: .equal, toItem: faveButtonLike, attribute: .centerX, multiplier: 1, constant: 0))
+        restaurantLikeView.addConstraint(NSLayoutConstraint(item: restaurantLikeView, attribute: .centerY, relatedBy: .equal, toItem: faveButtonLike, attribute: .centerY, multiplier: 1, constant: 0))
         
         restaurantMenuPriceView.addSubview(restaurantLikeView)
         restaurantMenuPriceView.addConstraintsWithFormat(format: "H:[v0(46)]|", views: restaurantLikeView)
@@ -731,6 +744,29 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
                 }
             }
         }.resume()
+    }
+    
+    func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
+        likeRestaurantMenuToggle()
+    }
+    
+    func color(_ rgbColor: Int) -> UIColor {
+        return UIColor(
+            red:   CGFloat((rgbColor & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbColor & 0x00FF00) >> 8 ) / 255.0,
+            blue:  CGFloat((rgbColor & 0x0000FF) >> 0 ) / 255.0,
+            alpha: CGFloat(1.0)
+        )
+    }
+    
+    func faveButtonDotColors(_ faveButton: FaveButton) -> [DotColors]? {
+        return [
+            DotColors(first: color(0x7DC2F4), second: color(0xE2264D)),
+            DotColors(first: color(0xF8CC61), second: color(0x9BDFBA)),
+            DotColors(first: color(0xAF90F4), second: color(0x90D1F9)),
+            DotColors(first: color(0xE9A966), second: color(0xF8C852)),
+            DotColors(first: color(0xF68FA7), second: color(0xF6A2B8))
+        ]
     }
     
     @objc func openRestaurantMap() {
