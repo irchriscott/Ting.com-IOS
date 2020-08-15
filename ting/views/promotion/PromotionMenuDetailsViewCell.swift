@@ -337,7 +337,6 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
                 let interests = promotion.interests.interests
                 if interests.contains(session.id) {
                     promotionInterestImage.image =  UIImage(named: "icon_star_filled_25_gray")
-                    faveButtonInterest.setSelected(selected: true, animated: true)
                 }
                 
                 self.setRestaurantDistance()
@@ -373,6 +372,12 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
         promotionInterestView.addConstraintsWithFormat(format: "V:[v0(28)]", views: faveButtonInterest)
         promotionInterestView.addConstraint(NSLayoutConstraint(item: promotionInterestView, attribute: .centerX, relatedBy: .equal, toItem: faveButtonInterest, attribute: .centerX, multiplier: 1, constant: 0))
         promotionInterestView.addConstraint(NSLayoutConstraint(item: promotionInterestView, attribute: .centerY, relatedBy: .equal, toItem: faveButtonInterest, attribute: .centerY, multiplier: 1, constant: 0))
+        
+        if let interests = self.promotion?.interests.interests {
+            if interests.contains(session.id) {
+                faveButtonInterest.setSelected(selected: true, animated: true)
+            }
+        }
         
         promotionMenuView.addSubview(promotionOccationView)
         promotionMenuView.addSubview(promotionOnView)

@@ -16,7 +16,6 @@ class CuisineViewCell: UICollectionViewCell {
             if let cuisine = self.cuisine {
                 imageView.load(url: URL(string: "\(URLs.hostEndPoint)\(cuisine.image)")!)
                 titleView.text = cuisine.name
-                cuisineView.windless.end()
             }
             self.setup()
         }
@@ -71,16 +70,6 @@ class CuisineViewCell: UICollectionViewCell {
         addConstraintsWithFormat(format: "V:|[v0]|", views: cuisineView)
         
         imageView.addBlackGradientLayer(frame: CGRect(x: 0, y: bounds.height - 40, width: bounds.width, height: 40))
-        
-        if cuisine == nil {
-            cuisineView.windless.setupWindlessableViews([imageView]).apply({ (config) in
-                config.animationLayerOpacity = 0.6
-                config.direction = .right
-                config.duration = 2.0
-                config.pauseDuration = 0.5
-                config.animationLayerColor = Colors.colorLightGray
-            }).start()
-        }
     }
     
     required init?(coder: NSCoder) {

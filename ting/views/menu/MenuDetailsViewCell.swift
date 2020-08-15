@@ -431,7 +431,6 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, Fave
                 if let likes = menu.menu?.likes?.likes {
                     if likes.contains(session.id) {
                         restaurantLikeImage.image =  UIImage(named: "icon_heart_like_32_primary")
-                        faveButtonLike.setSelected(selected: true, animated: true)
                     }
                 }
                 
@@ -509,6 +508,12 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, Fave
         restaurantLikeView.addConstraintsWithFormat(format: "V:[v0(28)]", views: faveButtonLike)
         restaurantLikeView.addConstraint(NSLayoutConstraint(item: restaurantLikeView, attribute: .centerX, relatedBy: .equal, toItem: faveButtonLike, attribute: .centerX, multiplier: 1, constant: 0))
         restaurantLikeView.addConstraint(NSLayoutConstraint(item: restaurantLikeView, attribute: .centerY, relatedBy: .equal, toItem: faveButtonLike, attribute: .centerY, multiplier: 1, constant: 0))
+        
+        if let likes = self.menu?.menu?.likes?.likes {
+            if likes.contains(session.id) {
+                faveButtonLike.setSelected(selected: true, animated: true)
+            }
+        }
         
         restaurantMenuPriceView.addSubview(restaurantLikeView)
         restaurantMenuPriceView.addConstraintsWithFormat(format: "H:[v0(46)]|", views: restaurantLikeView)

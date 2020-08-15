@@ -4,6 +4,7 @@ PODS:
     - AppAuth/ExternalUserAgent (= 1.3.0)
   - AppAuth/Core (1.3.0)
   - AppAuth/ExternalUserAgent (1.3.0)
+  - BEMCheckBox (1.4.1)
   - Charts (3.4.0):
     - Charts/Core (= 3.4.0)
   - Charts/Core (3.4.0)
@@ -39,11 +40,13 @@ PODS:
   - LoadingShimmer (1.0.3)
   - ReachabilitySwift (5.0.0)
   - ShimmerSwift (2.1.1)
+  - SimpleCheckbox (2.1.0)
   - ViewPager-Swift (2.0.1)
   - Windless (0.1.5)
   - XLPagerTabStrip (9.0.0)
 
 DEPENDENCIES:
+  - BEMCheckBox
   - Charts
   - FaveButton
   - FittedSheets
@@ -57,6 +60,7 @@ DEPENDENCIES:
   - LoadingShimmer
   - ReachabilitySwift
   - ShimmerSwift
+  - SimpleCheckbox
   - ViewPager-Swift
   - Windless
   - XLPagerTabStrip
@@ -64,6 +68,7 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AppAuth
+    - BEMCheckBox
     - Charts
     - FaveButton
     - FittedSheets
@@ -79,6 +84,7 @@ SPEC REPOS:
     - LoadingShimmer
     - ReachabilitySwift
     - ShimmerSwift
+    - SimpleCheckbox
     - ViewPager-Swift
     - Windless
     - XLPagerTabStrip
@@ -94,6 +100,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AppAuth: 73574f3013a1e65b9601a3ddc8b3158cce68c09d
+  BEMCheckBox: 5ba6e37ade3d3657b36caecc35c8b75c6c2b1a4e
   Charts: 74c9f256eaf0460c0c416522d1cf8c634ea6b286
   FaveButton: 93cfebf6030336fa7653fad2068c3152ed668b39
   FittedSheets: 7f754c9f6fb4ea330cbc57c652b594255f2a6819
@@ -110,10 +117,11 @@ SPEC CHECKSUMS:
   LoadingShimmer: dd681218498ec9648f572b845a7299b9c62e8e30
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   ShimmerSwift: f7ed2daf9c246de8299dfd9e12c6ab465cba9842
+  SimpleCheckbox: ddcd433ab8c3a8f57300bebda13151a8f302c7f9
   ViewPager-Swift: 7d83f5d4888a0fa808c08c8405ba84e603a2eb58
   Windless: c6b7d63ac3a0c7e6b241e316650d4605abf71894
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
 
-PODFILE CHECKSUM: be03006ed4e7bb05a1a3e92a00cdbea696b8e9e9
+PODFILE CHECKSUM: e9c60d1c890cc7a21461bb30859eb4ad787d5abe
 
 COCOAPODS: 1.9.3

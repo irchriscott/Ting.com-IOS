@@ -144,6 +144,7 @@
 		8FDDF97A2372A737000AA334 /* RestaurantMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDF9792372A737000AA334 /* RestaurantMenuViewController.swift */; };
 		8FDDF97C23741608000AA334 /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDDF97B23741608000AA334 /* StringExtension.swift */; };
 		8FEB1D99232B66B10024FF04 /* RestaurantViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FEB1D98232B66B10024FF04 /* RestaurantViewCell.swift */; };
+		8FF1687524E6FB0B00DD13A2 /* RestaurantFiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF1687424E6FB0B00DD13A2 /* RestaurantFiltersViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -282,6 +283,7 @@
 		8FDDF9792372A737000AA334 /* RestaurantMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantMenuViewController.swift; sourceTree = "<group>"; };
 		8FDDF97B23741608000AA334 /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		8FEB1D98232B66B10024FF04 /* RestaurantViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantViewCell.swift; sourceTree = "<group>"; };
+		8FF1687424E6FB0B00DD13A2 /* RestaurantFiltersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantFiltersViewController.swift; sourceTree = "<group>"; };
 		B3574E3CEF3D845DD3605E35 /* Pods-ting.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ting.release.xcconfig"; path = "Target Support Files/Pods-ting/Pods-ting.release.xcconfig"; sourceTree = "<group>"; };
 		B76E861E707C1B41EA38E562 /* Pods-ting.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ting.debug.xcconfig"; path = "Target Support Files/Pods-ting/Pods-ting.debug.xcconfig"; sourceTree = "<group>"; };
 		F4863839C5BE4B747F8CCDFF /* Pods_ting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -397,6 +399,7 @@
 		8F30B20C22F9B81C000B66B7 /* controllers */ = {
 			isa = PBXGroup;
 			children = (
+				8FF1687324E6FADB00DD13A2 /* others */,
 				8FB7B20D23A8A04C00245012 /* promotion */,
 				8F36E7272336484C0028ECE6 /* menu */,
 				8F2F0514233534E500517F36 /* restaurant */,
@@ -650,6 +653,14 @@
 			path = main;
 			sourceTree = "<group>";
 		};
+		8FF1687324E6FADB00DD13A2 /* others */ = {
+			isa = PBXGroup;
+			children = (
+				8FF1687424E6FB0B00DD13A2 /* RestaurantFiltersViewController.swift */,
+			);
+			path = others;
+			sourceTree = "<group>";
+		};
 		D286F9B8A77C5C979F674E4F /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -875,6 +886,7 @@
 				8F157C6723A9F6B0008C88E2 /* RestaurantHeaderViewCell.swift in Sources */,
 				8F49C10C22F497D80084F3E7 /* RestaurantMenu.swift in Sources */,
 				8F07FFCF2312AA8F00D0ACD5 /* CustomViews.swift in Sources */,
+				8FF1687524E6FB0B00DD13A2 /* RestaurantFiltersViewController.swift in Sources */,
 				8F2F8B0D22F0BC2200FF5B59 /* LoginViewController.swift in Sources */,
 				8F07FFD7231467AF00D0ACD5 /* SecondaryButton.swift in Sources */,
 				8F07FFD52313BDDC00D0ACD5 /* UserAddressesView.swift in Sources */,

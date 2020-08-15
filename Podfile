@@ -17,4 +17,6 @@ target 'ting' do
     pod 'LoadingShimmer'
     pod 'ShimmerSwift'
     pod 'ViewPager-Swift'
+    pod 'BEMCheckBox'
+    pod 'SimpleCheckbox'
 end

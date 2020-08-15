@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import FittedSheets
+import ShimmerSwift
 
 class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     
@@ -387,8 +388,32 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! RestaurantViewCellMenuViewCell
+        
+        let viewShimmer: UIView = {
+            let view = UIView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.backgroundColor = Colors.colorVeryLightGray
+            view.layer.cornerRadius = 2.0
+            view.layer.masksToBounds = true
+            view.clipsToBounds = true
+            return view
+        }()
+        
         if let menus = self.menus {
             cell.menu = menus[indexPath.item]
+        } else {
+            
+            cell.addSubview(viewShimmer)
+            cell.addConstraintsWithFormat(format: "V:|[v0]|", views: viewShimmer)
+            cell.addConstraintsWithFormat(format: "H:|[v0]|", views: viewShimmer)
+            
+            let shimmerView = ShimmeringView(frame: CGRect(x: 0, y: 0, width: 70, height: 45))
+            cell.addSubview(shimmerView)
+            
+            shimmerView.contentView = viewShimmer
+            shimmerView.shimmerAnimationOpacity = 0.4
+            shimmerView.shimmerSpeed = 250
+            shimmerView.isShimmering = true
         }
         return cell
     }
@@ -495,7 +520,6 @@ class RestaurantViewCellMenuViewCell: UICollectionViewCell {
                 self.menuImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(image.image)")!)
                 self.menuImageView.alpha = 1.0
                 self.menuImageView.contentMode = .scaleAspectFill
-                windless.end()
             }
             self.setup()
         }
@@ -507,19 +531,10 @@ class RestaurantViewCellMenuViewCell: UICollectionViewCell {
     }
     
     private func setup() {
+        backgroundColor = Colors.colorLightGray
         addSubview(menuImageView)
         addConstraintsWithFormat(format: "H:|[v0(\(frame.width))]|", views: menuImageView)
         addConstraintsWithFormat(format: "V:|[v0(\(frame.height))]|", views: menuImageView)
-        
-//        if menu == nil {
-//            windless.setupWindlessableViews([menuImageView]).apply({ (config) in
-//                config.animationLayerOpacity = 0.6
-//                config.direction = .right
-//                config.duration = 2.0
-//                config.pauseDuration = 0.5
-//                config.animationLayerColor = Colors.colorLightGray
-//            }).start()
-//        }
     }
     
     required init?(coder aDecoder: NSCoder) {

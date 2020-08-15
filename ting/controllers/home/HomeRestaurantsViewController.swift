@@ -10,6 +10,7 @@ import UIKit
 import MapKit
 import GradientLoadingBar
 import ShimmerSwift
+import FittedSheets
 
 class HomeRestaurantsViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CLLocationManagerDelegate, UITextFieldDelegate {
     
@@ -25,15 +26,17 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     let footerIdRestaurant = "footerIdRestaurant"
     
     var cuisines: [RestaurantCategory] = []
-    var filters: [FilterGroup] = [
+    let filters: [FilterGroup] = [
         [0, "icon_marker_25_gray", "Distance"],
         [1, "icon_clock_25_gray", "Availability"],
         [2, "icon_cuisines_36_gray", "Cuisines"],
         [3, "icon_glass_100_gray", "Services"],
         [4, "icon_wifi_25_gray", "Specials"],
         [5, "icon_categories_36_gray", "Types"],
-        [6, "icon_menu_reviews_32_gray", "Reviews"]
+        [6, "icon_menu_reviews_32_gray", "Ratings"]
     ]
+    
+    var filterValues: RestaurantFilters?
     
     var spinnerViewHeight: CGFloat = 36
     var restaurants: [Branch] = []
@@ -47,7 +50,10 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     var mapCenter: CLLocation?
     var selectedBranch: Branch?
     
-    let gradientLoadingBar = GradientLoadingBar(height: 4.0, isRelativeToSafeArea: false)
+    var country: String!
+    var town: String!
+    
+    var gradientLoadingBar: GradientLoadingBar!
     
     let mapFloatingButton: FloatingButton = {
         let view = FloatingButton()
@@ -139,6 +145,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     
     var pageIndex = 1
     var shouldLoad = true
+    var isFiltering = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -147,8 +154,13 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         self.navigationController?.navigationBar.barTintColor = Colors.colorWhite
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         
+        self.gradientLoadingBar = GradientLoadingBar(height: 4.0, isRelativeToSafeArea: false)
+        
         let barButtonAppearance = UIBarButtonItem.appearance()
         barButtonAppearance.setTitleTextAttributes([.foregroundColor : UIColor.clear], for: .normal)
+        
+        country = session.country
+        town = session.town
         
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -166,6 +178,10 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         self.cuisines = LocalData.instance.getCuisines()
         self.cuisinesCollectionView.reloadData()
         self.getCuisines()
+        
+        self.filterValues = LocalData.instance.getFilters()
+        self.filtersCollectionView.reloadData()
+        self.getFilters()
         
         hideKeyboardGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard(_:)))
         
@@ -205,6 +221,16 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         }
     }
     
+    private func getFilters() {
+        APIDataProvider.instance.getFilters { (data) in
+            DispatchQueue.main.async {
+                if let filters = data {
+                    self.filterValues = filters
+                }
+            }
+        }
+    }
+    
     private func getRestaurants(location: CLLocation?, index: Int){
         self.gradientLoadingBar.fadeIn()
         APIDataProvider.instance.getRestaurants(url: "\(URLs.restaurantsGlobal)?page=\(index)") { (branches) in
@@ -231,6 +257,44 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                 } else { self.shouldLoad = false }
             }
         }
+    }
+    
+    private func searchFilteredRestaurants(location: CLLocation?, index: Int){
+        
+        let filterParams = LocalData.instance.getFiltersParams()
+        
+        do {
+            let data = try JSONEncoder().encode(filterParams)
+            APIDataProvider.instance.searchFilterRestaurants(country: country, town: town, query: searchView.text ?? "", filters: String(data: data, encoding: .utf8)!, page: "\(index)") { (branches) in
+                DispatchQueue.main.async {
+                    self.removeSpinner()
+                    if !branches.isEmpty {
+                        if let userLocation = location {
+                            for var branch in branches {
+                                let branchLocation = CLLocation(latitude: CLLocationDegrees(exactly: Double(branch.latitude)!)!, longitude: CLLocationDegrees(exactly: Double(branch.longitude)!)!)
+                                branch.dist = Double(branchLocation.distance(from: userLocation) / 1000).rounded(toPlaces: 2)
+                                if !self.restaurants.contains(where: { (b) -> Bool in
+                                    return b.id == branch.id
+                                }){ self.restaurants.append(branch) }
+                            }
+                        } else { for var branch in self.restaurants { branch.dist = 0.00 } }
+                        
+                        self.restaurants = self.restaurants.sorted(by: { $0.dist! < $1.dist! })
+                        self.spinnerViewHeight = 0
+                        self.collectionView.reloadData()
+                        self.restaurantsCollectionView.reloadData()
+                        
+                    } else {
+                        self.shouldLoad = false
+                        if self.pageIndex == 1 {
+                            self.showErrorMessage(message: "No Result Found", title: "Result")
+                            self.isFiltering = false
+                            self.getRestaurants(location: self.selectedLocation, index: self.pageIndex)
+                        }
+                    }
+                }
+            }
+        } catch { return }
     }
     
     @objc func refreshRestaurants(){
@@ -423,6 +487,9 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                 filterView.addConstraintsWithFormat(format: "V:|-7-[v0(22)]-7-|", views: filterIconView)
                 filterView.addConstraintsWithFormat(format: "H:|-7-[v0(22)]-7-|", views: filterIconView)
                 
+                filterView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(filterRestaurants(_:))))
+                filterView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(clearFilters(_:))))
+                
                 contentView.addSubview(iconView)
                 contentView.addSubview(searchView)
                 
@@ -457,11 +524,27 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             }
         case self.cuisinesCollectionView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdCuisine, for: indexPath) as! CuisineViewCell
+            
+            let viewShimmer: UIView = {
+                let view = UIView()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.backgroundColor = Colors.colorVeryLightGray
+                view.layer.cornerRadius = 5.0
+                view.layer.masksToBounds = true
+                view.clipsToBounds = true
+                return view
+            }()
+            
             if self.cuisines.isEmpty {
+                
+                cell.addSubview(viewShimmer)
+                cell.addConstraintsWithFormat(format: "V:|[v0]|", views: viewShimmer)
+                cell.addConstraintsWithFormat(format: "H:|[v0]|", views: viewShimmer)
+                
                 let shimmerView = ShimmeringView(frame: CGRect(x: 0, y: 0, width: 125, height: 160))
                 cell.addSubview(shimmerView)
                 
-                shimmerView.contentView = view
+                shimmerView.contentView = viewShimmer
                 shimmerView.shimmerAnimationOpacity = 0.4
                 shimmerView.shimmerSpeed = 250
                 shimmerView.isShimmering = true
@@ -528,6 +611,73 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         case self.cuisinesCollectionView:
             break
         case self.filtersCollectionView:
+            
+            var selectedFilters: [Filter]!
+            
+            let data = self.filters[indexPath.item]
+            
+            switch data[0] as! Int {
+            case 0:
+                Toast.makeToast(message: "Not Available Yet", duration: Toast.MID_LENGTH_DURATION, style: .default)
+                break
+            default:
+                if let filters = self.filterValues {
+                    switch data[0] as! Int {
+                    case 1:
+                        selectedFilters = filters.availability
+                        break
+                    case 2:
+                        selectedFilters = filters.cuisines
+                        break
+                    case 3:
+                        selectedFilters = filters.services
+                        break
+                    case 4:
+                        selectedFilters = filters.specials
+                        break
+                    case 5:
+                        selectedFilters = filters.types
+                        break
+                    case 6:
+                        selectedFilters = filters.ratings
+                        break
+                    default:
+                        selectedFilters = []
+                    }
+                    
+                    let storyboard = UIStoryboard(name: "Home", bundle: nil)
+                    let filtersController = storyboard.instantiateViewController(withIdentifier: "RestaurantFilters") as! RestaurantFiltersViewController
+                    filtersController.filters = selectedFilters
+                    filtersController.type = data[0] as? Int
+                    
+                    filtersController.onFilterRestaurants = { filter in
+                        if filter {
+                            self.showSpinner(onView: self.view)
+                            
+                            self.pageIndex = 1
+                            
+                            self.restaurants = []
+                            self.spinnerViewHeight = 0
+                            self.searchFilteredRestaurants(location: self.selectedLocation, index: self.pageIndex)
+                        }
+                    }
+                    
+                    let sheetController = SheetViewController(controller: filtersController, sizes: [.fixed(CGFloat((50 * selectedFilters.count) + 160))])
+                    sheetController.blurBottomSafeArea = false
+                    sheetController.adjustForBottomSafeArea = true
+                    sheetController.topCornersRadius = 8
+                    sheetController.dismissOnBackgroundTap = true
+                    sheetController.extendBackgroundBehindHandle = false
+                    sheetController.willDismiss = {_ in }
+                    sheetController.didDismiss = {_ in
+                        filtersController.updateFilterParams()
+                    }
+                    self.present(sheetController, animated: false, completion: nil)
+                    
+                    break;
+                }
+            }
+            
             break
         case self.restaurantsCollectionView:
             let branch = self.restaurants[indexPath.item]
@@ -603,7 +753,9 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                 if self.shouldLoad {
                     pageIndex += 1
                     self.spinnerViewHeight = 36
-                    getRestaurants(location: self.selectedLocation, index: pageIndex)
+                    if isFiltering {
+                        self.searchFilteredRestaurants(location: self.selectedLocation, index: pageIndex)
+                    } else { getRestaurants(location: self.selectedLocation, index: pageIndex) }
                 }
             }
             break
@@ -682,6 +834,29 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         let restaurantViewController = storyboard.instantiateViewController(withIdentifier: "RestaurantView") as! RestaurantViewController
         restaurantViewController.restaurant = restaurant
         self.navigationController?.pushViewController(restaurantViewController, animated: true)
+    }
+    
+    @objc private func filterRestaurants(_ sender: Any) {
+        self.showSpinner(onView: self.view)
+        
+        self.pageIndex = 1
+        
+        self.restaurants = []
+        self.spinnerViewHeight = 0
+        self.searchFilteredRestaurants(location: self.selectedLocation, index: self.pageIndex)
+    }
+    
+    @objc private func clearFilters(_ sender: Any) {
+        let alertDialog = UIAlertController(title: "Clear Filters", message: "Do you really wnt to clear filters ?", preferredStyle: UIAlertController.Style.alert)
+        alertDialog.addAction(UIAlertAction(title: "YES", style: UIAlertAction.Style.default, handler: { (action) in
+            LocalData.instance.resetFiltersParams()
+            Toast.makeToast(message: "Filters Cleared", duration: Toast.MID_LENGTH_DURATION, style: .success)
+            self.pageIndex = 1
+            self.isFiltering = false
+            self.getRestaurants(location: self.selectedLocation, index: self.pageIndex)
+        }))
+        alertDialog.addAction(UIAlertAction(title: "CANCEL", style: UIAlertAction.Style.default, handler: nil))
+        self.present(alertDialog, animated: true, completion: nil)
     }
     
     private func restaurantCellViewHeight(index: Int) -> CGFloat {

@@ -288,7 +288,7 @@ class APIDataProvider: NSObject {
     
     public func getFilters(completion: @escaping (RestaurantFilters?) -> ()){
         
-        guard let url = URL(string: URLs.cuisineGlobal) else { return }
+        guard let url = URL(string: URLs.restaurantFilters) else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -307,6 +307,42 @@ class APIDataProvider: NSObject {
                 } catch {
                     DispatchQueue.main.async {
                         completion(nil)
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
+    
+    public func searchFilterRestaurants(country: String, town: String, query: String, filters: String, page: String, completion: @escaping ([Branch]) -> ()){
+        
+        let formData: Parameters = ["token": self.session.token!, "country": country, "town": town, "query": query, "filters": filters, "page": page]
+        
+        guard let url = URL(string: URLs.restaurantSearchFiltered) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+               
+        let boundary = Requests().generateBoundary()
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+               
+        let httpBody = Requests().createDataBody(withParameters: formData, media: nil, boundary: boundary)
+        request.httpBody = httpBody
+        
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let restaurants = try JSONDecoder().decode([Branch].self, from: data)
+                    DispatchQueue.main.async { completion(restaurants) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([])
                         self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
                     }
                 }

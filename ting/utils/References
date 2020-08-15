@@ -9,3 +9,14 @@ print("codingPath:", context.codingPath)
 } catch let DecodingError.typeMismatch(type, context)  {
 print("Type '\(type)' mismatch:", context.debugDescription)
 print("codingPath:", context.codingPath)
+
+
+if menu == nil {
+    windless.setupWindlessableViews([menuImageView]).apply({ (config) in
+        config.animationLayerOpacity = 0.6
+        config.direction = .right
+        config.duration = 2.0
+        config.pauseDuration = 0.5
+        config.animationLayerColor = Colors.colorLightGray
+    }).start()
+}

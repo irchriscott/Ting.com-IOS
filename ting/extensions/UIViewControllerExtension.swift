@@ -15,7 +15,7 @@ extension UIViewController {
     
     func showSpinner(onView: UIView){
         let spinnerView = UIView(frame: onView.bounds)
-        spinnerView.backgroundColor = Colors.colorTransparent
+        spinnerView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         let ai = UIActivityIndicatorView(style: .white)
         ai.startAnimating()
         ai.center = spinnerView.center
@@ -53,9 +53,9 @@ extension UIViewController {
         })
     }
     
-    func showErrorMessage(message: String){
+    func showErrorMessage(message: String, title: String = "Error"){
         DispatchQueue.main.async {
-            let alertDialog = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertController.Style.alert)
+            let alertDialog = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
             alertDialog.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
             self.present(alertDialog, animated: true, completion: nil)
         }
@@ -65,7 +65,7 @@ extension UIViewController {
         successOverlayView.bounds.size.width = self.view.bounds.width
         successOverlayView.bounds.size.height = self.view.bounds.height
         successOverlayView.center = self.view.center
-        successOverlayView.backgroundColor = Colors.colorTransparent
+        successOverlayView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         successOverlayView.alpha = 0.0
     
         DispatchQueue.main.async {
