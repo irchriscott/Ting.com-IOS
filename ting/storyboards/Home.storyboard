@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="hYB-MA-usT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -16,33 +17,6 @@
         </array>
     </customFonts>
     <scenes>
-        <!--Discovery-->
-        <scene sceneID="6NR-Bh-Dx8">
-            <objects>
-                <viewController id="hYB-MA-usT" customClass="HomeDiscoverViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Ncp-t1-bfw">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Dicovery" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xIx-qK-Sgw">
-                                <rect key="frame" x="149" y="241" width="67" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <viewLayoutGuide key="safeArea" id="fbQ-nS-EzN"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" title="Discovery" image="ic_discovery" selectedImage="ic_discovery" id="edE-XE-ivW">
-                        <offsetWrapper key="titlePositionAdjustment" horizontal="0.0" vertical="0.0"/>
-                    </tabBarItem>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="iM8-rj-VBD" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1906" y="606"/>
-        </scene>
         <!--Home View Controller-->
         <scene sceneID="dPj-QS-bYy">
             <objects>
@@ -55,7 +29,7 @@
                         <color key="selectedImageTintColor" red="0.70980392160000005" green="0.43529411759999997" blue="0.90980392160000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </tabBar>
                     <connections>
-                        <segue destination="hYB-MA-usT" kind="relationship" relationship="viewControllers" id="4g6-uv-lBS"/>
+                        <segue destination="rK7-NY-fXQ" kind="relationship" relationship="viewControllers" id="wiJ-gq-gpl"/>
                         <segue destination="ZHN-Em-l18" kind="relationship" relationship="viewControllers" id="kOX-IH-BKH"/>
                         <segue destination="DaR-rN-viP" kind="relationship" relationship="viewControllers" id="lbI-S6-Dpr"/>
                     </connections>
@@ -356,7 +330,7 @@
                             <fontDescription key="fontDescription" name="Poppins-Regular" family="Poppins" pointSize="17"/>
                         </textAttributes>
                         <textAttributes key="largeTitleTextAttributes">
-                            <fontDescription key="fontDescription" name="Poppins-SemiBold" family="Poppins" pointSize="30"/>
+                            <fontDescription key="fontDescription" name="Poppins-SemiBold" family="Poppins" pointSize="26"/>
                         </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -367,6 +341,31 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OaK-Ve-3jH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-325.60000000000002" y="-161.46926536731635"/>
+        </scene>
+        <!--Discovery-->
+        <scene sceneID="J6O-zA-z72">
+            <objects>
+                <navigationController id="rK7-NY-fXQ" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Discovery" image="ic_discovery" selectedImage="ic_discovery" id="ExT-Zq-wHx"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" largeTitles="YES" id="PkW-kQ-JEo">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="96"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <textAttributes key="titleTextAttributes">
+                            <fontDescription key="fontDescription" name="Poppins-Regular" family="Poppins" pointSize="17"/>
+                        </textAttributes>
+                        <textAttributes key="largeTitleTextAttributes">
+                            <fontDescription key="fontDescription" name="Poppins-SemiBold" family="Poppins" pointSize="26"/>
+                        </textAttributes>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="F5n-DF-FYN" kind="relationship" relationship="rootViewController" id="99G-L4-1re"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BRd-yJ-YxB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1940" y="606"/>
         </scene>
         <!--Restaurants-->
         <scene sceneID="waM-FZ-KAf">
@@ -382,7 +381,7 @@
                             <fontDescription key="fontDescription" name="Poppins-Regular" family="Poppins" pointSize="17"/>
                         </textAttributes>
                         <textAttributes key="largeTitleTextAttributes">
-                            <fontDescription key="fontDescription" name="Poppins-SemiBold" family="Poppins" pointSize="30"/>
+                            <fontDescription key="fontDescription" name="Poppins-SemiBold" family="Poppins" pointSize="26"/>
                         </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -633,9 +632,45 @@
             </objects>
             <point key="canvasLocation" x="4258" y="2087"/>
         </scene>
+        <!--Discovery-->
+        <scene sceneID="Pgf-yM-wHv">
+            <objects>
+                <collectionViewController id="F5n-DF-FYN" customClass="HomeDiscoverViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="PaO-t0-Hee">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="pQz-fP-CpO">
+                            <size key="itemSize" width="128" height="128"/>
+                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <cells>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="MZq-ch-ZEh">
+                                <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="aDj-oX-y8i">
+                                    <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </collectionViewCellContentView>
+                            </collectionViewCell>
+                        </cells>
+                        <connections>
+                            <outlet property="dataSource" destination="F5n-DF-FYN" id="2Jt-H8-aM6"/>
+                            <outlet property="delegate" destination="F5n-DF-FYN" id="9tH-Ix-Bhx"/>
+                        </connections>
+                    </collectionView>
+                    <navigationItem key="navigationItem" title="Discovery" largeTitleDisplayMode="always" id="zgX-4T-34B"/>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="y5b-w5-g2d" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1940" y="1325"/>
+        </scene>
         <!--Restaurants-->
         <scene sceneID="lOv-RI-d2K">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cP0-VN-87w" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <collectionViewController id="dMH-QD-BJp" customClass="HomeRestaurantsViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="Uuj-Jr-ZPN">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
@@ -664,7 +699,6 @@
                     </collectionView>
                     <navigationItem key="navigationItem" title="Restaurants" largeTitleDisplayMode="always" id="Bda-O2-pU4"/>
                 </collectionViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="cP0-VN-87w" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1164" y="1327"/>
         </scene>

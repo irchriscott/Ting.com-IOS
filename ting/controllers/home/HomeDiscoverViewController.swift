@@ -8,23 +8,41 @@
 
 import UIKit
 
-class HomeDiscoverViewController: UIViewController {
+class HomeDiscoverViewController: UICollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        self.setupNavigationBar()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewDidAppear(_ animated: Bool) {
+        self.setupNavigationBar()
     }
-    */
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.setupNavigationBar()
+    }
 
+    func setupNavigationBar(){
+        
+        self.navigationController?.navigationBar.backgroundColor = Colors.colorWhite
+        self.navigationController?.navigationBar.barTintColor = Colors.colorWhite
+        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.barStyle = .default
+        self.navigationController?.navigationBar.shadowImage = nil
+        self.navigationItem.title = "Discovery"
+        
+        self.navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor : UIColor.black]
+        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : Colors.colorDarkGray]
+        
+        let barButtonAppearance = UIBarButtonItem.appearance()
+        barButtonAppearance.setTitleTextAttributes([.foregroundColor : UIColor.clear], for: .normal)
+        
+        if #available(iOS 13.0, *) {
+            let statusBar = UIView(frame: UIApplication.shared.keyWindow?.windowScene?.statusBarManager?.statusBarFrame ?? CGRect.zero)
+            statusBar.backgroundColor = Colors.colorWhite
+            UIApplication.shared.keyWindow?.addSubview(statusBar)
+        }
+    }
 }
