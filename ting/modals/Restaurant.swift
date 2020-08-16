@@ -77,6 +77,7 @@ struct RestaurantFoodCategories: Codable {
 }
 
 struct RestaurantCategory: Codable {
+    let id: Int
     let name: String
     let country: String
     let image: String

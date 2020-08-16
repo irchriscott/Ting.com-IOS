@@ -103,6 +103,10 @@
 		8F49C10E22F49ABA0084F3E7 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F49C10D22F49ABA0084F3E7 /* User.swift */; };
 		8F49C11022F4A7460084F3E7 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F49C10F22F4A7460084F3E7 /* SignUpViewController.swift */; };
 		8F4C1AFB24E9153D002BEF50 /* DetailsShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C1AFA24E9153D002BEF50 /* DetailsShimmerView.swift */; };
+		8F4C1B0024E926AA002BEF50 /* CuisineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C1AFF24E926AA002BEF50 /* CuisineViewController.swift */; };
+		8F4C1B0224E926FA002BEF50 /* CuisineRestaurantsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C1B0124E926FA002BEF50 /* CuisineRestaurantsViewController.swift */; };
+		8F4C1B0424E9271B002BEF50 /* CuisineMenusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C1B0324E9271B002BEF50 /* CuisineMenusViewController.swift */; };
+		8F4C1B0624E97B6E002BEF50 /* CuisineRestaurantViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C1B0524E97B6E002BEF50 /* CuisineRestaurantViewCell.swift */; };
 		8F55441C232C0A32001BCBE2 /* CosmosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F55441B232C0A32001BCBE2 /* CosmosView.swift */; };
 		8F68B03222F583E500A3AB3B /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F68B03122F583E500A3AB3B /* PrimaryButton.swift */; };
 		8F79B4BA22F4C9D3000FBBB1 /* LeftToRightSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F79B4B922F4C9D3000FBBB1 /* LeftToRightSegue.swift */; };
@@ -246,6 +250,10 @@
 		8F49C10D22F49ABA0084F3E7 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8F49C10F22F4A7460084F3E7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		8F4C1AFA24E9153D002BEF50 /* DetailsShimmerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsShimmerView.swift; sourceTree = "<group>"; };
+		8F4C1AFF24E926AA002BEF50 /* CuisineViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuisineViewController.swift; sourceTree = "<group>"; };
+		8F4C1B0124E926FA002BEF50 /* CuisineRestaurantsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuisineRestaurantsViewController.swift; sourceTree = "<group>"; };
+		8F4C1B0324E9271B002BEF50 /* CuisineMenusViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuisineMenusViewController.swift; sourceTree = "<group>"; };
+		8F4C1B0524E97B6E002BEF50 /* CuisineRestaurantViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuisineRestaurantViewCell.swift; sourceTree = "<group>"; };
 		8F55441B232C0A32001BCBE2 /* CosmosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CosmosView.swift; sourceTree = "<group>"; };
 		8F68B03122F583E500A3AB3B /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
 		8F79B4B922F4C9D3000FBBB1 /* LeftToRightSegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftToRightSegue.swift; sourceTree = "<group>"; };
@@ -401,6 +409,7 @@
 		8F30B20C22F9B81C000B66B7 /* controllers */ = {
 			isa = PBXGroup;
 			children = (
+				8F4C1AFC24E922BD002BEF50 /* cuisine */,
 				8FF1687324E6FADB00DD13A2 /* others */,
 				8FB7B20D23A8A04C00245012 /* promotion */,
 				8F36E7272336484C0028ECE6 /* menu */,
@@ -560,6 +569,16 @@
 			path = modals;
 			sourceTree = "<group>";
 		};
+		8F4C1AFC24E922BD002BEF50 /* cuisine */ = {
+			isa = PBXGroup;
+			children = (
+				8F4C1AFF24E926AA002BEF50 /* CuisineViewController.swift */,
+				8F4C1B0124E926FA002BEF50 /* CuisineRestaurantsViewController.swift */,
+				8F4C1B0324E9271B002BEF50 /* CuisineMenusViewController.swift */,
+			);
+			path = cuisine;
+			sourceTree = "<group>";
+		};
 		8F79B4B822F4C93A000FBBB1 /* segues */ = {
 			isa = PBXGroup;
 			children = (
@@ -572,6 +591,7 @@
 			isa = PBXGroup;
 			children = (
 				8FA0334324E2658800B0D680 /* CuisineViewCell.swift */,
+				8F4C1B0524E97B6E002BEF50 /* CuisineRestaurantViewCell.swift */,
 			);
 			path = cuisine;
 			sourceTree = "<group>";
@@ -877,6 +897,7 @@
 				8F157C7523AA2362008C88E2 /* RestaurantDrinksViewController.swift in Sources */,
 				8FA5717024DF002F00C8034D /* Administrator.swift in Sources */,
 				8F157C7D23B1D111008C88E2 /* MenuItemView.swift in Sources */,
+				8F4C1B0424E9271B002BEF50 /* CuisineMenusViewController.swift in Sources */,
 				8F11988B232F5E3F00DA8C7D /* APIDataProvider.swift in Sources */,
 				8F43F3CE22F798E200545AC2 /* Requests.swift in Sources */,
 				8FB57BA5237BF3BC00732D5A /* ReviewsPercentsView.swift in Sources */,
@@ -894,11 +915,13 @@
 				8F2F8B0D22F0BC2200FF5B59 /* LoginViewController.swift in Sources */,
 				8F07FFD7231467AF00D0ACD5 /* SecondaryButton.swift in Sources */,
 				8F07FFD52313BDDC00D0ACD5 /* UserAddressesView.swift in Sources */,
+				8F4C1B0024E926AA002BEF50 /* CuisineViewController.swift in Sources */,
 				8F49C10222F385CB0084F3E7 /* ServerResponse.swift in Sources */,
 				8F0D814323153480003138B6 /* CustomMapMarker.swift in Sources */,
 				8F1D75E72331D507000B25C9 /* RestaurantMapView.swift in Sources */,
 				8FC6088822FBD361005D142B /* Functions.swift in Sources */,
 				8F157C8123B37318008C88E2 /* RestaurantLikesController.swift in Sources */,
+				8F4C1B0224E926FA002BEF50 /* CuisineRestaurantsViewController.swift in Sources */,
 				8F3309DE22F9EBB700437767 /* LaunchScreenViewController.swift in Sources */,
 				8FA0334624E279D500B0D680 /* LocalData.swift in Sources */,
 				8F12248F23312351000C20EF /* FloatingButton.swift in Sources */,
@@ -938,6 +961,7 @@
 				8F49C11022F4A7460084F3E7 /* SignUpViewController.swift in Sources */,
 				8FAA270822F8965300B0B05B /* InputTextField.swift in Sources */,
 				8F36E729233648D70028ECE6 /* BottomSheetMenuControllerView.swift in Sources */,
+				8F4C1B0624E97B6E002BEF50 /* CuisineRestaurantViewCell.swift in Sources */,
 				8F14F138233285D300844B63 /* UIDeviceExtension.swift in Sources */,
 				8F3309D922F9E8D100437767 /* HomeRestaurantsViewController.swift in Sources */,
 				8F2F8B0B22F0BC2200FF5B59 /* AppDelegate.swift in Sources */,

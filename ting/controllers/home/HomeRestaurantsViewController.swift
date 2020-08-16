@@ -146,6 +146,8 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     var pageIndex = 1
     var shouldLoad = true
     var isFiltering = false
+    
+    var loadedRestaurants:[Int] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -236,17 +238,18 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         APIDataProvider.instance.getRestaurants(url: "\(URLs.restaurantsGlobal)?page=\(index)") { (branches) in
             DispatchQueue.main.async {
                 if !branches.isEmpty {
+                    var newBranches: [Branch] = []
                     if let userLocation = location {
                         for var branch in branches {
                             let branchLocation = CLLocation(latitude: CLLocationDegrees(exactly: Double(branch.latitude)!)!, longitude: CLLocationDegrees(exactly: Double(branch.longitude)!)!)
                             branch.dist = Double(branchLocation.distance(from: userLocation) / 1000).rounded(toPlaces: 2)
                             if !self.restaurants.contains(where: { (b) -> Bool in
                                 return b.id == branch.id
-                            }){ self.restaurants.append(branch) }
+                            }){ newBranches.append(branch) }
                         }
-                    } else { for var branch in self.restaurants { branch.dist = 0.00 } }
+                    } else { for var branch in newBranches { branch.dist = 0.00 } }
                     
-                    self.restaurants = self.restaurants.sorted(by: { $0.dist! < $1.dist! })
+                    self.restaurants.append(contentsOf: newBranches.sorted(by: { $0.dist! < $1.dist! }))
                     self.spinnerViewHeight = 0
                     self.collectionView.reloadData()
                     self.restaurantsCollectionView.reloadData()
@@ -269,17 +272,18 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                 DispatchQueue.main.async {
                     self.removeSpinner()
                     if !branches.isEmpty {
+                        var newBranches: [Branch] = []
                         if let userLocation = location {
                             for var branch in branches {
                                 let branchLocation = CLLocation(latitude: CLLocationDegrees(exactly: Double(branch.latitude)!)!, longitude: CLLocationDegrees(exactly: Double(branch.longitude)!)!)
                                 branch.dist = Double(branchLocation.distance(from: userLocation) / 1000).rounded(toPlaces: 2)
                                 if !self.restaurants.contains(where: { (b) -> Bool in
                                     return b.id == branch.id
-                                }){ self.restaurants.append(branch) }
+                                }){ newBranches.append(branch) }
                             }
-                        } else { for var branch in self.restaurants { branch.dist = 0.00 } }
+                        } else { for var branch in newBranches { branch.dist = 0.00 } }
                         
-                        self.restaurants = self.restaurants.sorted(by: { $0.dist! < $1.dist! })
+                        self.restaurants.append(contentsOf: newBranches.sorted(by: { $0.dist! < $1.dist! }))
                         self.spinnerViewHeight = 0
                         self.collectionView.reloadData()
                         self.restaurantsCollectionView.reloadData()
@@ -423,7 +427,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch collectionView {
         case self.collectionView:
-            switch indexPath.item {
+            switch indexPath.row {
             case 0:
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
                 cell.backgroundColor = Colors.colorWhite
@@ -549,7 +553,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                 shimmerView.shimmerSpeed = 250
                 shimmerView.isShimmering = true
             } else {
-                cell.cuisine = self.cuisines[indexPath.item]
+                cell.cuisine = self.cuisines[indexPath.row]
             }
             return cell
         case self.filtersCollectionView:
@@ -561,7 +565,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                 return view
             }()
             
-            let data = self.filters[indexPath.item]
+            let data = self.filters[indexPath.row]
             let filterRect = NSString(string: data[2] as! String).boundingRect(with: CGSize(width: view.frame.width, height: 26), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Medium", size: 12)!], context: nil)
             
             filterView.text = data[2] as! String
@@ -596,10 +600,13 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             return cell
         case self.restaurantsCollectionView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdRestaurant, for: indexPath) as! RestaurantViewCell
-            let restaurant = self.restaurants[indexPath.item]
-            cell.branch = restaurant
-            cell.backgroundColor = .white
-            cell.controller = self
+            let restaurant = self.restaurants[indexPath.row]
+            if !self.loadedRestaurants.contains(indexPath.row) {
+                cell.branch = restaurant
+                cell.backgroundColor = .white
+                cell.controller = self
+                self.loadedRestaurants.append(indexPath.row)
+            }
             return cell
         default:
             return collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
@@ -609,12 +616,17 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch collectionView {
         case self.cuisinesCollectionView:
+            let cuisine = self.cuisines[indexPath.row]
+            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+            let cuisineViewController = storyboard.instantiateViewController(withIdentifier: "CuisineView") as! CuisineViewController
+            cuisineViewController.cuisine = cuisine
+            self.navigationController?.pushViewController(cuisineViewController, animated: true)
             break
         case self.filtersCollectionView:
             
             var selectedFilters: [Filter]!
             
-            let data = self.filters[indexPath.item]
+            let data = self.filters[indexPath.row]
             
             switch data[0] as! Int {
             case 0:
@@ -680,7 +692,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             
             break
         case self.restaurantsCollectionView:
-            let branch = self.restaurants[indexPath.item]
+            let branch = self.restaurants[indexPath.row]
             let storyboard = UIStoryboard(name: "Home", bundle: nil)
             let restaurantViewController = storyboard.instantiateViewController(withIdentifier: "RestaurantView") as! RestaurantViewController
             restaurantViewController.restaurant = branch
@@ -694,7 +706,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         switch collectionView {
         case self.collectionView:
-            switch indexPath.item {
+            switch indexPath.row {
             case 0:
                 return CGSize(width: view.frame.width, height: 168)
             case 1:
@@ -718,14 +730,14 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         case self.cuisinesCollectionView:
             return CGSize(width: 125, height: 160)
         case self.filtersCollectionView:
-            let data = self.filters[indexPath.item]
+            let data = self.filters[indexPath.row]
             let filterRect = NSString(string: data[2] as! String).boundingRect(with: CGSize(width: view.frame.width, height: 26), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Medium", size: 12)!], context: nil)
             return CGSize(width: filterRect.width + 40, height: 42)
         case self.restaurantsShimmerCollectionView:
             return CGSize(width: view.frame.width, height: 94)
         case self.restaurantsCollectionView:
             if !self.restaurants.isEmpty {
-                return CGSize(width: view.frame.width, height: self.restaurantCellViewHeight(index: indexPath.item))
+                return CGSize(width: view.frame.width, height: self.restaurantCellViewHeight(index: indexPath.row))
             }
             return CGSize(width: view.frame.width, height: 210)
         default:
@@ -749,7 +761,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         switch collectionView {
         case self.restaurantsCollectionView:
-            if indexPath.item == self.restaurants.count - 1 {
+            if indexPath.row == self.restaurants.count - 1 {
                 if self.shouldLoad {
                     pageIndex += 1
                     self.spinnerViewHeight = 36
@@ -847,10 +859,10 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     }
     
     @objc private func clearFilters(_ sender: Any) {
-        let alertDialog = UIAlertController(title: "Clear Filters", message: "Do you really wnt to clear filters ?", preferredStyle: UIAlertController.Style.alert)
+        let alertDialog = UIAlertController(title: "Reset All Filters", message: "Do you really want to reset all filters ?", preferredStyle: UIAlertController.Style.alert)
         alertDialog.addAction(UIAlertAction(title: "YES", style: UIAlertAction.Style.default, handler: { (action) in
             LocalData.instance.resetFiltersParams()
-            Toast.makeToast(message: "Filters Cleared", duration: Toast.MID_LENGTH_DURATION, style: .success)
+            Toast.makeToast(message: "Filters Reset Successfully", duration: Toast.MID_LENGTH_DURATION, style: .success)
             self.pageIndex = 1
             self.isFiltering = false
             self.getRestaurants(location: self.selectedLocation, index: self.pageIndex)
