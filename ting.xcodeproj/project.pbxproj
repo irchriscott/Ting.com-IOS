@@ -102,6 +102,7 @@
 		8F49C10C22F497D80084F3E7 /* RestaurantMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F49C10B22F497D80084F3E7 /* RestaurantMenu.swift */; };
 		8F49C10E22F49ABA0084F3E7 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F49C10D22F49ABA0084F3E7 /* User.swift */; };
 		8F49C11022F4A7460084F3E7 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F49C10F22F4A7460084F3E7 /* SignUpViewController.swift */; };
+		8F4C1AFB24E9153D002BEF50 /* DetailsShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4C1AFA24E9153D002BEF50 /* DetailsShimmerView.swift */; };
 		8F55441C232C0A32001BCBE2 /* CosmosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F55441B232C0A32001BCBE2 /* CosmosView.swift */; };
 		8F68B03222F583E500A3AB3B /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F68B03122F583E500A3AB3B /* PrimaryButton.swift */; };
 		8F79B4BA22F4C9D3000FBBB1 /* LeftToRightSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F79B4B922F4C9D3000FBBB1 /* LeftToRightSegue.swift */; };
@@ -244,6 +245,7 @@
 		8F49C10B22F497D80084F3E7 /* RestaurantMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantMenu.swift; sourceTree = "<group>"; };
 		8F49C10D22F49ABA0084F3E7 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8F49C10F22F4A7460084F3E7 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
+		8F4C1AFA24E9153D002BEF50 /* DetailsShimmerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsShimmerView.swift; sourceTree = "<group>"; };
 		8F55441B232C0A32001BCBE2 /* CosmosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CosmosView.swift; sourceTree = "<group>"; };
 		8F68B03122F583E500A3AB3B /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
 		8F79B4B922F4C9D3000FBBB1 /* LeftToRightSegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftToRightSegue.swift; sourceTree = "<group>"; };
@@ -578,6 +580,7 @@
 			isa = PBXGroup;
 			children = (
 				8FA0334824E2AF4900B0D680 /* RowShimmerView.swift */,
+				8F4C1AFA24E9153D002BEF50 /* DetailsShimmerView.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -881,6 +884,7 @@
 				8FB57BA3237AA21700732D5A /* MenuPromotionViewCell.swift in Sources */,
 				8F07FFCD23128B2D00D0ACD5 /* TitleTextLabel.swift in Sources */,
 				8F49C0F922F2F7F60084F3E7 /* UIViewControllerExtension.swift in Sources */,
+				8F4C1AFB24E9153D002BEF50 /* DetailsShimmerView.swift in Sources */,
 				8F1F112622FA23CC00CA4DD9 /* ResetPasswordViewController.swift in Sources */,
 				8F3E3CF4230B903500D9BC1C /* HomeMenuViewController.swift in Sources */,
 				8F157C6723A9F6B0008C88E2 /* RestaurantHeaderViewCell.swift in Sources */,
