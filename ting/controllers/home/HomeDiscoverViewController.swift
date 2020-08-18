@@ -33,7 +33,7 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
     
     private lazy var recommandedRestaurantsView: UICollectionView = {
         let carouselFlow = UICollectionViewCarouselLayout()
-        carouselFlow.itemSize = CGSize(width: 200, height: 320)
+        carouselFlow.itemSize = CGSize(width: 200, height: 328)
         carouselFlow.minimumLineSpacing = 0
         let view = UICollectionView(collectionViewCarouselLayout: carouselFlow)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -86,6 +86,8 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
         
         self.navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor : UIColor.black]
         self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : Colors.colorDarkGray]
+        
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         
         let barButtonAppearance = UIBarButtonItem.appearance()
         barButtonAppearance.setTitleTextAttributes([.foregroundColor : UIColor.clear], for: .normal)
@@ -212,23 +214,24 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
             return cell
         case self.recommandedRestaurantsView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.recommandedRestaurantCellId, for: indexPath) as! RecommandedRestaurantViewCell
+            let shimmerView = ShimmeringView(frame: CGRect(x: 0, y: 0, width: 200, height: 328))
+            let viewShimmer: RecommandedRestaurantShimmerView = {
+                let view = RecommandedRestaurantShimmerView()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                return view
+            }()
             if self.recommandedRestaurants.isEmpty {
-                let shimmerView = ShimmeringView(frame: CGRect(x: 0, y: 0, width: 200, height: 320))
-                cell.addSubview(shimmerView)
-                
-                let view: UIView = {
-                    let view = UIView()
-                    view.translatesAutoresizingMaskIntoConstraints = false
-                    view.backgroundColor = .clear
-                    return view
-                }()
-                
-                shimmerView.contentView = view
+                if !self.recommandedRestaurants.isEmpty {
+                    cell.addSubview(shimmerView)
+                }
+                shimmerView.contentView = viewShimmer
                 shimmerView.shimmerAnimationOpacity = 0.4
                 shimmerView.shimmerSpeed = 250
                 shimmerView.isShimmering = true
             } else {
                 cell.branch = self.recommandedRestaurants[indexPath.row]
+                shimmerView.removeFromSuperview()
+                viewShimmer.removeFromSuperview()
             }
             return cell
         default:
@@ -243,12 +246,12 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
             case 0:
                 return CGSize(width: self.view.frame.width, height: 40)
             case 1:
-                return CGSize(width: self.view.frame.width, height: 320)
+                return CGSize(width: self.view.frame.width, height: 328)
             default:
                 return CGSize(width: self.view.frame.width, height: 0)
             }
         case self.recommandedRestaurantsView:
-            return CGSize(width: 200, height: 320)
+            return CGSize(width: 200, height: 328)
         default:
             return CGSize(width: self.view.frame.width, height: 0)
         }

@@ -49,4 +49,8 @@ extension UIView {
         gradient.locations = [0.0, 0.6]
         self.layer.insertSublayer(gradient, at: 0)
     }
+    
+    func removeSubviews() {
+        subviews.forEach { $0.removeFromSuperview() }
+    }
 }

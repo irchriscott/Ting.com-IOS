@@ -66,6 +66,7 @@
 		8F36E729233648D70028ECE6 /* BottomSheetMenuControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F36E728233648D70028ECE6 /* BottomSheetMenuControllerView.swift */; };
 		8F36E72D2336881B0028ECE6 /* PolylineMapRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F36E72C2336881A0028ECE6 /* PolylineMapRoute.swift */; };
 		8F37674324EBA38800E80E98 /* RecommandedRestaurantViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F37674224EBA38800E80E98 /* RecommandedRestaurantViewCell.swift */; };
+		8F37674524EBC79B00E80E98 /* RecommandedRestaurantShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F37674424EBC79B00E80E98 /* RecommandedRestaurantShimmerView.swift */; };
 		8F38601822F1D21E00479072 /* Poppins_Extra_Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F38600F22F1D21E00479072 /* Poppins_Extra_Bold.ttf */; };
 		8F38601922F1D21E00479072 /* Poppins_Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F38601022F1D21E00479072 /* Poppins_Light.ttf */; };
 		8F38601A22F1D21E00479072 /* Poppins_Semi_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F38601122F1D21E00479072 /* Poppins_Semi_bold.ttf */; };
@@ -214,6 +215,7 @@
 		8F36E728233648D70028ECE6 /* BottomSheetMenuControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetMenuControllerView.swift; sourceTree = "<group>"; };
 		8F36E72C2336881A0028ECE6 /* PolylineMapRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolylineMapRoute.swift; sourceTree = "<group>"; };
 		8F37674224EBA38800E80E98 /* RecommandedRestaurantViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommandedRestaurantViewCell.swift; sourceTree = "<group>"; };
+		8F37674424EBC79B00E80E98 /* RecommandedRestaurantShimmerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommandedRestaurantShimmerView.swift; sourceTree = "<group>"; };
 		8F38600F22F1D21E00479072 /* Poppins_Extra_Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Poppins_Extra_Bold.ttf; sourceTree = "<group>"; };
 		8F38601022F1D21E00479072 /* Poppins_Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Poppins_Light.ttf; sourceTree = "<group>"; };
 		8F38601122F1D21E00479072 /* Poppins_Semi_bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Poppins_Semi_bold.ttf; sourceTree = "<group>"; };
@@ -601,6 +603,7 @@
 		8FA0334724E2AF2A00B0D680 /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				8F37674424EBC79B00E80E98 /* RecommandedRestaurantShimmerView.swift */,
 				8FA0334824E2AF4900B0D680 /* RowShimmerView.swift */,
 				8F4C1AFA24E9153D002BEF50 /* DetailsShimmerView.swift */,
 			);
@@ -915,6 +918,7 @@
 				8F157C6723A9F6B0008C88E2 /* RestaurantHeaderViewCell.swift in Sources */,
 				8F49C10C22F497D80084F3E7 /* RestaurantMenu.swift in Sources */,
 				8F07FFCF2312AA8F00D0ACD5 /* CustomViews.swift in Sources */,
+				8F37674524EBC79B00E80E98 /* RecommandedRestaurantShimmerView.swift in Sources */,
 				8FF1687524E6FB0B00DD13A2 /* RestaurantFiltersViewController.swift in Sources */,
 				8F2F8B0D22F0BC2200FF5B59 /* LoginViewController.swift in Sources */,
 				8F07FFD7231467AF00D0ACD5 /* SecondaryButton.swift in Sources */,

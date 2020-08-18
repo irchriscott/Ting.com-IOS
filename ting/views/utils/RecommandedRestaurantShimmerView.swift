@@ -1,15 +1,15 @@
 //
-//  RecommandedRestaurantViewCell.swift
+//  RecommandedRestaurantShimmerView.swift
 //  ting
 //
-//  Created by Christian Scott on 17/08/2020.
+//  Created by Christian Scott on 18/08/2020.
 //  Copyright © 2020 Ir Christian Scott. All rights reserved.
 //
 
 import UIKit
 
-class RecommandedRestaurantViewCell: UICollectionViewCell {
-    
+class RecommandedRestaurantShimmerView: UIView {
+
     var restaurantNameHeight: CGFloat = 25
     var restaurantAddressHeight: CGFloat = 16
     let device = UIDevice.type
@@ -80,46 +80,8 @@ class RecommandedRestaurantViewCell: UICollectionViewCell {
         return view
     }()
     
-    var branch: Branch? {
-        didSet {
-            if let branch = self.branch {
-                self.restaurantImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(branch.restaurant!.logo)")!)
-                self.restaurantImageView.alpha = 1.0
-                self.restaurantName.text = "\(branch.restaurant!.name), \(branch.name)"
-                self.restaurantRating.rating = Double(branch.reviews?.average ?? 0)
-                self.restaurantAddress.text = branch.address
-                
-                if UIDevice.smallDevices.contains(device) {
-                    restaurantNameTextSize = 14
-                    restaurantAddressTextSize = 12
-                } else if UIDevice.mediumDevices.contains(device) {
-                    restaurantNameTextSize = 15
-                }
-                
-                let frameWidth = frame.width
-                
-                let branchNameRect = NSString(string: "\(branch.name), \(branch.restaurant!.name)").boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: restaurantNameTextSize)!], context: nil)
-                
-                let branchAddressRect = NSString(string: branch.address).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: restaurantAddressTextSize)!], context: nil)
-                
-                restaurantAddressHeight = branchAddressRect.height
-                restaurantNameHeight = branchNameRect.height
-                
-                restaurantName.backgroundColor = .clear
-                restaurantAddress.backgroundColor = .clear
-            }
-            self.resetup()
-        }
-    }
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.setup()
-    }
-    
-    private func resetup() {
-        restaurantAddressView.removeSubviews()
-        removeSubviews()
         self.setup()
     }
     
@@ -151,4 +113,5 @@ class RecommandedRestaurantViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
 }

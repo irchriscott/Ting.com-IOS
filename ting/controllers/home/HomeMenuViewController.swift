@@ -75,6 +75,8 @@ class HomeMenuViewController: UIViewController {
         self.navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor : UIColor.black]
         self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : Colors.colorDarkGray]
         
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        
         let barButtonAppearance = UIBarButtonItem.appearance()
         barButtonAppearance.setTitleTextAttributes([.foregroundColor : UIColor.clear], for: .normal)
         
