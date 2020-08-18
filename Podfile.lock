@@ -39,8 +39,10 @@ PODS:
   - LightweightObservable (1.0.3)
   - LoadingShimmer (1.0.3)
   - ReachabilitySwift (5.0.0)
+  - ScalingCarousel (3.0.2)
   - ShimmerSwift (2.1.1)
   - SimpleCheckbox (2.1.0)
+  - ToosieSlide (1.1.1)
   - ViewPager-Swift (2.0.1)
   - Windless (0.1.5)
   - XLPagerTabStrip (9.0.0)
@@ -59,8 +61,10 @@ DEPENDENCIES:
   - Kingfisher
   - LoadingShimmer
   - ReachabilitySwift
+  - ScalingCarousel
   - ShimmerSwift
   - SimpleCheckbox
+  - ToosieSlide (~> 1.1)
   - ViewPager-Swift
   - Windless
   - XLPagerTabStrip
@@ -83,8 +87,10 @@ SPEC REPOS:
     - LightweightObservable
     - LoadingShimmer
     - ReachabilitySwift
+    - ScalingCarousel
     - ShimmerSwift
     - SimpleCheckbox
+    - ToosieSlide
     - ViewPager-Swift
     - Windless
     - XLPagerTabStrip
@@ -116,12 +122,14 @@ SPEC CHECKSUMS:
   LightweightObservable: 8687e8e1e2940ae2f64d7f71fe78c036d89c966f
   LoadingShimmer: dd681218498ec9648f572b845a7299b9c62e8e30
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
+  ScalingCarousel: a458c9a689076e647cd5cafe36e1664a12738ea8
   ShimmerSwift: f7ed2daf9c246de8299dfd9e12c6ab465cba9842
   SimpleCheckbox: ddcd433ab8c3a8f57300bebda13151a8f302c7f9
+  ToosieSlide: b410e89e0e1c00aecddeecebd1b4a8ed66385cac
   ViewPager-Swift: 7d83f5d4888a0fa808c08c8405ba84e603a2eb58
   Windless: c6b7d63ac3a0c7e6b241e316650d4605abf71894
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
 
-PODFILE CHECKSUM: e9c60d1c890cc7a21461bb30859eb4ad787d5abe
+PODFILE CHECKSUM: 8220fce9b7a3cf16140af851b5506c449b5bdfe3
 
 COCOAPODS: 1.9.3

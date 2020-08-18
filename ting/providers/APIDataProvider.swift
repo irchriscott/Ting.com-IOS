@@ -403,4 +403,31 @@ class APIDataProvider: NSObject {
             }
         }.resume()
     }
+    
+    public func getRecommandedRestaurants(country: String, town: String, completion: @escaping ([Branch]) -> ()){
+        
+        guard let url = URL(string: "\(URLs.discoverRestaurants)?country=\(country)&town=\(town)") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let restaurants = try JSONDecoder().decode([Branch].self, from: data)
+                    DispatchQueue.main.async { completion(restaurants) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([])
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
 }

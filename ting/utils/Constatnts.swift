@@ -76,6 +76,15 @@ struct URLs {
     static let cuisineGlobal                = "\(endPoint)usr/g/cuisines/all/"
     static let cuisineRestaurants           = "\(endPoint)usr/g/cuisine/r/%d/?page=%d"
     static let cuisineMenus                 = "\(endPoint)usr/g/cuisine/m/%d/?page=%d"
+    
+    //DISCOVERY
+    
+    static let discoverRestaurants          = "\(endPoint)usr/d/restaurants/"
+    static let discoverTopRestaurants       = "\(endPoint)usr/d/restaurants/top/"
+    static let discoverTodayPromosRand      = "\(endPoint)usr/d/today/promotions/rand/"
+    static let discoverTodayPromosAll       = "\(endPoint)usr/d/today/promotions/all/"
+    static let discoverTopMenus             = "\(endPoint)usr/d/menus/top/"
+    static let discoverMenus                = "\(endPoint)usr/d/menus/discover/"
 }
 
 struct StaticData {

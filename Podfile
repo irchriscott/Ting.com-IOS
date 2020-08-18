@@ -19,4 +19,6 @@ target 'ting' do
     pod 'ViewPager-Swift'
     pod 'BEMCheckBox'
     pod 'SimpleCheckbox'
+    pod 'ScalingCarousel'
+    pod 'ToosieSlide', '~> 1.1'
 end

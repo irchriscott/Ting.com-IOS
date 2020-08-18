@@ -65,6 +65,7 @@
 		8F3309DE22F9EBB700437767 /* LaunchScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3309DD22F9EBB700437767 /* LaunchScreenViewController.swift */; };
 		8F36E729233648D70028ECE6 /* BottomSheetMenuControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F36E728233648D70028ECE6 /* BottomSheetMenuControllerView.swift */; };
 		8F36E72D2336881B0028ECE6 /* PolylineMapRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F36E72C2336881A0028ECE6 /* PolylineMapRoute.swift */; };
+		8F37674324EBA38800E80E98 /* RecommandedRestaurantViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F37674224EBA38800E80E98 /* RecommandedRestaurantViewCell.swift */; };
 		8F38601822F1D21E00479072 /* Poppins_Extra_Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F38600F22F1D21E00479072 /* Poppins_Extra_Bold.ttf */; };
 		8F38601922F1D21E00479072 /* Poppins_Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F38601022F1D21E00479072 /* Poppins_Light.ttf */; };
 		8F38601A22F1D21E00479072 /* Poppins_Semi_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F38601122F1D21E00479072 /* Poppins_Semi_bold.ttf */; };
@@ -212,6 +213,7 @@
 		8F3309DD22F9EBB700437767 /* LaunchScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenViewController.swift; sourceTree = "<group>"; };
 		8F36E728233648D70028ECE6 /* BottomSheetMenuControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetMenuControllerView.swift; sourceTree = "<group>"; };
 		8F36E72C2336881A0028ECE6 /* PolylineMapRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolylineMapRoute.swift; sourceTree = "<group>"; };
+		8F37674224EBA38800E80E98 /* RecommandedRestaurantViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommandedRestaurantViewCell.swift; sourceTree = "<group>"; };
 		8F38600F22F1D21E00479072 /* Poppins_Extra_Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Poppins_Extra_Bold.ttf; sourceTree = "<group>"; };
 		8F38601022F1D21E00479072 /* Poppins_Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Poppins_Light.ttf; sourceTree = "<group>"; };
 		8F38601122F1D21E00479072 /* Poppins_Semi_bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Poppins_Semi_bold.ttf; sourceTree = "<group>"; };
@@ -660,6 +662,7 @@
 				8F157C7A23ADFB55008C88E2 /* RestaurantMenuViewCell.swift */,
 				8F157C8423B3B5D1008C88E2 /* RestaurantReviewCell.swift */,
 				8F157C8823B52154008C88E2 /* RestaurantLikeViewCell.swift */,
+				8F37674224EBA38800E80E98 /* RecommandedRestaurantViewCell.swift */,
 			);
 			path = restaurant;
 			sourceTree = "<group>";
@@ -897,6 +900,7 @@
 				8F157C7523AA2362008C88E2 /* RestaurantDrinksViewController.swift in Sources */,
 				8FA5717024DF002F00C8034D /* Administrator.swift in Sources */,
 				8F157C7D23B1D111008C88E2 /* MenuItemView.swift in Sources */,
+				8F37674324EBA38800E80E98 /* RecommandedRestaurantViewCell.swift in Sources */,
 				8F4C1B0424E9271B002BEF50 /* CuisineMenusViewController.swift in Sources */,
 				8F11988B232F5E3F00DA8C7D /* APIDataProvider.swift in Sources */,
 				8F43F3CE22F798E200545AC2 /* Requests.swift in Sources */,

@@ -1,0 +1,6 @@
+framework module ToosieSlide {
+  umbrella header "ToosieSlide-umbrella.h"
+
+  export *
+  module * { export * }
+}
