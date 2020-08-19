@@ -430,4 +430,58 @@ class APIDataProvider: NSObject {
             }
         }.resume()
     }
+    
+    public func getTodayPromotions(country: String, town: String, completion: @escaping ([MenuPromotion]) -> ()){
+        
+        guard let url = URL(string: "\(URLs.discoverTodayPromosRand)?country=\(country)&town=\(town)") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let promotions = try JSONDecoder().decode([MenuPromotion].self, from: data)
+                    DispatchQueue.main.async { completion(promotions) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([])
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
+    
+    public func getTodayPromotionsAll(country: String, town: String, page: Int, completion: @escaping ([MenuPromotion]) -> ()){
+        
+        guard let url = URL(string: "\(URLs.discoverTodayPromosAll)?country=\(country)&town=\(town)&page=\(page)") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let promotions = try JSONDecoder().decode([MenuPromotion].self, from: data)
+                    DispatchQueue.main.async { completion(promotions) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([])
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
 }

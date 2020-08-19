@@ -50,6 +50,14 @@ extension UIView {
         self.layer.insertSublayer(gradient, at: 0)
     }
     
+    func addBlackGradientLayerTop(frame: CGRect){
+        let gradient = CAGradientLayer()
+        gradient.frame = frame
+        gradient.colors = [UIColor.black.withAlphaComponent(0.8).cgColor, UIColor.clear.cgColor]
+        gradient.locations = [0.0, 0.8]
+        self.layer.insertSublayer(gradient, at: 0)
+    }
+    
     func removeSubviews() {
         subviews.forEach { $0.removeFromSuperview() }
     }

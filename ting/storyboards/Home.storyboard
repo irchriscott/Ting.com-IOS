@@ -632,12 +632,40 @@
             </objects>
             <point key="canvasLocation" x="4258" y="2087"/>
         </scene>
+        <!--Today Promotions View Controller-->
+        <scene sceneID="QeG-SZ-S2b">
+            <objects>
+                <tableViewController restorationIdentifier="TodayPromotions" storyboardIdentifier="TodayPromotions" id="Tqp-eB-jif" customClass="TodayPromotionsViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="qJV-Gj-f4c">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="xRa-oJ-Pw0">
+                                <rect key="frame" x="0.0" y="28" width="375" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="xRa-oJ-Pw0" id="nku-1I-von">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Tqp-eB-jif" id="uc2-uI-HbJ"/>
+                            <outlet property="delegate" destination="Tqp-eB-jif" id="xqf-rb-WNt"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="CFv-Mb-GcA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2809" y="1325"/>
+        </scene>
         <!--Discovery-->
         <scene sceneID="Pgf-yM-wHv">
             <objects>
                 <collectionViewController id="F5n-DF-FYN" customClass="HomeDiscoverViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" id="PaO-t0-Hee">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="571"/>
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="PaO-t0-Hee">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="pQz-fP-CpO">
@@ -672,10 +700,9 @@
         <!--Restaurants-->
         <scene sceneID="lOv-RI-d2K">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="cP0-VN-87w" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <collectionViewController id="dMH-QD-BJp" customClass="HomeRestaurantsViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="Uuj-Jr-ZPN">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" id="Uuj-Jr-ZPN">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="571"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="O9D-W4-VbO">
@@ -701,6 +728,7 @@
                     </collectionView>
                     <navigationItem key="navigationItem" title="Restaurants" largeTitleDisplayMode="always" id="Bda-O2-pU4"/>
                 </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cP0-VN-87w" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1164" y="1327"/>
         </scene>

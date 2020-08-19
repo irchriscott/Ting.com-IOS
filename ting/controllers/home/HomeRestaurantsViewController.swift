@@ -303,6 +303,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     
     @objc func refreshRestaurants(){
         pageIndex = 1
+        self.loadedRestaurants = []
         self.restaurants = []
         self.spinnerViewHeight = 0
         self.getRestaurants(location: self.selectedLocation, index: pageIndex)
@@ -669,7 +670,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                             self.showSpinner(onView: self.view)
                             
                             self.pageIndex = 1
-                            
+                            self.loadedRestaurants = []
                             self.restaurants = []
                             self.spinnerViewHeight = 0
                             self.searchFilteredRestaurants(location: self.selectedLocation, index: self.pageIndex)
@@ -854,7 +855,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         self.showSpinner(onView: self.view)
         
         self.pageIndex = 1
-        
+        self.loadedRestaurants = []
         self.restaurants = []
         self.spinnerViewHeight = 0
         self.searchFilteredRestaurants(location: self.selectedLocation, index: self.pageIndex)
@@ -866,6 +867,8 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             LocalData.instance.resetFiltersParams()
             Toast.makeToast(message: "Filters Reset Successfully", duration: Toast.MID_LENGTH_DURATION, style: .success)
             self.pageIndex = 1
+            self.loadedRestaurants = []
+            self.restaurants = []
             self.isFiltering = false
             self.getRestaurants(location: self.selectedLocation, index: self.pageIndex)
         }))

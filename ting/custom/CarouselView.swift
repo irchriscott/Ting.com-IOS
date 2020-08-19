@@ -22,6 +22,14 @@ final public class CarouselView: UIView, UICollectionViewDelegateFlowLayout, UIC
         }
     }
     
+    public var rowSize: CGSize = .zero {
+        didSet {
+            self.frame = CGRect(x: 0, y: 0, width: rowSize.width, height: rowSize.height)
+            self.setupCarousel()
+            self.collectionView.reloadData()
+        }
+    }
+    
     private lazy var tapGesture : UITapGestureRecognizer = {
         let tap = UITapGestureRecognizer(target: self, action: #selector(tapGestureHandler(tap:)))
         return tap
@@ -32,7 +40,7 @@ final public class CarouselView: UIView, UICollectionViewDelegateFlowLayout, UIC
         control.currentPage = 0
         control.hidesForSinglePage = true
         control.pageIndicatorTintColor = .lightGray
-        control.currentPageIndicatorTintColor = UIColor(red:0.20, green:0.60, blue:0.86, alpha:1.0)
+        control.currentPageIndicatorTintColor = Colors.colorPrimary
         control.translatesAutoresizingMaskIntoConstraints = false
         return control
     }()
@@ -55,7 +63,6 @@ final public class CarouselView: UIView, UICollectionViewDelegateFlowLayout, UIC
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        setupCarousel()
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -67,18 +74,16 @@ final public class CarouselView: UIView, UICollectionViewDelegateFlowLayout, UIC
         self.backgroundColor = .clear
         
         self.addSubview(collectionView)
-        NSLayoutConstraint(item: collectionView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1.0, constant: 0).isActive = true
-        NSLayoutConstraint(item: collectionView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: 0).isActive = true
-        NSLayoutConstraint(item: collectionView, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 0).isActive = true
-        NSLayoutConstraint(item: collectionView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: 0).isActive = true
+
+        self.addConstraintsWithFormat(format: "H:|[v0(\(rowSize.width))]|", views: collectionView)
+        self.addConstraintsWithFormat(format: "V:|[v0]|", views: collectionView)
         
         self.collectionView.addGestureRecognizer(self.tapGesture)
         
         self.addSubview(pageControl)
-        NSLayoutConstraint(item: pageControl, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 20).isActive = true
-        NSLayoutConstraint(item: pageControl, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: -20).isActive = true
+        NSLayoutConstraint(item: pageControl, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: -35).isActive = true
         NSLayoutConstraint(item: pageControl, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: -5).isActive = true
-        NSLayoutConstraint(item: pageControl, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 25).isActive = true
+        NSLayoutConstraint(item: pageControl, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 18).isActive = true
         
         self.bringSubviewToFront(pageControl)
     }
@@ -140,7 +145,7 @@ final public class CarouselView: UIView, UICollectionViewDelegateFlowLayout, UIC
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let size = CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
+        let size = CGSize(width: self.rowSize.width, height: collectionView.frame.height)
         return size
     }
     
@@ -153,6 +158,9 @@ final public class CarouselView: UIView, UICollectionViewDelegateFlowLayout, UIC
         pageControl.currentPage = Int(pageNumber)
     }
     
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.slides[indexPath.item].onSlideClick!(indexPath.item)
+    }
 }
 
 fileprivate class CarouselCollectionViewCell: UICollectionViewCell {
@@ -172,30 +180,57 @@ fileprivate class CarouselCollectionViewCell: UICollectionViewCell {
         view.contentMode = .scaleAspectFill
         view.backgroundColor = .clear
         view.clipsToBounds = true
-        view.addBlackGradientLayer(frame: self.bounds)
+        view.layer.cornerRadius = 4.0
+        view.layer.masksToBounds = true
+        view.addBlackGradientLayerTop(frame: self.bounds)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    private var titleLabel : UILabel = {
+    private var promotionTitleView : UILabel = {
         let label = UILabel()
         label.adjustsFontSizeToFitWidth = true
-        label.font = UIFont.boldSystemFont(ofSize: 40)
+        label.font = UIFont(name: "Poppins-SemiBold", size: 19)
         label.textColor = .white
-        label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    private var descriptionLabel : UILabel = {
+    private var separatorView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .white
+        return view
+    }()
+    
+    private var promotionTypeView : UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 19)
+        label.font = UIFont(name: "Poppins-Medium", size: 14)
         label.textColor = .white
-        label.textAlignment = .center
-        label.numberOfLines = 0
+        label.numberOfLines = 1
         label.backgroundColor = .clear
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+    
+    let promotionReductionView: InlineIconTextView = {
+        let view = InlineIconTextView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.icon = UIImage(named: "icon_promo_minus_white")!
+        view.size = .small
+        view.text = "Reduction"
+        view.textColor = .white
+        return view
+    }()
+    
+    let promotionSupplementView: InlineIconTextView = {
+        let view = InlineIconTextView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.icon = UIImage(named: "icon_promo_plus_white")!
+        view.size = .small
+        view.text = "Supplement"
+        view.textColor = .white
+        return view
     }()
     
     override init(frame: CGRect) {
@@ -208,63 +243,91 @@ fileprivate class CarouselCollectionViewCell: UICollectionViewCell {
     }
     
     private func setup() {
-        self.backgroundColor = .clear
+        self.backgroundColor = .white
         self.clipsToBounds = true
         
         self.addSubview(self.imageView)
-        NSLayoutConstraint(item: self.imageView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1.0, constant: 0).isActive = true
-        NSLayoutConstraint(item: self.imageView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: 0).isActive = true
-        NSLayoutConstraint(item: self.imageView, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 0).isActive = true
-        NSLayoutConstraint(item: self.imageView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: 0).isActive = true
+        self.addConstraintsWithFormat(format: "H:|[v0]-24-|", views: imageView)
+        self.addConstraintsWithFormat(format: "V:|[v0]|", views: imageView)
         
-        self.addSubview(self.descriptionLabel)
-        let left = NSLayoutConstraint(item: descriptionLabel, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 15)
-        let right = NSLayoutConstraint(item: descriptionLabel, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: -15)
-        let bottom = NSLayoutConstraint(item: descriptionLabel, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 0.9, constant: 0)
-        let top = NSLayoutConstraint(item: descriptionLabel, attribute: .top, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1.25, constant: 0)
-        NSLayoutConstraint.activate([left, right, bottom, top])
+        self.addSubview(self.promotionTitleView)
+        self.addSubview(self.separatorView)
+        self.addSubview(self.promotionTypeView)
         
-        self.addSubview(self.titleLabel)
-        NSLayoutConstraint(item: self.titleLabel, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1.0, constant: 15).isActive = true
-        NSLayoutConstraint(item: self.titleLabel, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1.0, constant: -15).isActive = true
-        NSLayoutConstraint(item: self.titleLabel, attribute: .bottom, relatedBy: .equal, toItem: self.descriptionLabel, attribute: .top, multiplier: 1.0, constant: 8).isActive = true
-        NSLayoutConstraint(item: self.titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 43).isActive = true
+        self.addConstraintsWithFormat(format: "H:|-12-[v0]", views: promotionTitleView)
+        self.addConstraintsWithFormat(format: "H:|-12-[v0]-60-|", views: separatorView)
+        self.addConstraintsWithFormat(format: "H:|-12-[v0]", views: promotionTypeView)
+        
+        self.addConstraintsWithFormat(format: "V:|-12-[v0]-8-[v1(0.5)]-8-[v2]", views: promotionTitleView, separatorView, promotionTypeView)
     }
     
     private func parseData(forSlide slide: CarouselSlide) {
-        if let image = slide.slideImage {
-            self.imageView.image = image
-        }
+        if let promotion = slide.slidePromotion {
+            imageView.load(url: URL(string: "\(URLs.hostEndPoint)\(promotion.posterImage)")!)
+            promotionTitleView.text = promotion.occasionEvent
+            promotionTypeView.text = promotion.promotionItem.type.name
         
-        if let title = slide.slideTitle {
-            self.titleLabel.text = title
+            if promotion.promotionItem.category != nil && promotion.promotionItem.type.id == "05" {
+                promotionTypeView.text = (promotion.promotionItem.category?.name)!
+            }
+            
+            if promotion.promotionItem.menu != nil && promotion.promotionItem.type.id == "04" {
+                if let menu = promotion.promotionItem.menu {
+                    promotionTypeView.text = (menu.menu?.name)!
+                }
+            }
+            
+            var promotionReductionHeight: CGFloat = 0
+            var promotionSupplementHeight: CGFloat = 0
+            
+            if promotion.reduction.hasReduction {
+                let reductionText = "Order this menu and get \(promotion.reduction.amount) \((promotion.reduction.reductionType)!) reduction"
+                promotionReductionView.text = reductionText
+                let promotionReductionRect = NSString(string: reductionText).boundingRect(with: CGSize(width: frame.width - 60, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+                promotionReductionHeight = promotionReductionRect.height
+                addSubview(promotionReductionView)
+            }
+            
+            if promotion.supplement.hasSupplement {
+                var supplementText: String!
+                if !promotion.supplement.isSame {
+                    supplementText = "Order \(promotion.supplement.minQuantity) of this menu and get \(promotion.supplement.quantity) free \((promotion.supplement.supplement?.menu?.name)!)"
+                } else {
+                    supplementText = "Order \(promotion.supplement.minQuantity) of this menu and get \(promotion.supplement.quantity) more for free"
+                }
+                promotionSupplementView.text = supplementText
+                let promotionSupplementRect = NSString(string: supplementText).boundingRect(with: CGSize(width: frame.width - 60, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+                promotionSupplementHeight = promotionSupplementRect.height
+                addSubview(promotionSupplementView)
+            }
+            
+            if promotion.supplement.hasSupplement && promotion.reduction.hasReduction {
+                addConstraintsWithFormat(format: "H:|-12-[v0]", views: promotionReductionView)
+                addConstraintsWithFormat(format: "H:|-12-[v0]", views: promotionSupplementView)
+                addConstraintsWithFormat(format: "V:|-78-[v0(\(promotionReductionHeight))]-6-[v1(\(promotionSupplementHeight))]", views: promotionReductionView, promotionSupplementView)
+            } else if promotion.supplement.hasSupplement && !promotion.reduction.hasReduction {
+                addConstraintsWithFormat(format: "H:|-12-[v0]", views: promotionSupplementView)
+                addConstraintsWithFormat(format: "V:|-84-[v0(\(promotionSupplementHeight))]", views: promotionSupplementView)
+            } else if !promotion.supplement.hasSupplement && promotion.reduction.hasReduction {
+                addConstraintsWithFormat(format: "H:|-12-[v0]", views: promotionReductionView)
+                addConstraintsWithFormat(format: "V:|-12-[v0(\(promotionReductionHeight))]", views: promotionReductionView)
+            }
         }
-        
-        if let description = slide.slideDescription {
-            self.descriptionLabel.text = description
-        }
-        
         return
     }
-
 }
 
 final public class CarouselSlide : NSObject {
     
-    public var slideImage : UIImage?
-    public var slideTitle : String?
-    public var slideDescription: String?
+    var slidePromotion : MenuPromotion?
+    var onSlideClick: ((Int) -> Void)?
     
-    public init(image: UIImage, title: String, description: String) {
-        slideImage = image
-        slideTitle = title
-        slideDescription = description
+    init(promotion: MenuPromotion, onClick: @escaping (Int) -> Void) {
+        slidePromotion = promotion
+        onSlideClick = onClick
     }
     
     override init() {
         super.init()
     }
-    
 }
-
-

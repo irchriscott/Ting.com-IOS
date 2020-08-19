@@ -15,12 +15,24 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
     
     let cellId = "cellId"
     
+    let recommandedRestaurantsHeaderCellId = "recommandedRestaurantsHeaderCellId"
+    let recommandedRestaurantsContainerCellId = "recommandedRestaurantsContainerCellId"
+    
+    let cuisinesHeaderCellId = "cuisineHeaderCellId"
+    let cuisinesContainerCellId = "cuisineContainerCellId"
+    
+    let promotionsHeaderCellId = "promotionsHeaderCellId"
+    let promotionsContainerCellId = "promotionsContainerCellId"
+    
     let collectionViewHeaderId = "collectionViewHeaderId"
     let recommandedRestaurantCellId = "recommandedRestaurantCellId"
+    let cellIdCuisine = "cellIdCuisine"
     
     private var recommandedRestaurants: [Branch] = []
+    private var cuisines: [RestaurantCategory] = []
+    private var promotions: [MenuPromotion] = []
     
-    private let headerTitles = ["Recommanded Restaurants"]
+    private let headerTitles = ["Recommanded Restaurants", "Cuisines", "Today's Promotions"]
     
     var locationManager = CLLocationManager()
     var refresherLoadingView = UIRefreshControl()
@@ -30,6 +42,9 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
     
     private var country: String!
     private var town: String!
+    
+    private var hasLoadedPromotions: Bool = false
+    private var loadedRows:[Int] = []
     
     private lazy var recommandedRestaurantsView: UICollectionView = {
         let carouselFlow = UICollectionViewCarouselLayout()
@@ -42,6 +57,21 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
         view.backgroundColor = .white
         view.isUserInteractionEnabled = true
         view.showsHorizontalScrollIndicator = false
+        return view
+    }()
+    
+    private lazy var cuisinesCollectionView: UICollectionView = {
+        let layout =  UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 12
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        view.dataSource = self
+        view.showsVerticalScrollIndicator = false
+        view.showsHorizontalScrollIndicator = false
+        view.backgroundColor = .white
+        view.isUserInteractionEnabled = true
         return view
     }()
 
@@ -58,10 +88,26 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
         self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
         
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: self.cellId)
+        
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: self.recommandedRestaurantsHeaderCellId)
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: self.recommandedRestaurantsContainerCellId)
+        
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: self.cuisinesHeaderCellId)
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: self.cuisinesContainerCellId)
+        
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: self.promotionsHeaderCellId)
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: self.promotionsContainerCellId)
+        
         recommandedRestaurantsView.register(RecommandedRestaurantViewCell.self, forCellWithReuseIdentifier: self.recommandedRestaurantCellId)
-        recommandedRestaurantsView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: self.collectionViewHeaderId)
+        cuisinesCollectionView.register(CuisineViewCell.self, forCellWithReuseIdentifier: self.cellIdCuisine)
         
         self.getRecommandedRestaurants()
+        
+        self.cuisines = LocalData.instance.getCuisines()
+        self.cuisinesCollectionView.reloadData()
+        self.getCuisines()
+        
+        self.getTodayPromotions()
         
         refresherLoadingView.addTarget(self, action: #selector(refreshDiscovery), for: UIControl.Event.valueChanged)
         collectionView.addSubview(refresherLoadingView)
@@ -101,6 +147,8 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
     
     @objc func refreshDiscovery(){
         getRecommandedRestaurants()
+        getCuisines()
+        getTodayPromotions()
     }
     
     private func getRecommandedRestaurants() {
@@ -109,6 +157,29 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
                 self.refresherLoadingView.endRefreshing()
                 self.recommandedRestaurants = branches
                 self.recommandedRestaurantsView.reloadData()
+                self.collectionView.reloadData()
+            }
+        }
+    }
+    
+    private func getCuisines() {
+        APIDataProvider.instance.getCuisines { (restaurantCategories) in
+            DispatchQueue.main.async {
+                if self.cuisines.isEmpty {
+                    self.cuisines = restaurantCategories
+                    self.collectionView.reloadData()
+                    self.cuisinesCollectionView.reloadData()
+                }
+            }
+        }
+    }
+    
+    private func getTodayPromotions() {
+        APIDataProvider.instance.getTodayPromotions(country: country, town: town) { (promos) in
+            DispatchQueue.main.async {
+                self.hasLoadedPromotions = true
+                self.refresherLoadingView.endRefreshing()
+                self.promotions = promos
                 self.collectionView.reloadData()
             }
         }
@@ -174,9 +245,11 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case self.collectionView:
-            return 12
+            return 6
         case self.recommandedRestaurantsView:
             return self.recommandedRestaurants.isEmpty ? 3 : self.recommandedRestaurants.count
+        case self.cuisinesCollectionView:
+            return self.cuisines.isEmpty ? 4 : self.cuisines.count
         default:
             return 0
         }
@@ -185,7 +258,6 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch collectionView {
         case self.collectionView:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath)
             let headerTitle: UILabel = {
                 let view = UILabel()
                 view.translatesAutoresizingMaskIntoConstraints = false
@@ -195,23 +267,122 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
             }()
             switch indexPath.row {
             case 0:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.recommandedRestaurantsHeaderCellId, for: indexPath)
                 headerTitle.text = self.headerTitles[0]
                 
                 cell.addSubview(headerTitle)
-                cell.addConstraintsWithFormat(format: "H:|-20-[v0]", views: headerTitle)
+                cell.addConstraintsWithFormat(format: "H:|-12-[v0]", views: headerTitle)
                 cell.addConstraintsWithFormat(format: "V:[v0]", views: headerTitle)
                 cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerY, relatedBy: .equal, toItem: headerTitle, attribute: .centerY, multiplier: 1, constant: 0))
-                break
+                return cell
             case 1:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.recommandedRestaurantsContainerCellId, for: indexPath)
                 cell.addSubview(recommandedRestaurantsView)
                 cell.addConstraintsWithFormat(format: "V:|[v0]|", views: recommandedRestaurantsView)
                 cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: recommandedRestaurantsView)
-                break
+                return cell
+            case 2:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cuisinesHeaderCellId, for: indexPath)
+                headerTitle.text = self.headerTitles[1]
+                
+                cell.addSubview(headerTitle)
+                cell.addConstraintsWithFormat(format: "H:|-12-[v0]", views: headerTitle)
+                cell.addConstraintsWithFormat(format: "V:[v0]", views: headerTitle)
+                cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerY, relatedBy: .equal, toItem: headerTitle, attribute: .centerY, multiplier: 1, constant: 0))
+                return cell
+            case 3:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cuisinesContainerCellId, for: indexPath)
+                cell.addSubview(cuisinesCollectionView)
+                cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: cuisinesCollectionView)
+                cell.addConstraintsWithFormat(format: "V:|[v0]|", views: cuisinesCollectionView)
+                return cell
+            case 4:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.promotionsHeaderCellId, for: indexPath)
+                headerTitle.text = self.headerTitles[2]
+                
+                cell.addSubview(headerTitle)
+                cell.addConstraintsWithFormat(format: "H:|-12-[v0]", views: headerTitle)
+                cell.addConstraintsWithFormat(format: "V:[v0]", views: headerTitle)
+                cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerY, relatedBy: .equal, toItem: headerTitle, attribute: .centerY, multiplier: 1, constant: 0))
+                return cell
+            case 5:
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.promotionsContainerCellId, for: indexPath)
+                let viewShimmer: UIView = {
+                    let view = UIView()
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    view.backgroundColor = Colors.colorVeryLightGray
+                    view.layer.cornerRadius = 5.0
+                    view.layer.masksToBounds = true
+                    view.clipsToBounds = true
+                    return view
+                }()
+                
+                if self.promotions.isEmpty && !self.hasLoadedPromotions {
+                    
+                    cell.addSubview(viewShimmer)
+                    cell.addConstraintsWithFormat(format: "V:|[v0]|", views: viewShimmer)
+                    cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: viewShimmer)
+                    
+                    let shimmerView = ShimmeringView(frame: CGRect(x: 12, y: 0, width: self.view.frame.width - 24, height: 230))
+                    
+                    cell.addSubview(shimmerView)
+                    
+                    shimmerView.contentView = viewShimmer
+                    shimmerView.shimmerAnimationOpacity = 0.4
+                    shimmerView.shimmerSpeed = 250
+                    shimmerView.isShimmering = true
+                    
+                } else if !self.promotions.isEmpty && self.hasLoadedPromotions {
+                    var carouselSlides: [CarouselSlide] = []
+                    for promo in self.promotions {
+                        carouselSlides.append(CarouselSlide(promotion: promo, onClick: { (index) in
+                            let promotion = self.promotions[index]
+                            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+                            let promotionController = storyboard.instantiateViewController(withIdentifier: "PromotionMenuView") as! PromotionMenuViewController
+                            promotionController.promotion = promotion
+                            promotionController.controller = self
+                            self.navigationController?.pushViewController(promotionController, animated: true)
+                        }))
+                    }
+                    let promotionsCarouselView : CarouselView = {
+                        let view = CarouselView()
+                        view.translatesAutoresizingMaskIntoConstraints = false
+                        view.slides = carouselSlides
+                        view.rowSize = CGSize(width: self.view.frame.width, height: 230)
+                        return view
+                    }()
+                    
+                    promotionsCarouselView.interval = 8.0
+                    promotionsCarouselView.start()
+                    promotionsCarouselView.disableTap()
+                    
+                    cell.addSubview(promotionsCarouselView)
+                    cell.addConstraintsWithFormat(format: "V:|[v0]|", views: promotionsCarouselView)
+                    cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: promotionsCarouselView)
+                    
+                    viewShimmer.removeFromSuperview()
+                    
+                    let showMoreButton: UITextView = {
+                        let view = UITextView()
+                        view.translatesAutoresizingMaskIntoConstraints = false
+                        view.text = "Show More".uppercased()
+                        view.textColor = Colors.colorWhite
+                        view.font = UIFont(name: "Poppins-SemiBold", size: 14.0)
+                        view.backgroundColor = .clear
+                        return view
+                    }()
+                    
+                    cell.addSubview(showMoreButton)
+                    cell.addConstraintsWithFormat(format: "V:[v0(25)]-8-|", views: showMoreButton)
+                    cell.addConstraintsWithFormat(format: "H:|-18-[v0(100)]", views: showMoreButton)
+                    
+                    cell.bringSubviewToFront(showMoreButton)
+                    showMoreButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showMorePromotions)))
+                }
+                return cell
             default:
-                break
+                return collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath)
             }
-            
-            return cell
         case self.recommandedRestaurantsView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.recommandedRestaurantCellId, for: indexPath) as! RecommandedRestaurantViewCell
             let shimmerView = ShimmeringView(frame: CGRect(x: 0, y: 0, width: 200, height: 328))
@@ -234,6 +405,36 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
                 viewShimmer.removeFromSuperview()
             }
             return cell
+        case self.cuisinesCollectionView:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdCuisine, for: indexPath) as! CuisineViewCell
+            
+            let viewShimmer: UIView = {
+                let view = UIView()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.backgroundColor = Colors.colorVeryLightGray
+                view.layer.cornerRadius = 5.0
+                view.layer.masksToBounds = true
+                view.clipsToBounds = true
+                return view
+            }()
+            
+            if self.cuisines.isEmpty {
+                
+                cell.addSubview(viewShimmer)
+                cell.addConstraintsWithFormat(format: "V:|[v0]|", views: viewShimmer)
+                cell.addConstraintsWithFormat(format: "H:|[v0]|", views: viewShimmer)
+                
+                let shimmerView = ShimmeringView(frame: CGRect(x: 0, y: 0, width: 125, height: 160))
+                cell.addSubview(shimmerView)
+                
+                shimmerView.contentView = viewShimmer
+                shimmerView.shimmerAnimationOpacity = 0.4
+                shimmerView.shimmerSpeed = 250
+                shimmerView.isShimmering = true
+            } else {
+                cell.cuisine = self.cuisines[indexPath.row]
+            }
+            return cell
         default:
             return collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath)
         }
@@ -247,11 +448,21 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
                 return CGSize(width: self.view.frame.width, height: 40)
             case 1:
                 return CGSize(width: self.view.frame.width, height: 328)
+            case 2:
+                return CGSize(width: self.view.frame.width, height: 40)
+            case 3:
+                return CGSize(width: self.view.frame.width, height: 168)
+            case 4:
+                return self.promotions.isEmpty && self.hasLoadedPromotions ? CGSize(width: self.view.frame.width, height: 0) : CGSize(width: self.view.frame.width, height: 40)
+            case 5:
+            return self.promotions.isEmpty && self.hasLoadedPromotions ? CGSize(width: self.view.frame.width, height: 0) : CGSize(width: self.view.frame.width, height: 230)
             default:
                 return CGSize(width: self.view.frame.width, height: 0)
             }
         case self.recommandedRestaurantsView:
             return CGSize(width: 200, height: 328)
+        case self.cuisinesCollectionView:
+            return CGSize(width: 125, height: 160)
         default:
             return CGSize(width: self.view.frame.width, height: 0)
         }
@@ -269,8 +480,21 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
                 break
             }
             break
+        case self.cuisinesCollectionView:
+            let cuisine = self.cuisines[indexPath.row]
+            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+            let cuisineViewController = storyboard.instantiateViewController(withIdentifier: "CuisineView") as! CuisineViewController
+            cuisineViewController.cuisine = cuisine
+            self.navigationController?.pushViewController(cuisineViewController, animated: true)
+            break
         default:
             break
         }
+    }
+    
+    @objc private func showMorePromotions() {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let todayPromotionsViewController = storyboard.instantiateViewController(withIdentifier: "TodayPromotions") as! TodayPromotionsViewController
+        self.navigationController?.pushViewController(todayPromotionsViewController, animated: true)
     }
 }

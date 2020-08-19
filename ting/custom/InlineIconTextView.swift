@@ -27,6 +27,10 @@ class InlineIconTextView: UIView {
         didSet { self.setup() }
     }
     
+    open var textColor: UIColor = Colors.colorGray {
+        didSet { self.setup() }
+    }
+    
     open var size: InlineIconTextView.Size = .medium {
         didSet {
             switch self.size {
@@ -73,6 +77,7 @@ class InlineIconTextView: UIView {
         
         iconView.image = self.icon
         textView.text = self.text
+        textView.textColor = self.textColor
         textView.font = UIFont(name: "Poppins-Regular", size: self.textSize)
         
         addConstraintsWithFormat(format: "H:|[v0(\(imageSize))]-4-[v1]|", views: iconView, textView)
