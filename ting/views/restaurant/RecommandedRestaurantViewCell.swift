@@ -34,7 +34,6 @@ class RecommandedRestaurantViewCell: UICollectionViewCell {
         view.font = UIFont(name: "Poppins-SemiBold", size: 16)
         view.textColor = Colors.colorGray
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = Colors.colorVeryLightGray
         view.numberOfLines = 2
         return view
     }()

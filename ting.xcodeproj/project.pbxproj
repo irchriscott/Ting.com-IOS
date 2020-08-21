@@ -25,6 +25,8 @@
 		8F1095022330C83400A7519B /* DoubleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1095012330C83300A7519B /* DoubleExtension.swift */; };
 		8F11988B232F5E3F00DA8C7D /* APIDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F11988A232F5E3F00DA8C7D /* APIDataProvider.swift */; };
 		8F11B21C24ED938700B81140 /* TodayPromotionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F11B21B24ED938700B81140 /* TodayPromotionsViewController.swift */; };
+		8F11B21E24EEE20C00B81140 /* RecommandedMenuViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F11B21D24EEE20C00B81140 /* RecommandedMenuViewCell.swift */; };
+		8F11B22024EEF2E400B81140 /* RecommandedMenuShimmerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F11B21F24EEF2E400B81140 /* RecommandedMenuShimmerView.swift */; };
 		8F12248F23312351000C20EF /* FloatingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F12248E23312351000C20EF /* FloatingButton.swift */; };
 		8F13CAF42334EF3000E3D03D /* RestaurantMapInfoWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F13CAF32334EF3000E3D03D /* RestaurantMapInfoWindowView.swift */; };
 		8F13CAF62334FDB300E3D03D /* InlineIconTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F13CAF52334FDB300E3D03D /* InlineIconTextView.swift */; };
@@ -173,6 +175,8 @@
 		8F1095012330C83300A7519B /* DoubleExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleExtension.swift; sourceTree = "<group>"; };
 		8F11988A232F5E3F00DA8C7D /* APIDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIDataProvider.swift; sourceTree = "<group>"; };
 		8F11B21B24ED938700B81140 /* TodayPromotionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayPromotionsViewController.swift; sourceTree = "<group>"; };
+		8F11B21D24EEE20C00B81140 /* RecommandedMenuViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommandedMenuViewCell.swift; sourceTree = "<group>"; };
+		8F11B21F24EEF2E400B81140 /* RecommandedMenuShimmerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommandedMenuShimmerView.swift; sourceTree = "<group>"; };
 		8F12248E23312351000C20EF /* FloatingButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingButton.swift; sourceTree = "<group>"; };
 		8F13CAF32334EF3000E3D03D /* RestaurantMapInfoWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantMapInfoWindowView.swift; sourceTree = "<group>"; };
 		8F13CAF52334FDB300E3D03D /* InlineIconTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineIconTextView.swift; sourceTree = "<group>"; };
@@ -608,6 +612,7 @@
 				8F37674424EBC79B00E80E98 /* RecommandedRestaurantShimmerView.swift */,
 				8FA0334824E2AF4900B0D680 /* RowShimmerView.swift */,
 				8F4C1AFA24E9153D002BEF50 /* DetailsShimmerView.swift */,
+				8F11B21F24EEF2E400B81140 /* RecommandedMenuShimmerView.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -619,6 +624,7 @@
 				8FB57B9E2378671C00732D5A /* MenuReviewViewCell.swift */,
 				8FB57BA02379351100732D5A /* MenuDishFoodViewCell.swift */,
 				8FB57BA2237AA21700732D5A /* MenuPromotionViewCell.swift */,
+				8F11B21D24EEE20C00B81140 /* RecommandedMenuViewCell.swift */,
 			);
 			path = menu;
 			sourceTree = "<group>";
@@ -941,6 +947,7 @@
 				8FC6088622FA2EE5005D142B /* Toast.swift in Sources */,
 				8F30B20922F9B603000B66B7 /* UserAuthentication.swift in Sources */,
 				8F49C10422F491E60084F3E7 /* Branch.swift in Sources */,
+				8F11B22024EEF2E400B81140 /* RecommandedMenuShimmerView.swift in Sources */,
 				8FA5716C24DEFE3C00C8034D /* Booking.swift in Sources */,
 				8FA5716A24DEFBCE00C8034D /* Bill.swift in Sources */,
 				8F3309D722F9E8B400437767 /* HomeDiscoverViewController.swift in Sources */,
@@ -967,6 +974,7 @@
 				8F157C7123AA232B008C88E2 /* RestaurantPromosViewController.swift in Sources */,
 				8F43F3D022F79DC900545AC2 /* Media.swift in Sources */,
 				8F3E3CF6230B981C00D9BC1C /* CircularImageView.swift in Sources */,
+				8F11B21E24EEE20C00B81140 /* RecommandedMenuViewCell.swift in Sources */,
 				8FB7B20C23A8A03C00245012 /* PromotionMenuViewController.swift in Sources */,
 				8F157C7723AA237B008C88E2 /* RestaurantDishesViewController.swift in Sources */,
 				8F157C6F23AA214E008C88E2 /* RestaurantTabViewController.swift in Sources */,

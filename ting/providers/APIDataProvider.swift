@@ -484,4 +484,85 @@ class APIDataProvider: NSObject {
             }
         }.resume()
     }
+    
+    public func getRecommandedMenus(country: String, town: String, completion: @escaping ([RestaurantMenu]) -> ()) {
+        
+        guard let url = URL(string: "\(URLs.discoverMenus)?country=\(country)&town=\(town)") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let menus = try JSONDecoder().decode([RestaurantMenu].self, from: data)
+                    DispatchQueue.main.async { completion(menus) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([])
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
+    
+    public func getTopRestaurants(country: String, town: String, completion: @escaping ([Branch]) -> ()){
+        
+        guard let url = URL(string: "\(URLs.discoverTopRestaurants)?country=\(country)&town=\(town)") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let restaurants = try JSONDecoder().decode([Branch].self, from: data)
+                    DispatchQueue.main.async { completion(restaurants) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([])
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
+    
+    public func getTopMenus(country: String, town: String, completion: @escaping ([RestaurantMenu]) -> ()) {
+        
+        guard let url = URL(string: "\(URLs.discoverTopMenus)?country=\(country)&town=\(town)") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let menus = try JSONDecoder().decode([RestaurantMenu].self, from: data)
+                    DispatchQueue.main.async { completion(menus) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([])
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
 }
