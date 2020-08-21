@@ -108,7 +108,16 @@ class RestaurantHeaderViewCell: UICollectionViewCell, CLLocationManagerDelegate 
         didSet {
             numberFormatter.numberStyle = .decimal
             if let branch = self.branch, let restaurant = self.branch?.restaurant {
-                profileImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(restaurant.logo)")!)
+                profileImageView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(restaurant.logo)")!,
+                    placeholder: UIImage(named: "default_restaurant"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
+                
                 namesLabel.text = "\(restaurant.name), \(branch.name)"
                 addressLabel.text = branch.address
                 rateView.rating = Double(branch.reviews?.average ?? 0)

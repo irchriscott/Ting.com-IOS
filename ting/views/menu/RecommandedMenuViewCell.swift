@@ -96,7 +96,15 @@ class RecommandedMenuViewCell: UICollectionViewCell {
                 let imageIndex = Int.random(in: 0...images!.count - 1)
                 let image = images![imageIndex]
                 
-                menuImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(image.image)")!)
+                menuImageView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(image.image)")!,
+                    placeholder: UIImage(named: "default_meal"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
                 
                 self.menuName.text = menu.menu?.name
                 self.menuRating.rating = Double(menu.menu?.reviews?.average ?? 0)

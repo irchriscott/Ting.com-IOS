@@ -152,7 +152,15 @@ class EditUserProfileImageViewCell : UICollectionViewCell, UIImagePickerControll
         addSubview(chooseImageView)
         addSubview(delimiterView)
         
-        userImageView.load(url: URL(string: "\(URLs.uploadEndPoint)\(session!.image)")!)
+        userImageView.kf.setImage(
+            with: URL(string: "\(URLs.uploadEndPoint)\(session!.image)")!,
+            placeholder: UIImage(named: "default_user"),
+            options: [
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(1)),
+                .cacheOriginalImage
+            ]
+        )
         
         let openImageGaleryTapGesture = UITapGestureRecognizer(target: self, action: #selector(openImageGalery(getsureRecognizer:)))
         chooseImageView.addGestureRecognizer(openImageGaleryTapGesture)

@@ -119,7 +119,15 @@ class BottomSheetMenuHeaderViewCell: UICollectionViewCell {
                 self.setup()
                 let images = menu.menu?.images?.images
                 let image = images![self.imageIndex]
-                self.menuImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(image.image)")!)
+                self.menuImageView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(image.image)")!,
+                    placeholder: UIImage(named: "default_meal"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
             }
         }
     }

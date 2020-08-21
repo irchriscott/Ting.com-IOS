@@ -22,4 +22,6 @@ target 'ting' do
     pod 'ScalingCarousel'
     pod 'ToosieSlide', '~> 1.1'
     pod 'MercariQRScanner'
+    pod 'CircularRevealKit'
+    pod 'PubNubSwift'
 end

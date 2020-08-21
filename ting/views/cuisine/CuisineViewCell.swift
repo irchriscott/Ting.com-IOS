@@ -14,7 +14,15 @@ class CuisineViewCell: UICollectionViewCell {
     var cuisine: RestaurantCategory? {
         didSet {
             if let cuisine = self.cuisine {
-                imageView.load(url: URL(string: "\(URLs.hostEndPoint)\(cuisine.image)")!)
+                imageView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(cuisine.image)")!,
+                    placeholder: UIImage(named: "default_restaurant"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
                 titleView.text = cuisine.name
             }
             self.setup()

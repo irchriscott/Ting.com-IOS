@@ -1233,7 +1233,15 @@ class RestaurantMenuHeaderImageViewCell: UICollectionViewCell {
     }
     
     private func setup(){
-        menuImageView.load(url: URL(string: self.imageURL!)!)
+        menuImageView.kf.setImage(
+            with: URL(string: self.imageURL!)!,
+            placeholder: UIImage(named: "default_meal"),
+            options: [
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(1)),
+                .cacheOriginalImage
+            ]
+        )
         addSubview(menuImageView)
         addConstraintsWithFormat(format: "H:|[v0]|", views: menuImageView)
         addConstraintsWithFormat(format: "V:|[v0]|", views: menuImageView)

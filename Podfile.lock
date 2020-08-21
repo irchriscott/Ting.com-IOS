@@ -8,6 +8,7 @@ PODS:
   - Charts (3.4.0):
     - Charts/Core (= 3.4.0)
   - Charts/Core (3.4.0)
+  - CircularRevealKit (0.9.1)
   - FaveButton (3.2.1)
   - FittedSheets (1.4.5)
   - Floaty (4.2.0)
@@ -39,6 +40,7 @@ PODS:
   - LightweightObservable (1.0.3)
   - LoadingShimmer (1.0.3)
   - MercariQRScanner (1.6)
+  - PubNubSwift (3.0.1)
   - ReachabilitySwift (5.0.0)
   - ScalingCarousel (3.0.2)
   - ShimmerSwift (2.1.1)
@@ -51,6 +53,7 @@ PODS:
 DEPENDENCIES:
   - BEMCheckBox
   - Charts
+  - CircularRevealKit
   - FaveButton
   - FittedSheets
   - Floaty
@@ -62,6 +65,7 @@ DEPENDENCIES:
   - Kingfisher
   - LoadingShimmer
   - MercariQRScanner
+  - PubNubSwift
   - ReachabilitySwift
   - ScalingCarousel
   - ShimmerSwift
@@ -76,6 +80,7 @@ SPEC REPOS:
     - AppAuth
     - BEMCheckBox
     - Charts
+    - CircularRevealKit
     - FaveButton
     - FittedSheets
     - Floaty
@@ -89,6 +94,7 @@ SPEC REPOS:
     - LightweightObservable
     - LoadingShimmer
     - MercariQRScanner
+    - PubNubSwift
     - ReachabilitySwift
     - ScalingCarousel
     - ShimmerSwift
@@ -111,6 +117,7 @@ SPEC CHECKSUMS:
   AppAuth: 73574f3013a1e65b9601a3ddc8b3158cce68c09d
   BEMCheckBox: 5ba6e37ade3d3657b36caecc35c8b75c6c2b1a4e
   Charts: 74c9f256eaf0460c0c416522d1cf8c634ea6b286
+  CircularRevealKit: 680ac8c2b67e198f8fea0561abd2acf8ca7c932c
   FaveButton: 93cfebf6030336fa7653fad2068c3152ed668b39
   FittedSheets: 7f754c9f6fb4ea330cbc57c652b594255f2a6819
   Floaty: e2bd5a0f6f7f70899e26ff2da31081c8bee8d1b0
@@ -125,6 +132,7 @@ SPEC CHECKSUMS:
   LightweightObservable: 8687e8e1e2940ae2f64d7f71fe78c036d89c966f
   LoadingShimmer: dd681218498ec9648f572b845a7299b9c62e8e30
   MercariQRScanner: e1ee83878c2b4606661afa72d54af82bb6e355aa
+  PubNubSwift: db8d3a556ecd546d7cbf9cb0df2b79dafb67603c
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   ScalingCarousel: a458c9a689076e647cd5cafe36e1664a12738ea8
   ShimmerSwift: f7ed2daf9c246de8299dfd9e12c6ab465cba9842
@@ -134,6 +142,6 @@ SPEC CHECKSUMS:
   Windless: c6b7d63ac3a0c7e6b241e316650d4605abf71894
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
 
-PODFILE CHECKSUM: 4bfa16cfd56f46185aceae71cd22f0368ce5bfec
+PODFILE CHECKSUM: f57dc5119c028fcbc75bda377a69e3e6eaac9b98
 
 COCOAPODS: 1.9.3

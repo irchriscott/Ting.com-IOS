@@ -156,7 +156,15 @@ class RestaurantSpecificationsViewController: UITableViewController {
             let data = self.cuisines![indexPath.row]
             if !self.dataLoadedCuisines![indexPath.row] {
                 titleView.text = data.name
-                imageView.load(url: URL(string: "\(URLs.hostEndPoint)\(data.image)")!)
+                imageView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(data.image)")!,
+                    placeholder: UIImage(named: "default_restaurant"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
             }
             self.dataLoadedCuisines![indexPath.row] = true
             break
@@ -165,7 +173,15 @@ class RestaurantSpecificationsViewController: UITableViewController {
             let data = self.categories![indexPath.row]
             if !self.dataLoadedCategories![indexPath.row] {
                 titleView.text = data.name
-                imageView.load(url: URL(string: "\(URLs.hostEndPoint)\((data.image)!)")!)
+                imageView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\((data.image)!)")!,
+                    placeholder: UIImage(named: "default_restaurant"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
             }
             self.dataLoadedCategories![indexPath.row] = true
             break

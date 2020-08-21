@@ -95,7 +95,16 @@ class RestaurantReviewCell: UITableViewCell {
     var review: RestaurantReview? {
         didSet {
             if let review = self.review {
-                userImageView.load(url: URL(string: "\(URLs.uploadEndPoint)\(review.user!.image)")!)
+                userImageView.kf.setImage(
+                    with: URL(string: "\(URLs.uploadEndPoint)\(review.user!.image)")!,
+                    placeholder: UIImage(named: "default_user"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
+                
                 userNameView.text = review.user!.name
                 reviewTextView.text = review.comment
                 reviewRatingView.rating = Double(review.review)

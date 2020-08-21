@@ -10,6 +10,7 @@ import UIKit
 import MapKit
 import ToosieSlide
 import ShimmerSwift
+import CircularRevealKit
 
 class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource {
     

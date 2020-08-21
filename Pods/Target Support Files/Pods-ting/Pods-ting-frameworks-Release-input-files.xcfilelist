@@ -2,6 +2,7 @@ ${PODS_ROOT}/Target Support Files/Pods-ting/Pods-ting-frameworks.sh
 ${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework
 ${BUILT_PRODUCTS_DIR}/BEMCheckBox/BEMCheckBox.framework
 ${BUILT_PRODUCTS_DIR}/Charts/Charts.framework
+${BUILT_PRODUCTS_DIR}/CircularRevealKit/CircularRevealKit.framework
 ${BUILT_PRODUCTS_DIR}/FaveButton/FaveButton.framework
 ${BUILT_PRODUCTS_DIR}/FittedSheets/FittedSheets.framework
 ${BUILT_PRODUCTS_DIR}/Floaty/Floaty.framework
@@ -13,6 +14,7 @@ ${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework
 ${BUILT_PRODUCTS_DIR}/LightweightObservable/LightweightObservable.framework
 ${BUILT_PRODUCTS_DIR}/LoadingShimmer/LoadingShimmer.framework
 ${BUILT_PRODUCTS_DIR}/MercariQRScanner/MercariQRScanner.framework
+${BUILT_PRODUCTS_DIR}/PubNubSwift/PubNub.framework
 ${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework
 ${BUILT_PRODUCTS_DIR}/ScalingCarousel/ScalingCarousel.framework
 ${BUILT_PRODUCTS_DIR}/ShimmerSwift/ShimmerSwift.framework
