@@ -33,12 +33,7 @@ class CuisineRestaurantsViewController: UITableViewController, CLLocationManager
     var mapCenter: CLLocation?
     var selectedBranch: Branch?
     
-    lazy var mapView: RestaurantMapView = {
-        let view = RestaurantMapView()
-        view.controller = self
-        view.restaurant = self.selectedBranch
-        return view
-    }()
+    var mapView: RestaurantMapViewController!
     
     var pageIndex = 1
     var shouldLoad = true
@@ -94,6 +89,12 @@ class CuisineRestaurantsViewController: UITableViewController, CLLocationManager
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.shimmerCellId)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.emptyCellId)
         tableView.register(CuisineRestaurantViewCell.self, forCellReuseIdentifier: self.cellId)
+        
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        mapView = storyboard.instantiateViewController(withIdentifier: "RestaurantMapView") as? RestaurantMapViewController
+        mapView.controller = self
+        mapView.restaurant = self.selectedBranch
+        mapView.modalPresentationStyle = .overFullScreen
     }
     
     private func checkLocationAuthorization(status: CLAuthorizationStatus){

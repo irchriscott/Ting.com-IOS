@@ -22,9 +22,12 @@ class FloatingButton: UIView {
         didSet { self.setup() }
     }
     
+    open var imageFrame: CGRect = CGRect(x: 0, y: 0, width: 22, height: 22) {
+        didSet { self.setup() }
+    }
+    
     private let imageView: UIImageView = {
         let view = UIImageView()
-        view.frame = CGRect(x: 0, y: 0, width: 22, height: 22)
         return view
     }()
 
@@ -36,6 +39,7 @@ class FloatingButton: UIView {
     private func setup(){
         self.backgroundColor = self.background
         self.frame = self.size
+        self.imageView.frame = self.imageFrame
         self.imageView.center = self.center
         self.imageView.image = self.icon
         self.layer.cornerRadius = self.frame.width / 2

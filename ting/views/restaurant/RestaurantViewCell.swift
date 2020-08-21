@@ -190,13 +190,7 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         return view
     }()
     
-    lazy var mapView: RestaurantMapView = {
-        let view = RestaurantMapView()
-        view.restaurant = self.branch
-        view.controller = self.controller as? HomeRestaurantsViewController
-        view.cell = self
-        return view
-    }()
+    var mapView: RestaurantMapViewController!
     
     var controller: UIViewController? {
         didSet { self.setup() }
@@ -292,10 +286,17 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         super.init(frame: frame)
         self.restaurantAddressView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantViewCell.openRestaurantMap)))
         self.restaurantDistanceView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantViewCell.openRestaurantMap)))
-        self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantViewCell.closeRestaurantMap)))
     }
     
     private func setup(){
+        
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        mapView = storyboard.instantiateViewController(withIdentifier: "RestaurantMapView") as? RestaurantMapViewController
+        mapView.controller = self.controller
+        mapView.restaurant = self.branch
+        mapView.modalPresentationStyle = .overFullScreen
+        
+        self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantViewCell.closeRestaurantMap)))
         
         addSubview(viewCell)
         
@@ -469,24 +470,23 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
             let parentController = self.controller as? HomeRestaurantsViewController
             window.windowLevel = UIWindow.Level.statusBar
             mapView.mapCenter = CLLocation(latitude: CLLocationDegrees(Double(branch!.latitude)!), longitude: CLLocationDegrees(Double(branch!.longitude)!))
-            mapView.frame = window.frame
-            mapView.center = window.center
+            
             mapView.restaurant = self.branch
             mapView.controller = self.controller
             mapView.cell = self
             parentController?.isMapOpened = true
             parentController?.mapCenter = CLLocation(latitude: CLLocationDegrees(Double(branch!.latitude)!), longitude: CLLocationDegrees(Double(branch!.longitude)!))
             parentController?.selectedBranch = self.branch
-            window.addSubview(mapView)
+            
+            controller?.present(mapView, animated: true, completion: nil)
         }
     }
     
     @objc func closeRestaurantMap(){
         UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
-        self.mapView.closeImageView.removeFromSuperview()
-        self.mapView.closeButtonView.removeFromSuperview()
         self.mapView.restaurantView.removeFromSuperview()
-        self.mapView.removeFromSuperview()
+        
+        mapView.dismiss(animated: true, completion: nil)
         
         let parentController = self.controller as? HomeRestaurantsViewController
         parentController?.isMapOpened = false

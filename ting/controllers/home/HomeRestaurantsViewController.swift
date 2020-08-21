@@ -62,12 +62,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         return view
     }()
     
-    lazy var mapView: RestaurantMapView = {
-        let view = RestaurantMapView()
-        view.controller = self
-        view.restaurant = self.selectedBranch
-        return view
-    }()
+    var mapView: RestaurantMapViewController!
     
     var circleView: UIView = {
         let view = UIView()
@@ -163,6 +158,12 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         
         country = session.country
         town = session.town
+        
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        mapView = storyboard.instantiateViewController(withIdentifier: "RestaurantMapView") as? RestaurantMapViewController
+        mapView.modalPresentationStyle = .overFullScreen
+        mapView.controller = self
+        mapView.restaurant = self.selectedBranch
         
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -823,21 +824,19 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             window.windowLevel = UIWindow.Level.statusBar
             
             mapView.mapCenter = self.selectedLocation
-            mapView.frame = window.frame
-            mapView.center = window.center
+            
             
             mapView.restaurants = self.restaurants
             mapView.restaurant = self.selectedBranch
-            window.addSubview(mapView)
+            
+            self.present(mapView, animated: true, completion: nil)
         }
     }
     
     @objc func closeRestaurantMap(){
         UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
         
-        self.mapView.closeImageView.removeFromSuperview()
-        self.mapView.closeButtonView.removeFromSuperview()
-        self.mapView.removeFromSuperview()
+        self.mapView.dismiss(animated: true, completion: nil)
         
         isMapOpened = false
         mapCenter = nil

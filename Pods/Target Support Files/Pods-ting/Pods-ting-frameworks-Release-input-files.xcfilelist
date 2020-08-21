@@ -12,6 +12,7 @@ ${BUILT_PRODUCTS_DIR}/ImageViewer/ImageViewer.framework
 ${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework
 ${BUILT_PRODUCTS_DIR}/LightweightObservable/LightweightObservable.framework
 ${BUILT_PRODUCTS_DIR}/LoadingShimmer/LoadingShimmer.framework
+${BUILT_PRODUCTS_DIR}/MercariQRScanner/MercariQRScanner.framework
 ${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework
 ${BUILT_PRODUCTS_DIR}/ScalingCarousel/ScalingCarousel.framework
 ${BUILT_PRODUCTS_DIR}/ShimmerSwift/ShimmerSwift.framework

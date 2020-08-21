@@ -440,12 +440,7 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, Fave
         }
     }
     
-    lazy var mapView: RestaurantMapView = {
-        let view = RestaurantMapView()
-        view.controller = self.controller
-        view.restaurant = self.menu?.menu?.branch
-        return view
-    }()
+    var mapView: RestaurantMapViewController!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -453,7 +448,6 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, Fave
         self.restaurantName.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(navigateToRestaurant(_:))))
         self.restaurantLikeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MenuDetailsViewCell.likeRestaurantMenuToggle)))
         self.restaurantDistanceView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openRestaurantMap)))
-        self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeRestaurantMap)))
         
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -461,6 +455,14 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, Fave
     }
     
     private func setup() {
+        
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        mapView = storyboard.instantiateViewController(withIdentifier: "RestaurantMapView") as? RestaurantMapViewController
+        mapView.controller = self.controller
+        mapView.restaurant = self.menu?.menu?.branch
+        mapView.modalPresentationStyle = .overFullScreen
+        
+        self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeRestaurantMap)))
         
         restaurantMenuDescriptionView.addSubview(restaurantMenuDescriptionIcon)
         restaurantMenuDescriptionView.addSubview(restaurantMenuDescriptionText)
@@ -781,21 +783,18 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, Fave
                 branch.dist = Double(branchLocation.distance(from: location) / 1000).rounded(toPlaces: 2)
                 isMapOpened = true
                 window.windowLevel = UIWindow.Level.statusBar
-                mapView.frame = window.frame
-                mapView.center = window.center
+                
                 mapView.mapCenter = branchLocation
                 mapView.selectedLocation = location
                 mapView.restaurant = branch
-                window.addSubview(mapView)
+                controller?.present(mapView, animated: true, completion: nil)
             }
         }
     }
     
     @objc func closeRestaurantMap(){
         UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
-        mapView.closeImageView.removeFromSuperview()
-        mapView.closeButtonView.removeFromSuperview()
-        mapView.removeFromSuperview()
+        mapView.dismiss(animated: true, completion: nil)
         isMapOpened = false
         mapCenter = nil
     }

@@ -421,6 +421,36 @@
             </objects>
             <point key="canvasLocation" x="-2372" y="2091"/>
         </scene>
+        <!--Table Scanner View Controller-->
+        <scene sceneID="Lgu-Fa-BoL">
+            <objects>
+                <viewController restorationIdentifier="TableScannerView" storyboardIdentifier="TableScannerView" id="kJo-TT-raH" customClass="TableScannerViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="brL-Ok-TZD">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="Uuj-mu-iXE"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="00f-XR-NtD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2689" y="2847"/>
+        </scene>
+        <!--Restaurant Map View Controller-->
+        <scene sceneID="YiS-xB-ssI">
+            <objects>
+                <viewController restorationIdentifier="RestaurantMapView" storyboardIdentifier="RestaurantMapView" id="Np4-XU-GKt" customClass="RestaurantMapViewController" customModule="Ting" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="H7Y-Ih-xWG">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="RiW-WM-Duv"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="B7k-aV-BJ4" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1825" y="2848"/>
+        </scene>
         <!--Restaurant Foods View Controller-->
         <scene sceneID="HOZ-gH-Zcm">
             <objects>

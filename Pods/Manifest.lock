@@ -38,6 +38,7 @@ PODS:
   - Kingfisher/Core (5.12.0)
   - LightweightObservable (1.0.3)
   - LoadingShimmer (1.0.3)
+  - MercariQRScanner (1.6)
   - ReachabilitySwift (5.0.0)
   - ScalingCarousel (3.0.2)
   - ShimmerSwift (2.1.1)
@@ -60,6 +61,7 @@ DEPENDENCIES:
   - ImageViewer (from `https://github.com/Krisiacik/ImageViewer.git`)
   - Kingfisher
   - LoadingShimmer
+  - MercariQRScanner
   - ReachabilitySwift
   - ScalingCarousel
   - ShimmerSwift
@@ -86,6 +88,7 @@ SPEC REPOS:
     - Kingfisher
     - LightweightObservable
     - LoadingShimmer
+    - MercariQRScanner
     - ReachabilitySwift
     - ScalingCarousel
     - ShimmerSwift
@@ -121,6 +124,7 @@ SPEC CHECKSUMS:
   Kingfisher: dc6e0f53bb5b12c3e75bedb0e01bbd7a640eea69
   LightweightObservable: 8687e8e1e2940ae2f64d7f71fe78c036d89c966f
   LoadingShimmer: dd681218498ec9648f572b845a7299b9c62e8e30
+  MercariQRScanner: e1ee83878c2b4606661afa72d54af82bb6e355aa
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   ScalingCarousel: a458c9a689076e647cd5cafe36e1664a12738ea8
   ShimmerSwift: f7ed2daf9c246de8299dfd9e12c6ab465cba9842
@@ -130,6 +134,6 @@ SPEC CHECKSUMS:
   Windless: c6b7d63ac3a0c7e6b241e316650d4605abf71894
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
 
-PODFILE CHECKSUM: 8220fce9b7a3cf16140af851b5506c449b5bdfe3
+PODFILE CHECKSUM: 4bfa16cfd56f46185aceae71cd22f0368ce5bfec
 
 COCOAPODS: 1.9.3

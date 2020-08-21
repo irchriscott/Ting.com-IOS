@@ -21,4 +21,5 @@ target 'ting' do
     pod 'SimpleCheckbox'
     pod 'ScalingCarousel'
     pod 'ToosieSlide', '~> 1.1'
+    pod 'MercariQRScanner'
 end

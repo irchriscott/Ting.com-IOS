@@ -134,6 +134,14 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
         view.backgroundColor = .white
         return view
     }()
+    
+    let placementFloatingButton: FloatingButton = {
+        let view = FloatingButton()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.icon = UIImage(named: "icon_dot_filled_25_white")
+        view.imageFrame = CGRect(x: 0, y: 0, width: 15, height: 15)
+        return view
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -192,6 +200,15 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
         
         refresherLoadingView.addTarget(self, action: #selector(refreshDiscovery), for: UIControl.Event.valueChanged)
         collectionView.addSubview(refresherLoadingView)
+        
+        let tabBarHeight = self.tabBarController?.tabBar.frame.height ?? 50
+        
+        self.view.addSubview(placementFloatingButton)
+        self.view.addConstraintsWithFormat(format: "H:[v0(50)]-12-|", views: placementFloatingButton)
+        self.view.addConstraintsWithFormat(format: "V:[v0(50)]-\(tabBarHeight + 12)-|", views: placementFloatingButton)
+        
+        
+        placementFloatingButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(navigateToPlacement)))
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -1068,5 +1085,13 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
         } else { menuPriceHeight += priceRect.height + 4 }
         
         return heightConstant + menuNameRect.height + menuDescriptionRect.height + CGFloat(menuPriceHeight)
+    }
+    
+    @objc private func navigateToPlacement() {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let tableScannerViewController = storyboard.instantiateViewController(withIdentifier: "TableScannerView") as! TableScannerViewController
+        tableScannerViewController.controller = self.navigationController
+        tableScannerViewController.modalPresentationStyle = .overFullScreen
+        self.present(tableScannerViewController, animated: true, completion: nil)
     }
 }

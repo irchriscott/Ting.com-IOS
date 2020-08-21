@@ -125,18 +125,12 @@ class RestaurantHeaderViewCell: UICollectionViewCell, CLLocationManagerDelegate 
         didSet {}
     }
     
-    lazy var mapView: RestaurantMapView = {
-        let view = RestaurantMapView()
-        view.controller = self.controller
-        view.restaurant = self.branch
-        return view
-    }()
+    var mapView: RestaurantMapViewController!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.restaurantDistanceView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(showUserAddresses)))
         self.restaurantDistanceView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openRestaurantMap)))
-        self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeRestaurantMap)))
         
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(likeRestaurantToggle(_sender:)))
         doubleTap.numberOfTapsRequired = 2
@@ -148,6 +142,14 @@ class RestaurantHeaderViewCell: UICollectionViewCell, CLLocationManagerDelegate 
     }
     
     private func setup(){
+        
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        mapView = storyboard.instantiateViewController(withIdentifier: "RestaurantMapView") as? RestaurantMapViewController
+        mapView.controller = self.controller
+        mapView.restaurant = self.branch
+        mapView.modalPresentationStyle = .overFullScreen
+        
+        self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeRestaurantMap)))
         
         restaurantStatusView.addSubview(restaurantDistanceView)
         restaurantStatusView.addSubview(restaurantTimeStatusView)
@@ -306,21 +308,18 @@ class RestaurantHeaderViewCell: UICollectionViewCell, CLLocationManagerDelegate 
                 branch.dist = Double(branchLocation.distance(from: location) / 1000).rounded(toPlaces: 2)
                 isMapOpened = true
                 window.windowLevel = UIWindow.Level.statusBar
-                mapView.frame = window.frame
-                mapView.center = window.center
+                
                 mapView.mapCenter = branchLocation
                 mapView.selectedLocation = location
                 mapView.restaurant = branch
-                window.addSubview(mapView)
+                controller?.present(mapView, animated: true, completion: nil)
             }
         }
     }
     
     @objc func closeRestaurantMap(){
         UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
-        mapView.closeImageView.removeFromSuperview()
-        mapView.closeButtonView.removeFromSuperview()
-        mapView.removeFromSuperview()
+        mapView.dismiss(animated: true, completion: nil)
         isMapOpened = false
         mapCenter = nil
     }
