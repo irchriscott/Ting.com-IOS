@@ -21,6 +21,7 @@ struct User: Codable {
     let gender: String?
     let country: String
     let town: String
+    let channel: String
     let restaurants: UserRestaurants?
     let reviews: UserRestaurantReviews?
     let addresses: UserAddresses?

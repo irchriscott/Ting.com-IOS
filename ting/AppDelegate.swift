@@ -10,15 +10,22 @@ import UIKit
 import GoogleMaps
 import GooglePlaces
 import GoogleSignIn
+import PushNotifications
+import PusherSwift
+import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLocationManagerDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLocationManagerDelegate, UNUserNotificationCenterDelegate, PusherDelegate  {
 
     var window: UIWindow?
     var locationManager = CLLocationManager()
     var controller: UIViewController?
     
     var signedInUser: GIDGoogleUser?
+    var auth = UserAuthentication()
+    
+    var pusherBeam = PushNotifications.shared
+    var pusher: Pusher!
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -33,17 +40,64 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
         
         self.controller = self.window?.rootViewController?.topMostViewController()
         
+        self.initializePusherNotification()
+        
+        let notificationCenter = UNUserNotificationCenter.current()
+        let options: UNAuthorizationOptions = [.alert, .sound, .badge]
+        
+        notificationCenter.getNotificationSettings { (settings) in
+            if settings.authorizationStatus != .authorized {
+                notificationCenter.requestAuthorization(options: options) {
+                    (didAllow, error) in
+                    if !didAllow {
+                        self.controller?.showErrorMessage(message: "Request", title: "Please, Allow this App to send you notifications")
+                    }
+                }
+            }
+        }
+        
+        self.pusherBeam.start(instanceId: StaticData.PUSH_NOTIFICATION_KEY)
+        self.pusherBeam.registerForRemoteNotifications()
+        
+        if auth.isUserLoggedIn() {
+            try? self.pusherBeam.addDeviceInterest(interest: auth.get()!.channel)
+        }
+        
         return true
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler(UNNotificationPresentationOptions.init(arrayLiteral: [.alert, .sound]))
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        if let _ = response.notification.request.content.userInfo["data"] as? String {
+            // Navigate to a controller wuth data
+            //let homeVC = window?.rootViewController?.children[0]
+            //homeVC?.notificationTappedWith(customData: customData)
+        }
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        self.pusherBeam.registerDeviceToken(deviceToken)
+    }
+    
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
+        print(userInfo)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+        
+        self.initializePusherNotification()
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        
+        self.initializePusherNotification()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -52,6 +106,67 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        
+        self.initializePusherNotification()
+    }
+    
+    private func initializePusherNotification() {
+        if auth.isUserLoggedIn() {
+            let options = PusherClientOptions(
+                authMethod: .inline(secret: "6528a9e8016a7355e41c"),
+                autoReconnect: true,
+                host: .cluster("mt1")
+            )
+
+            pusher = Pusher(key: "299875b04b5fe1dc527a", options: options)
+            pusher.delegate = self
+            pusher.connect()
+            
+            let channel = pusher.subscribe(auth.get()!.channel)
+            
+            channel.bind(eventName: auth.get()!.channel, callback: { (data: Any?) -> Void in
+                
+                if let data = data as? [String : AnyObject] {
+                    
+                    let title = data["title"] as? String
+                    let body = data["body"] as? String
+                    
+                    let content = UNMutableNotificationContent()
+                    
+                    content.title = title!
+                    if data.contains(where: { (key, value) -> Bool in
+                        return key == "text"
+                    }) {
+                        if let text = data["text"] as? String {
+                            if text != "" && !text.isEmpty {
+                                content.body = text
+                            } else { content.body = body! }
+                        } else { content.body = body! }
+                    } else { content.body = body! }
+                    content.sound = UNNotificationSound.default
+                    content.badge = 1
+                    content.categoryIdentifier = "Ting.com"
+                    
+                    if data.contains(where: { (key, value) -> Bool in
+                        return key == "image"
+                    }) {
+                        if let image = data["image"] as? String {
+                            if image != "" && !image.isEmpty {
+                                guard let notificationImage = try? UNNotificationAttachment(identifier: "", url: URL(string: data["image"] as! String)!, options: nil) else { return }
+                                content.attachments = [notificationImage]
+                            }
+                        }
+                    }
+                    
+                    let trigger = UNTimeIntervalNotificationTrigger.init(timeInterval: 2, repeats: false)
+                    let request = UNNotificationRequest.init(identifier: "Ting.com", content: content, trigger: trigger)
+
+                    let center = UNUserNotificationCenter.current()
+                    center.delegate = self
+                    center.add(request)
+                }
+            })
+        }
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -126,7 +241,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
                 if let address = response?.firstResult(){
                     DispatchQueue.main.async {
                                
-                        let token = "\(String(describing: user.userID))-\(user.authentication.idToken ?? Functions.randomString(length: 512))"
+                        let token = "\(user.userID ?? "")-\(user.authentication.idToken ?? Functions.randomString(length: 512))"
                             
                         let formData: Parameters = ["token": token, "name": user.profile.name, "email": user.profile.email, "country": address.country!, "town": address.administrativeArea!, "address": address.lines![0], "longitude": String(address.coordinate.longitude), "latitude": String(address.coordinate.latitude), "type": "Home", "other_address_type": "Home"]
                                

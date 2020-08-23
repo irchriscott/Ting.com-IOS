@@ -7,7 +7,7 @@ target 'ting' do
     pod 'FittedSheets'
     pod 'Kingfisher'
     use_frameworks!
-    pod 'ReachabilitySwift'
+    pod 'ReachabilitySwift', '= 4.3.0'
     pod 'ImageViewer', :git => 'https://github.com/Krisiacik/ImageViewer.git'
     pod 'Charts'
     pod 'XLPagerTabStrip'
@@ -24,4 +24,6 @@ target 'ting' do
     pod 'MercariQRScanner'
     pod 'CircularRevealKit'
     pod 'PubNubSwift'
+    pod 'PushNotifications'
+    pod 'PusherSwift', '= 7.2.0'
 end

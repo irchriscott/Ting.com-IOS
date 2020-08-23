@@ -92,6 +92,23 @@ struct StaticData {
     static let addressTypes                 = ["Home", "Work", "School", "Other"]
     static let googleClientID               = "1033794072902-espnuj5ort5627uv0mun7ih2lndv17lc.apps.googleusercontent.com"
     static let googleMapsKey                = "AIzaSyD2mLGusTJZqu7zesBgobnoVIzN6hIayvk"
+    
+    static let PUBNUB_SUBSCRIBE_KEY         = "sub-c-6597d23e-1b1d-11ea-b79a-866798696d74"
+    static let PUBNUB_PUBLISH_KEY           = "pub-c-62f722d6-c307-4dd9-89dc-e598a9164424"
+    static let PUSH_NOTIFICATION_KEY        = "f47c28dd-63ae-49c0-9f30-88560b21e061"
+}
+
+struct Socket {
+    static let SOCKET_REQUEST_RESTO_TABLE           = "request_resto_table"
+    static let SOCKET_REQUEST_ASSIGN_WAITER         = "request_assign_waiter"
+    static let SOCKET_REQUEST_NOTIFY_ORDER          = "request_notify_order"
+    static let SOCKET_REQUEST_W_NOTIFY_ORDER        = "request_w_notify_order"
+
+    static let SOCKET_RESPONSE_ERROR                = "response_error"
+    static let SOCKET_RESPONSE_PLACEMENT_DONE       = "response_resto_placement_done"
+    static let SOCKET_RESPONSE_TABLE_WAITER         = "response_resto_table_waiter"
+    static let SOCKET_RESPONSE_RESTO_TABLE          = "response_resto_table"
+    static let SOCKET_RESPONSE_RESTO_BILL_PAID      = "response_resto_bill_paid"
 }
 
 struct Base64ImageData {
