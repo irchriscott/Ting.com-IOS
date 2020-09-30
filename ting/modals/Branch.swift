@@ -21,6 +21,7 @@ struct Branch: Codable {
     let placeId: String
     let email: String
     let phone: String
+    let channel: String
     let isAvailable: Bool
     let categories: RestaurantCategories
     let tables: BranchTables

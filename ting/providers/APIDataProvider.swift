@@ -565,4 +565,23 @@ class APIDataProvider: NSObject {
             }
         }.resume()
     }
+    
+    public func requestRestaurantTable(table: String, completion: @escaping (Data?) -> ()) {
+        
+        guard let url = URL(string: "\(URLs.placementRequestTable)?table=\(table)") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                DispatchQueue.main.async { completion(data) }
+            }
+        }.resume()
+    }
 }

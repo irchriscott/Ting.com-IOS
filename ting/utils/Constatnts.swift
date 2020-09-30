@@ -85,6 +85,9 @@ struct URLs {
     static let discoverTodayPromosAll       = "\(endPoint)usr/d/today/promotions/all/"
     static let discoverTopMenus             = "\(endPoint)usr/d/menus/top/"
     static let discoverMenus                = "\(endPoint)usr/d/menus/discover/"
+    
+    //PLACEMENT
+    static let placementRequestTable        = "\(endPoint)usr/po/table/request/"
 }
 
 struct StaticData {

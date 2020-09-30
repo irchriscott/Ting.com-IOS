@@ -36,4 +36,14 @@ class UserAuthentication : NSObject {
         let data = UserDefaults.standard.data(forKey: SESSION_USER_KEY)
         do { return try JSONDecoder().decode(User.self, from: data!) } catch { return nil }
     }
+    
+    public func socketUser() -> SocketUser? {
+        if let user = self.get() {
+            return SocketUser(id: user.id, type: 3, name: user.name, email: user.email, image: "/tinguploads/\(user.image)", channel: user.channel)
+        } else { return nil }
+    }
+    
+    public func logout() {
+        UserDefaults.standard.removeObject(forKey: SESSION_USER_KEY)
+    }
 }

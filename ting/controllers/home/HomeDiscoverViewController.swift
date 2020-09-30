@@ -1090,9 +1090,14 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
     
     @objc private func navigateToPlacement() {
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
-        let tableScannerViewController = storyboard.instantiateViewController(withIdentifier: "TableScannerView") as! TableScannerViewController
-        tableScannerViewController.controller = self.navigationController
-        tableScannerViewController.modalPresentationStyle = .overFullScreen
-        self.present(tableScannerViewController, animated: true, completion: nil)
+        if PlacementProvider().isPlacedIn() {
+            let placementViewController = storyboard.instantiateViewController(withIdentifier: "PlacementView") as! PlacementViewController
+            self.navigationController?.pushViewController(placementViewController, animated: true)
+        } else {
+            let tableScannerViewController = storyboard.instantiateViewController(withIdentifier: "TableScannerView") as! TableScannerViewController
+            tableScannerViewController.controller = self.navigationController
+            tableScannerViewController.modalPresentationStyle = .overFullScreen
+            self.present(tableScannerViewController, animated: true, completion: nil)
+        }
     }
 }

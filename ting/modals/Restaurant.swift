@@ -104,6 +104,7 @@ struct RestaurantReview: Codable {
 
 struct RestaurantTable: Codable {
     let id: Int
+    let branch: Branch?
     let uuid: String
     let maxPeople: Int
     let number: String
