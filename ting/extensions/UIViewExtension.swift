@@ -21,6 +21,16 @@ extension UIView {
         layer.insertSublayer(gradientLayer, at: 0)
     }
     
+    func setLinearGradientBackgroundColorElse(colorOne: UIColor, colorTwo: UIColor, frame: CGRect){
+        
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = frame
+        gradientLayer.colors = [colorOne.cgColor, colorTwo.cgColor]
+        gradientLayer.locations = [0.0, 1.0]
+        
+        self.layer.insertSublayer(gradientLayer, at: 0)
+    }
+    
     func setGradientBackgroundColor(colorOne: UIColor, colorTwo: UIColor){
         
         let gradientLayer = CAGradientLayer()

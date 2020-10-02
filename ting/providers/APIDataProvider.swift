@@ -584,4 +584,31 @@ class APIDataProvider: NSObject {
             }
         }.resume()
     }
+    
+    public func getCurrentPlacement(token: String, completion: @escaping (Placement?) -> ()) {
+        
+        guard let url = URL(string: "\(URLs.getCurrentPlacement)?token=\(token)") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let placement = try JSONDecoder().decode(Placement.self, from: data)
+                    DispatchQueue.main.async { completion(placement) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion(nil)
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
 }

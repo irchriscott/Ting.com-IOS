@@ -24,7 +24,7 @@ class PrimaryButtonElse: UIButton {
         super.init(frame: frame)
         self.layer.cornerRadius = self.frame.size.height / 2
         self.layer.masksToBounds = true
-        self.setLinearGradientBackgroundColor(colorOne: Colors.colorPrimary, colorTwo: Colors.colorPrimaryDark)
+        self.setLinearGradientBackgroundColorElse(colorOne: Colors.colorPrimary, colorTwo: Colors.colorPrimaryDark, frame: CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height))
     }
     
     required init?(coder aDecoder: NSCoder) {

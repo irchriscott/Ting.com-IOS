@@ -19,7 +19,7 @@ class Spinner: NSObject {
     func show(){
         if let window =  UIApplication.shared.keyWindow {
             let spinnerView = UIView(frame: window.bounds)
-            spinnerView.backgroundColor = Colors.colorTransparent
+            spinnerView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
             let ai = UIActivityIndicatorView(style: .white)
             ai.startAnimating()
             ai.center = spinnerView.center

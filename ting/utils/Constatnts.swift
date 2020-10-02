@@ -31,6 +31,12 @@ struct Colors {
     static let colorStatusTimeOrange        = UIColor(red: 0.95, green: 0.44, blue: 0.11, alpha: 1.0)
     static let colorStatusTimeGreen         = UIColor(red: 0.13, green: 0.73, blue: 0.27, alpha: 1.0)
     static let colorStatusTimeRed           = UIColor(red: 0.86, green: 0.16, blue: 0.16, alpha: 1.0)
+    static let colorPlacementMenuOne        = UIColor(red: 0.54, green: 0.17, blue: 0.89, alpha: 1.0)
+    static let colorPlacementMenuTwo        = UIColor(red: 0.58, green: 0.00, blue: 0.83, alpha: 1.0)
+    static let colorPlacementMenuThree      = UIColor(red: 0.44, green: 0.18, blue: 0.66, alpha: 1.0)
+    static let colorPlacementMenuFour       = UIColor(red: 0.36, green: 0.23, blue: 0.55, alpha: 1.0)
+    static let colorPlacementMenuFive       = UIColor(red: 0.47, green: 0.32, blue: 0.66, alpha: 1.0)
+    static let colorPlacementMenuSix        = UIColor(red: 0.61, green: 0.32, blue: 0.71, alpha: 1.0)
 }
 
 struct Sizes {
@@ -88,6 +94,7 @@ struct URLs {
     
     //PLACEMENT
     static let placementRequestTable        = "\(endPoint)usr/po/table/request/"
+    static let getCurrentPlacement          = "\(endPoint)usr/po/placement/get/"
 }
 
 struct StaticData {
