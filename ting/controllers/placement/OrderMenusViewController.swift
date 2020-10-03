@@ -113,17 +113,13 @@ class OrderMenusViewController: UICollectionViewController, UICollectionViewDele
         self.pageIndex = 1
         self.loadedMenus = []
         self.menus = []
-        self.getOrderRestaurantMenus(index: pageIndex, q: searchText)
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        self.pageIndex = 1
-        self.loadedMenus = []
-        self.menus = []
-        self.getOrderRestaurantMenus(index: pageIndex, q: "")
-    }
+        if searchText == "" {
+            self.getOrderRestaurantMenus(index: pageIndex, q: searchText)
+        }
+     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        self.getOrderRestaurantMenus(index: pageIndex, q: searchBar.text ?? "")
         self.view.endEditing(true)
     }
 
