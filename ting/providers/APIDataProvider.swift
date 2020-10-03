@@ -611,4 +611,31 @@ class APIDataProvider: NSObject {
             }
         }.resume()
     }
+    
+    public func getRestaurantOrderMenus(branch: Int, type: Int, page: Int, query: String, completion: @escaping ([RestaurantMenu]) -> ()) {
+        
+        guard let url = URL(string: String(format: URLs.restaurantMenusOrders, arguments: [branch, type, page, query])) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let menus = try JSONDecoder().decode([RestaurantMenu].self, from: data)
+                    DispatchQueue.main.async { completion(menus) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([])
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
 }

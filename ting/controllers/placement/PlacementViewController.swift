@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PubNub
 
 class PlacementViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
@@ -17,21 +18,30 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
     var placement: Placement? {
         didSet {
             if let _ = self.placement {
-                self.collectionView.reloadData()
+                self.collectionView.reloadSections(IndexSet(integer: 0))
             }
         }
     }
     
+    let appWindow = UIApplication.shared.keyWindow
+    
+    let session = UserAuthentication().get()!
+    
+    var pubnub: PubNub!
+    let listener = SubscriptionListener(queue: .main)
+    
     let colors: [UIColor] = [Colors.colorPlacementMenuOne, Colors.colorPlacementMenuTwo, Colors.colorPlacementMenuThree, Colors.colorPlacementMenuFour, Colors.colorPlacementMenuFive, Colors.colorPlacementMenuSix]
     
-    let menus:[[String]] = [
+    private var menus: [[String]] = [
         ["Foods", "icon_p_menu_foods"],
         ["Drinks", "icon_p_menu_drinks"],
         ["Dishes", "icon_p_menu_dishes"],
         ["Orders", "icon_p_menu_orders"],
         ["Bill", "icon_p_menu_bill"],
         ["Request Waiter", "icon_p_menu_request"]
-    ].reversed()
+    ]
+        
+    let spinner = Spinner()
     
     var loadedData:[Bool] = []
 
@@ -39,15 +49,61 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
         super.viewDidLoad()
         self.setupNavigationBar()
         
-        self.loadedData = [Bool](repeating: false, count: 6)
+        self.loadedData = [Bool](repeating: false, count: self.menus.count)
         
         self.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: self.cellId)
         self.collectionView.register(PlacementHeaderViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: self.headerId)
         self.collectionView.register(PlacementFooterViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: self.footerId)
         
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "icon_info_25_white"), style: .plain, target: self, action: #selector(restaurantAbout(sender:)))
+        
         if let place = PlacementProvider().get() {
             self.placement = place
         }
+        
+        PubNub.log.levels = [.all]
+        PubNub.log.writers = [ConsoleLogWriter(), FileLogWriter()]
+
+        let config = PubNubConfiguration(publishKey: "pub-c-62f722d6-c307-4dd9-89dc-e598a9164424", subscribeKey: "sub-c-6597d23e-1b1d-11ea-b79a-866798696d74")
+        pubnub = PubNub(configuration: config)
+        
+        let channels = [session.channel]
+        
+        listener.didReceiveMessage = { message in
+            do {
+                let response = try JSONDecoder().decode(SocketResponseMessage.self, from: message.payload.jsonStringify!.data(using: .utf8)!)
+                self.spinner.hide()
+                switch response.type {
+                
+                case Socket.SOCKET_RESPONSE_ERROR:
+                    if let m = response.message {
+                        self.showErrorMessage(message: m, title: "Sorry")
+                    } else { self.showErrorMessage(message: "An error has occurred. Try again", title: "Sorry") }
+                case Socket.SOCKET_RESPONSE_PLACEMENT_DONE:
+                    PlacementProvider().placeOut()
+                    self.showAlertMessage(image: "icon_important_75_white", message: "Placement is Done") {
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }
+                default:
+                    self.showErrorMessage(message: "No Response. Try again", title: "Humm ?")
+                }
+            } catch {
+                self.spinner.hide()
+                self.showErrorMessage(message: "An error has occurred. Try again", title: "Ouch")
+            }
+        }
+        
+        listener.didReceiveStatus = { status in
+            switch status {
+            case .success(let connection):
+                if connection == .connected {}
+            case .failure(let error):
+                self.showErrorMessage(message: error.localizedDescription)
+            }
+        }
+        
+        pubnub.add(listener)
+        pubnub.subscribe(to: channels, withPresence: true)
         
         self.getPlacement()
     }
@@ -103,19 +159,19 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
     }
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        return 2
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 6
-    }
+        return section == 0 ? 0 : self.menus.count
+     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath)
-        cell.backgroundColor = colors[indexPath.row]
+        cell.backgroundColor = colors[indexPath.item]
         cell.layer.cornerRadius = 4
         
-        let menu = self.menus[indexPath.row]
+        let menu = self.menus[indexPath.item]
         
         let menuView: UIView = {
             let view = UIView()
@@ -138,7 +194,7 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
             return view
         }()
         
-        if !self.loadedData[indexPath.row] {
+        if !self.loadedData[indexPath.item] {
             iconView.image = UIImage(named: menu[1])
             nameView.text = menu[0].uppercased()
             
@@ -157,9 +213,9 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
             
             cell.addConstraint(NSLayoutConstraint(item: menuView, attribute: .centerX, relatedBy: .equal, toItem: cell, attribute: .centerX, multiplier: 1, constant: 0))
             cell.addConstraint(NSLayoutConstraint(item: menuView, attribute: .centerY, relatedBy: .equal, toItem: cell, attribute: .centerY, multiplier: 1, constant: 0))
+            
+            self.loadedData[indexPath.item] = true
         }
-        
-        self.loadedData[indexPath.row] = true
         
         return cell
     }
@@ -173,9 +229,19 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
         case UICollectionView.elementKindSectionHeader:
             let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.headerId, for: indexPath) as! PlacementHeaderViewCell
             cell.placement = self.placement
+            cell.controller = self
             return cell
         default:
             return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.footerId, for: indexPath) as! PlacementFooterViewCell
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        switch indexPath.row {
+        case 0, 1, 2:
+            self.openOrderMenus(type: indexPath.row + 1)
+        default:
+            break
         }
     }
     
@@ -192,11 +258,121 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: self.view.frame.width, height: 250)
+        return section == 0 ? CGSize(width: self.view.frame.width, height: 250) : .zero
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        return CGSize(width: self.view.frame.width, height: 146)
+        return section == 0 ? .zero : CGSize(width: self.view.frame.width, height: 146)
+    }
+    
+    @objc func restaurantAbout(sender: UIBarButtonItem) {
+        if let branch = self.placement?.table.branch {
+            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+            let aboutController = storyboard.instantiateViewController(withIdentifier: "RestaurantAbout") as! RestaurantAboutController
+            aboutController.branch = branch
+            self.navigationController?.pushViewController(aboutController, animated: true)
+        }
+    }
+    
+    private func openOrderMenus(type: Int) {
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        let orderMenusController = storyboard.instantiateViewController(withIdentifier: "OrderMenusView") as! OrderMenusViewController
+        orderMenusController.type = type
+        orderMenusController.onClose = { self.getPlacement() }
+        orderMenusController.onOrder = { menu in self.getPlacement() }
+        self.present(orderMenusController, animated: true, completion: nil)
+    }
+    
+    public func requestWaiter() {
+        if let placement = self.placement {
+            let receiver = SocketUser(id: placement.table.branch?.id, type: 1, name: "\(placement.table.branch?.restaurant?.name ?? ""), \(placement.table.branch?.name ?? "")", email: placement.table.branch?.email, image: placement.table.branch?.restaurant?.logo, channel: (placement.table.branch?.channel)!)
+            
+            let args:[String:String] = ["table": "\(placement.table.id)", "token": PlacementProvider().getTempToken()!]
+            let data:[String:String] = ["table": placement.table.number]
+            
+            let message = SocketResponseMessage(uuid: UUID().uuidString, type: Socket.SOCKET_REQUEST_ASSIGN_WAITER, sender: UserAuthentication().socketUser(), receiver: receiver, status: 200, message: "", args: args, data: data)
+            
+            let messageJSON = try! JSONEncoder().encodeJSONObject(message)
+            
+            let jsonData = try! JSONSerialization.data(withJSONObject: messageJSON, options: [])
+            let jsonString = String(data: jsonData, encoding: String.Encoding.utf8)!.replacingOccurrences(of: "\"", with: "'")
+            
+            self.pubnub.publish(channel: placement.table.branch!.channel, message: jsonString) { (result) in
+                switch result {
+                case .success(_):
+                    Toast.makeToast(message: "Request Sent", duration: Toast.MID_LENGTH_DURATION, style: .success)
+                case let .failure(error):
+                    self.showErrorMessage(message: "An error has occured : \(error.localizedDescription). Try again", title: "Sorry")
+                }
+            }
+        }
+    }
+    
+    public func updatePeople() {
+        let alert = UIAlertController(title: "How many are you ?", message: nil, preferredStyle: .alert)
+
+        let action = UIAlertAction(title: "OK", style: .default) { _ in
+            let peopleText = alert.textFields![0]
+            if let people = peopleText.text {
+                if !people.isEmpty {
+                    self.spinner.show()
+                    let params: Parameters = ["token": self.placement!.token, "people": people]
+                    TingClient.postRequest(url: URLs.updatePlacementPeople, params: params) { (data) in
+                        DispatchQueue.main.async {
+                            if let data = data {
+                                self.spinner.hide()
+                                do {
+                                    let placement = try JSONDecoder().decode(Placement.self, from: data)
+                                    self.placement = placement
+                                    PlacementProvider().set(data: data)
+                                    PlacementProvider().setToken(data: placement.token)
+                                } catch {
+                                    self.showErrorMessage(message: error.localizedDescription)
+                                    do {
+                                        let response = try JSONDecoder().decode(ServerResponse.self, from: data)
+                                        self.showErrorMessage(message: response.message)
+                                    } catch {
+                                        self.showErrorMessage(message: error.localizedDescription)
+                                    }
+                                }
+                            } else {
+                                self.showErrorMessage(message: "Sorry, an error has occurred")
+                            }
+                        }
+                    }
+                } else {
+                    self.showErrorMessage(message: "Please, insert number of people")
+                }
+            } else {
+                self.showErrorMessage(message: "Please, insert number of people")
+            }
+        }
+        let cancel = UIAlertAction(title: "CANCEL", style: .destructive) { (alertAction) in
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        alert.addTextField { (textField) in
+            textField.placeholder = "Number of People"
+            textField.keyboardType = .numberPad
+            textField.textAlignment = .center
+            textField.font = UIFont(name: "Poppins-Medium", size: 40)
+            textField.returnKeyType = .done
+            textField.textColor = Colors.colorGray
+            textField.text = "\(self.placement!.people)"
+            textField.attributedPlaceholder = NSAttributedString(string: "Number of People", attributes: [
+                NSAttributedString.Key.foregroundColor: Colors.colorGray,
+                NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 14)!
+            ])
+            textField.addTarget(self, action: #selector(self.doneEditing), for: UIControl.Event.primaryActionTriggered)
+        }
+        
+        alert.addAction(action)
+        alert.addAction(cancel)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    @objc func doneEditing(){
+        self.view.endEditing(true)
     }
 }
 
@@ -258,6 +434,8 @@ class PlacementHeaderViewCell : UICollectionViewCell {
         return view
     }()
     
+    var controller: PlacementViewController?
+    
     var placement: Placement? {
         didSet {
             if let placement = self.placement {
@@ -288,7 +466,7 @@ class PlacementHeaderViewCell : UICollectionViewCell {
                 if let waiter = placement.waiter {
                     waiterView.text = waiter.name
                     waiterView.imageURL = "\(URLs.hostEndPoint)\(waiter.image)"
-                } else { waiterView.text = "-" }
+                } else { waiterView.text = "Request Waiter" }
                 
                 peopleView.text = String(placement.people)
             }
@@ -298,6 +476,8 @@ class PlacementHeaderViewCell : UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.waiterView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(requestWaiter)))
+        self.peopleView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(updatePeople)))
         self.setup()
     }
     
@@ -326,6 +506,49 @@ class PlacementHeaderViewCell : UICollectionViewCell {
         addConstraint(NSLayoutConstraint.init(item: restaurantName, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
         addConstraint(NSLayoutConstraint.init(item: billNumber, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
         addConstraint(NSLayoutConstraint.init(item: dataView, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
+    }
+    
+    @objc private func requestWaiter() {
+        if let place = self.placement {
+            if let waiter = place.waiter {
+                let alert = UIAlertController(title: waiter.name, message: "This is the waiter who will be serving you today. Enjoy !", preferredStyle: .alert)
+
+                let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+                let imageView = UIImageView(frame: CGRect(x: (alert.view.frame.width / 2) - 125, y: 90, width: 100, height: 100))
+                imageView.layer.cornerRadius = 4
+                imageView.layer.masksToBounds = true
+                imageView.contentMode = .scaleAspectFill
+                
+                imageView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(waiter.image)")!,
+                    placeholder: UIImage(named: "default_user"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
+
+                alert.view.addSubview(imageView)
+                let height = NSLayoutConstraint(item: alert.view, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 250)
+                alert.view.addConstraint(height)
+                
+                alert.addAction(action)
+
+                self.controller?.present(alert, animated: true, completion: nil)
+            } else {
+                let request = UIAlertController(title: "Request Waiter For Your Table", message: nil, preferredStyle: .actionSheet)
+                request.addAction(UIAlertAction(title: "Request Waiter", style: .default) { (action) in
+                    self.controller?.requestWaiter()
+                })
+                request.addAction(UIAlertAction(title: "CANCEL", style: .cancel, handler: { (action) in }))
+                controller?.present(request, animated: true, completion: nil)
+            }
+        }
+    }
+    
+    @objc func updatePeople() {
+        controller?.updatePeople()
     }
     
     required init?(coder: NSCoder) {

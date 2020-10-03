@@ -55,6 +55,8 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     
     var gradientLoadingBar: GradientLoadingBar!
     
+    let appWindow = UIApplication.shared.keyWindow
+    
     let mapFloatingButton: FloatingButton = {
         let view = FloatingButton()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -271,7 +273,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             let data = try JSONEncoder().encode(filterParams)
             APIDataProvider.instance.searchFilterRestaurants(country: country, town: town, query: searchView.text ?? "", filters: String(data: data, encoding: .utf8)!, page: "\(index)") { (branches) in
                 DispatchQueue.main.async {
-                    self.removeSpinner()
+                    self.appWindow?.rootViewController?.removeSpinner()
                     if !branches.isEmpty {
                         var newBranches: [Branch] = []
                         if let userLocation = location {
@@ -299,7 +301,10 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                     }
                 }
             }
-        } catch { return }
+        } catch {
+            self.appWindow?.rootViewController?.removeSpinner()
+            self.showErrorMessage(message: error.localizedDescription, title: "Error")
+        }
     }
     
     @objc func refreshRestaurants(){
@@ -668,7 +673,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                     
                     filtersController.onFilterRestaurants = { filter in
                         if filter {
-                            self.showSpinner(onView: self.view)
+                            self.appWindow?.rootViewController?.showSpinner(onView: self.appWindow?.rootViewController?.view ?? self.view)
                             
                             self.pageIndex = 1
                             self.loadedRestaurants = []
@@ -851,7 +856,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     }
     
     @objc private func filterRestaurants(_ sender: Any) {
-        self.showSpinner(onView: self.view)
+        self.appWindow?.rootViewController?.showSpinner(onView: self.appWindow?.rootViewController?.view ?? self.view)
         
         self.pageIndex = 1
         self.loadedRestaurants = []

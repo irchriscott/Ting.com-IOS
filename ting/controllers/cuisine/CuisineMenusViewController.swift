@@ -188,12 +188,14 @@ class CuisineMenusViewController: UITableViewController, IndicatorInfoProvider {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let menu = self.menus[indexPath.row]
-        let storyboard = UIStoryboard(name: "Home", bundle: nil)
-        let menuController = storyboard.instantiateViewController(withIdentifier: "RestaurantMenuView") as! RestaurantMenuViewController
-        menuController.restaurantMenu = menu
-        menuController.controller = self
-        self.navigationController?.pushViewController(menuController, animated: true)
+        if !self.menus.isEmpty {
+            let menu = self.menus[indexPath.row]
+            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+            let menuController = storyboard.instantiateViewController(withIdentifier: "RestaurantMenuView") as! RestaurantMenuViewController
+            menuController.restaurantMenu = menu
+            menuController.controller = self
+            self.navigationController?.pushViewController(menuController, animated: true)
+        }
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {

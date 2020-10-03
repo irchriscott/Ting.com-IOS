@@ -160,6 +160,10 @@
 		8FF757E225245BB1000C0445 /* PlacementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF757E125245BB1000C0445 /* PlacementViewController.swift */; };
 		8FF757E425247F64000C0445 /* JSONCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF757E325247F64000C0445 /* JSONCodable.swift */; };
 		8FF757E625247F7D000C0445 /* CodableFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF757E525247F7D000C0445 /* CodableFormat.swift */; };
+		8FF757E825272C26000C0445 /* UIAlertControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF757E725272C26000C0445 /* UIAlertControllerExtension.swift */; };
+		8FF757EA25273AED000C0445 /* TingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF757E925273AED000C0445 /* TingClient.swift */; };
+		8FF757EC25286722000C0445 /* OrderMenusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF757EB25286721000C0445 /* OrderMenusViewController.swift */; };
+		8FF757EF2528D665000C0445 /* RestaurantMenuOrderViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF757EE2528D665000C0445 /* RestaurantMenuOrderViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -314,6 +318,10 @@
 		8FF757E125245BB1000C0445 /* PlacementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacementViewController.swift; sourceTree = "<group>"; };
 		8FF757E325247F64000C0445 /* JSONCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONCodable.swift; sourceTree = "<group>"; };
 		8FF757E525247F7D000C0445 /* CodableFormat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodableFormat.swift; sourceTree = "<group>"; };
+		8FF757E725272C26000C0445 /* UIAlertControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtension.swift; sourceTree = "<group>"; };
+		8FF757E925273AED000C0445 /* TingClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TingClient.swift; sourceTree = "<group>"; };
+		8FF757EB25286721000C0445 /* OrderMenusViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderMenusViewController.swift; sourceTree = "<group>"; };
+		8FF757EE2528D665000C0445 /* RestaurantMenuOrderViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantMenuOrderViewCell.swift; sourceTree = "<group>"; };
 		B3574E3CEF3D845DD3605E35 /* Pods-ting.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ting.release.xcconfig"; path = "Target Support Files/Pods-ting/Pods-ting.release.xcconfig"; sourceTree = "<group>"; };
 		B76E861E707C1B41EA38E562 /* Pods-ting.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ting.debug.xcconfig"; path = "Target Support Files/Pods-ting/Pods-ting.debug.xcconfig"; sourceTree = "<group>"; };
 		F4863839C5BE4B747F8CCDFF /* Pods_ting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -344,6 +352,7 @@
 			children = (
 				8F11B22224EFC32E00B81140 /* TableScannerViewController.swift */,
 				8FF757E125245BB1000C0445 /* PlacementViewController.swift */,
+				8FF757EB25286721000C0445 /* OrderMenusViewController.swift */,
 			);
 			path = placement;
 			sourceTree = "<group>";
@@ -433,6 +442,7 @@
 				8F11988A232F5E3F00DA8C7D /* APIDataProvider.swift */,
 				8FA0334524E279D500B0D680 /* LocalData.swift */,
 				8FF757DF2523A66D000C0445 /* PlacementProvider.swift */,
+				8FF757E925273AED000C0445 /* TingClient.swift */,
 			);
 			path = providers;
 			sourceTree = "<group>";
@@ -515,6 +525,7 @@
 				8F1D75E82331F801000B25C9 /* UIApplicationExtension.swift */,
 				8F14F137233285D300844B63 /* UIDeviceExtension.swift */,
 				8FDDF97B23741608000AA334 /* StringExtension.swift */,
+				8FF757E725272C26000C0445 /* UIAlertControllerExtension.swift */,
 			);
 			path = extensions;
 			sourceTree = "<group>";
@@ -665,6 +676,7 @@
 		8FEB1D95232B660E0024FF04 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				8FF757ED2528D63B000C0445 /* placement */,
 				8FA0334724E2AF2A00B0D680 /* utils */,
 				8FA0334224E2655800B0D680 /* cuisine */,
 				8F157C6123A8ACEA008C88E2 /* promotion */,
@@ -720,6 +732,14 @@
 				8FF1687424E6FB0B00DD13A2 /* RestaurantFiltersViewController.swift */,
 			);
 			path = others;
+			sourceTree = "<group>";
+		};
+		8FF757ED2528D63B000C0445 /* placement */ = {
+			isa = PBXGroup;
+			children = (
+				8FF757EE2528D665000C0445 /* RestaurantMenuOrderViewCell.swift */,
+			);
+			path = placement;
 			sourceTree = "<group>";
 		};
 		D286F9B8A77C5C979F674E4F /* Pods */ = {
@@ -918,6 +938,7 @@
 				8FA5716E24DEFF9500C8034D /* Placement.swift in Sources */,
 				8FA0334124E2603600B0D680 /* CarouselView.swift in Sources */,
 				8F79B4BA22F4C9D3000FBBB1 /* LeftToRightSegue.swift in Sources */,
+				8FF757E825272C26000C0445 /* UIAlertControllerExtension.swift in Sources */,
 				8F1095022330C83400A7519B /* DoubleExtension.swift in Sources */,
 				8F88EE7A22F2B737000C4ED2 /* UIViewExtension.swift in Sources */,
 				8F157C6523A8FCCF008C88E2 /* PromotedMenuViewCell.swift in Sources */,
@@ -940,9 +961,11 @@
 				8F157C7D23B1D111008C88E2 /* MenuItemView.swift in Sources */,
 				8F37674324EBA38800E80E98 /* RecommandedRestaurantViewCell.swift in Sources */,
 				8F4C1B0424E9271B002BEF50 /* CuisineMenusViewController.swift in Sources */,
+				8FF757EA25273AED000C0445 /* TingClient.swift in Sources */,
 				8F11988B232F5E3F00DA8C7D /* APIDataProvider.swift in Sources */,
 				8F43F3CE22F798E200545AC2 /* Requests.swift in Sources */,
 				8FB57BA5237BF3BC00732D5A /* ReviewsPercentsView.swift in Sources */,
+				8FF757EC25286722000C0445 /* OrderMenusViewController.swift in Sources */,
 				8F1D75E92331F801000B25C9 /* UIApplicationExtension.swift in Sources */,
 				8FB57BA3237AA21700732D5A /* MenuPromotionViewCell.swift in Sources */,
 				8F07FFCD23128B2D00D0ACD5 /* TitleTextLabel.swift in Sources */,
@@ -1001,6 +1024,7 @@
 				8F43F3D022F79DC900545AC2 /* Media.swift in Sources */,
 				8F3E3CF6230B981C00D9BC1C /* CircularImageView.swift in Sources */,
 				8FF757E225245BB1000C0445 /* PlacementViewController.swift in Sources */,
+				8FF757EF2528D665000C0445 /* RestaurantMenuOrderViewCell.swift in Sources */,
 				8F11B21E24EEE20C00B81140 /* RecommandedMenuViewCell.swift in Sources */,
 				8FB7B20C23A8A03C00245012 /* PromotionMenuViewController.swift in Sources */,
 				8F157C7723AA237B008C88E2 /* RestaurantDishesViewController.swift in Sources */,
