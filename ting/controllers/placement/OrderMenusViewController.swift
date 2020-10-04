@@ -10,7 +10,7 @@ import UIKit
 import ShimmerSwift
 import FittedSheets
 
-class OrderMenusViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UISearchBarDelegate {
+class OrderMenusViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UISearchBarDelegate, UITextViewDelegate {
     
     private let cellId = "cellId"
     private let headerId = "headerId"
@@ -129,8 +129,98 @@ class OrderMenusViewController: UICollectionViewController, UICollectionViewDele
             if !self.menus.isEmpty {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath) as! RestaurantMenuOrderViewCell
                 if !self.loadedMenus.contains(indexPath.row) {
-                    cell.restaurantMenu = self.menus[indexPath.row]
+                    let menu = self.menus[indexPath.row]
+                    cell.restaurantMenu = menu
                     self.loadedMenus.append(indexPath.row)
+                    cell.openOrder = {
+                        
+                        let alert = UIAlertController(title: "Order Menu", message: nil, preferredStyle: .alert)
+
+                        let widthConstraints = alert.view.constraints.filter({ return $0.firstAttribute == .width })
+                        alert.view.removeConstraints(widthConstraints)
+                        let newWidth = UIScreen.main.bounds.width * 0.90
+                        let widthConstraint = NSLayoutConstraint(item: alert.view, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: newWidth)
+                        alert.view.addConstraint(widthConstraint)
+                        
+                        let firstContainer = alert.view.subviews[0]
+                        let constraint = firstContainer.constraints.filter({ return $0.firstAttribute == .width && $0.secondItem == nil })
+                        firstContainer.removeConstraints(constraint)
+                        alert.view.addConstraint(NSLayoutConstraint(item: firstContainer, attribute: .width, relatedBy: .equal, toItem: alert.view, attribute: .width, multiplier: 1.0, constant: 0))
+                        
+                        let innerBackground = firstContainer.subviews[0]
+                        let innerConstraints = innerBackground.constraints.filter({ return $0.firstAttribute == .width && $0.secondItem == nil })
+                        innerBackground.removeConstraints(innerConstraints)
+                        firstContainer.addConstraint(NSLayoutConstraint(item: innerBackground, attribute: .width, relatedBy: .equal, toItem: firstContainer, attribute: .width, multiplier: 1.0, constant: 0))
+                    
+                        let height = NSLayoutConstraint(item: alert.view, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 260)
+                        alert.view.addConstraint(height)
+                        
+                        alert.addTextField { (textField) in
+                            textField.placeholder = "Enter Quantity"
+                            textField.keyboardType = .numberPad
+                            textField.font = UIFont(name: "Poppins-Regular", size: 15)
+                            textField.returnKeyType = .next
+                            textField.textColor = Colors.colorGray
+                            textField.textRect(forBounds: textField.bounds.inset(by: UIEdgeInsets(top: 8, left: 6, bottom: 8, right: 6)))
+                            textField.placeholderRect(forBounds: textField.bounds.inset(by: UIEdgeInsets(top: 8, left: 6, bottom: 8, right: 6)))
+                            textField.editingRect(forBounds: textField.bounds.inset(by: UIEdgeInsets(top: 8, left: 6, bottom: 8, right: 6)))
+                            textField.layer.cornerRadius = 4
+                            textField.layer.masksToBounds = true
+                            
+                            textField.attributedPlaceholder = NSAttributedString(string: "Enter Quantity", attributes: [
+                                NSAttributedString.Key.foregroundColor: Colors.colorLightGray,
+                                NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 15)!
+                            ])
+                            textField.addTarget(self, action: #selector(self.doneEditing), for: UIControl.Event.primaryActionTriggered)
+                        }
+                        
+                        let conditionsTextView = UITextView()
+                        conditionsTextView.isEditable = true
+                        conditionsTextView.text = "Enter Conditions"
+                        conditionsTextView.textColor = Colors.colorLightGray
+                        conditionsTextView.font = UIFont(name: "Poppins-Regular", size: 12)!
+                        conditionsTextView.backgroundColor = Colors.colorWhite
+                        conditionsTextView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 6, right: 10)
+                        conditionsTextView.frame = CGRect(x: 16, y: 105, width: newWidth - 30, height: 100)
+                        conditionsTextView.layer.cornerRadius = 4
+                        conditionsTextView.layer.masksToBounds = true
+                        conditionsTextView.delegate = self
+                        conditionsTextView.returnKeyType = .done
+                        
+                        alert.view.addSubview(conditionsTextView)
+                        
+                        let action = UIAlertAction(title: "OK", style: .default) { _ in
+                            let quantityText = alert.textFields![0]
+                            let quantity = quantityText.text != "" && !quantityText.text!.isEmpty && !quantityText.text!.isNil ? quantityText.text! : "1"
+                            let conditions = conditionsTextView.text != "Enter Conditions" ? conditionsTextView.text! : ""
+                            
+                            let params: Parameters = ["token": self.placement.token, "quantity": quantity, "conditions": conditions, "menu": "\(menu.id!)"]
+                            
+                            TingClient.postRequest(url: URLs.placeOrderMenu, params: params) { (data) in
+                                DispatchQueue.main.async {
+                                    if let data = data {
+                                        do {
+                                            let response = try JSONDecoder().decode(ServerResponse.self, from: data)
+                                            let style: Toast.Style = response.type == "success" ? .success : .error
+                                            Toast.makeToast(message: response.message, duration: Toast.MID_LENGTH_DURATION, style: style)
+                                            if style == .success { self.onOrder(menu) }
+                                        } catch {
+                                            self.showErrorMessage(message: "An error has occurred. Sorry!")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        let cancel = UIAlertAction(title: "CANCEL", style: .destructive) { (alertAction) in
+                            alert.dismiss(animated: true, completion: nil)
+                        }
+                        
+                        alert.addAction(cancel)
+                        alert.addAction(action)
+                        
+                        self.present(alert, animated: true, completion: nil)
+                    }
                 }
                 return cell
             } else {
@@ -206,6 +296,21 @@ class OrderMenusViewController: UICollectionViewController, UICollectionViewDele
             
             return cell
         }
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == Colors.colorLightGray {
+            textView.text = ""
+            textView.textColor = Colors.colorGray
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = "Enter Conditions"
+            textView.textColor = Colors.colorLightGray
+        }
+        textView.resignFirstResponder()
     }
         
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -312,6 +417,10 @@ class OrderMenusViewController: UICollectionViewController, UICollectionViewDele
     @IBAction func cancel(sender: UIButton) {
         self.onClose()
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func doneEditing(){
+        self.view.endEditing(true)
     }
     
     private func restaurantMenuCellHeight(index: Int) -> CGFloat {

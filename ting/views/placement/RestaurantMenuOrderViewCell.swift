@@ -341,9 +341,12 @@ class RestaurantMenuOrderViewCell: UICollectionViewCell {
             self.setup()
         }
     }
+    
+    var openOrder: (() -> ())!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        orderButton.addTarget(self, action: #selector(onOpenOrderDialog(sender:)), for: .touchUpInside)
     }
     
     private func setup() {
@@ -445,6 +448,10 @@ class RestaurantMenuOrderViewCell: UICollectionViewCell {
         viewCell.addConstraintsWithFormat(format: "H:|-12-[v0(\(menuImageConstant))]-12-[v1]-12-|", views: menuImageView, menuAboutView)
         viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(55)]", views: menuImageView)
         viewCell.addConstraintsWithFormat(format: "V:|-12-[v0(\(staticValue + menuDescriptionHeight + menuNameHeight + menuPriceHeight))]", views: menuAboutView)
+    }
+    
+    @IBAction func onOpenOrderDialog(sender: UIButton) {
+        self.openOrder()
     }
     
     required init?(coder: NSCoder) {
