@@ -30,7 +30,7 @@ struct Bill : Codable {
 
 struct BillOrders : Codable {
     let count: Int
-    let orders: [OrderData]
+    let orders: [OrderData]?
 }
 
 struct Order : Codable {
