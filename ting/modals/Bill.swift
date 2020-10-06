@@ -44,7 +44,7 @@ struct Order : Codable {
     let isAccepted: Bool
     let isDeclined: Bool
     let reasons: String?
-    let hasPromotions: Bool
+    let hasPromotion: Bool
     let promotion: PromotionDataString?
     let createdAt: String
     let updatedAt: String
@@ -61,7 +61,7 @@ struct OrderData : Codable {
     let isAccepted: Bool
     let isDeclined: Bool
     let reasons: String?
-    let hasPromotions: Bool
+    let hasPromotion: Bool
     let promotion: PromotionDataString?
     let createdAt: String
     let updatedAt: String

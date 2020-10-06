@@ -98,6 +98,7 @@ struct URLs {
     static let updatePlacementPeople        = "\(endPoint)usr/po/placement/people/update/"
     static let restaurantMenusOrders        = "\(endPoint)usr/po/orders/branch/menus/?branch=%d&type=%d&page=%d&query=%@"
     static let placeOrderMenu               = "\(endPoint)usr/po/orders/menu/place/"
+    static let placementOrdersMenu          = "\(endPoint)usr/po/placement/orders/all/?token=%@&page=%d&query=%@"
 }
 
 struct StaticData {

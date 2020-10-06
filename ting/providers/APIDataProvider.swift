@@ -638,4 +638,32 @@ class APIDataProvider: NSObject {
             }
         }.resume()
     }
+    
+    public func getPlacementOrderMenus(token: String, page: Int, query: String, completion: @escaping ([Order]) -> ()) {
+        
+        guard let url = URL(string: String(format: URLs.placementOrdersMenu, arguments: [token, page, query])) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        request.setValue(self.session.token!, forHTTPHeaderField: "AUTHORIZATION")
+        
+        let session = URLSession.shared
+        
+        session.dataTask(with: request){ (data, response, error) in
+            if response != nil {}
+            if let data = data {
+                do {
+                    let orders = try JSONDecoder().decode([Order].self, from: data)
+                    DispatchQueue.main.async { completion(orders) }
+                } catch {
+                    DispatchQueue.main.async {
+                        completion([])
+                        print(error.localizedDescription)
+                        self.appWindow?.rootViewController?.showErrorMessage(message: error.localizedDescription)
+                    }
+                }
+            }
+        }.resume()
+    }
 }

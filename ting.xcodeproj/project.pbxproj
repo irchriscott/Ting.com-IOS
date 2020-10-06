@@ -135,6 +135,8 @@
 		8FA5717424DF02EF00C8034D /* SocketResponseMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5717324DF02EF00C8034D /* SocketResponseMessage.swift */; };
 		8FA5717624E0630D00C8034D /* RestaurantSpecificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA5717524E0630C00C8034D /* RestaurantSpecificationsViewController.swift */; };
 		8FAA270822F8965300B0B05B /* InputTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAA270722F8965300B0B05B /* InputTextField.swift */; };
+		8FB2AD8B252C649F00199A10 /* MenuOrdersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2AD8A252C649F00199A10 /* MenuOrdersViewController.swift */; };
+		8FB2AD8D252C69CF00199A10 /* OrderViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2AD8C252C69CF00199A10 /* OrderViewCell.swift */; };
 		8FB57B9D2378633D00732D5A /* MenuDetailsViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57B9C2378633D00732D5A /* MenuDetailsViewCell.swift */; };
 		8FB57B9F2378671C00732D5A /* MenuReviewViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57B9E2378671C00732D5A /* MenuReviewViewCell.swift */; };
 		8FB57BA12379351100732D5A /* MenuDishFoodViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA02379351100732D5A /* MenuDishFoodViewCell.swift */; };
@@ -293,6 +295,8 @@
 		8FA5717324DF02EF00C8034D /* SocketResponseMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketResponseMessage.swift; sourceTree = "<group>"; };
 		8FA5717524E0630C00C8034D /* RestaurantSpecificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantSpecificationsViewController.swift; sourceTree = "<group>"; };
 		8FAA270722F8965300B0B05B /* InputTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextField.swift; sourceTree = "<group>"; };
+		8FB2AD8A252C649F00199A10 /* MenuOrdersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuOrdersViewController.swift; sourceTree = "<group>"; };
+		8FB2AD8C252C69CF00199A10 /* OrderViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderViewCell.swift; sourceTree = "<group>"; };
 		8FB57B9C2378633D00732D5A /* MenuDetailsViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuDetailsViewCell.swift; sourceTree = "<group>"; };
 		8FB57B9E2378671C00732D5A /* MenuReviewViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuReviewViewCell.swift; sourceTree = "<group>"; };
 		8FB57BA02379351100732D5A /* MenuDishFoodViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuDishFoodViewCell.swift; sourceTree = "<group>"; };
@@ -353,6 +357,7 @@
 				8F11B22224EFC32E00B81140 /* TableScannerViewController.swift */,
 				8FF757E125245BB1000C0445 /* PlacementViewController.swift */,
 				8FF757EB25286721000C0445 /* OrderMenusViewController.swift */,
+				8FB2AD8A252C649F00199A10 /* MenuOrdersViewController.swift */,
 			);
 			path = placement;
 			sourceTree = "<group>";
@@ -738,6 +743,7 @@
 			isa = PBXGroup;
 			children = (
 				8FF757EE2528D665000C0445 /* RestaurantMenuOrderViewCell.swift */,
+				8FB2AD8C252C69CF00199A10 /* OrderViewCell.swift */,
 			);
 			path = placement;
 			sourceTree = "<group>";
@@ -927,6 +933,7 @@
 				8F157C6B23A9F873008C88E2 /* UserTabContentViewCell.swift in Sources */,
 				8F49C10A22F496270084F3E7 /* Restaurant.swift in Sources */,
 				8F11B21C24ED938700B81140 /* TodayPromotionsViewController.swift in Sources */,
+				8FB2AD8B252C649F00199A10 /* MenuOrdersViewController.swift in Sources */,
 				8F157C7F23B372D3008C88E2 /* RestaurantReviewsController.swift in Sources */,
 				8FDDF97C23741608000AA334 /* StringExtension.swift in Sources */,
 				8F49C10822F494C50084F3E7 /* MenuPromotion.swift in Sources */,
@@ -969,6 +976,7 @@
 				8F1D75E92331F801000B25C9 /* UIApplicationExtension.swift in Sources */,
 				8FB57BA3237AA21700732D5A /* MenuPromotionViewCell.swift in Sources */,
 				8F07FFCD23128B2D00D0ACD5 /* TitleTextLabel.swift in Sources */,
+				8FB2AD8D252C69CF00199A10 /* OrderViewCell.swift in Sources */,
 				8F49C0F922F2F7F60084F3E7 /* UIViewControllerExtension.swift in Sources */,
 				8F4C1AFB24E9153D002BEF50 /* DetailsShimmerView.swift in Sources */,
 				8F1F112622FA23CC00CA4DD9 /* ResetPasswordViewController.swift in Sources */,

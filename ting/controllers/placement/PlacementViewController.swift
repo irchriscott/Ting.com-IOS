@@ -240,6 +240,10 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
         switch indexPath.row {
         case 0, 1, 2:
             self.openOrderMenus(type: indexPath.row + 1)
+        case 3:
+            let storyboard = UIStoryboard(name: "Home", bundle: nil)
+            let ordersController = storyboard.instantiateViewController(withIdentifier: "MenuOrdersView") as! MenuOrdersViewController
+            self.present(ordersController, animated: true, completion: nil)
         default:
             break
         }
@@ -258,7 +262,7 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return section == 0 ? CGSize(width: self.view.frame.width, height: 250) : .zero
+        return section == 0 ? CGSize(width: self.view.frame.width, height: 268) : .zero
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
@@ -400,6 +404,17 @@ class PlacementHeaderViewCell : UICollectionViewCell {
         return view
     }()
     
+    let tableNumber: UILabel = {
+        let view = UILabel()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.font = UIFont(name: "Poppins-Regular", size: 15.0)
+        view.textColor = Colors.colorVeryLightGray
+        view.text = "Table No"
+        view.backgroundColor = Colors.colorVeryLightGray
+        view.textAlignment = .center
+        return view
+    }()
+    
     let billNumber: UILabel = {
         let view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -442,6 +457,9 @@ class PlacementHeaderViewCell : UICollectionViewCell {
                 restaurantName.textColor  = Colors.colorGray
                 restaurantName.backgroundColor = .white
                 
+                tableNumber.textColor = Colors.colorGray
+                tableNumber.backgroundColor = .white
+                
                 billNumber.textColor = Colors.colorGray
                 billNumber.backgroundColor = .white
                 
@@ -449,6 +467,8 @@ class PlacementHeaderViewCell : UICollectionViewCell {
                 peopleView.textColor = Colors.colorGray
                 
                 restaurantName.text = "\((placement.table.branch?.restaurant?.name)!), \((placement.table.branch?.name)!)"
+                tableNumber.text = "Table No \(placement.table.number)"
+                
                 restaurantImage.kf.setImage(
                     with: URL(string: "\(URLs.hostEndPoint)\((placement.table.branch?.restaurant?.logo)!)")!,
                     placeholder: UIImage(named: "default_restaurant"),
@@ -492,18 +512,21 @@ class PlacementHeaderViewCell : UICollectionViewCell {
         
         addSubview(restaurantImage)
         addSubview(restaurantName)
+        addSubview(tableNumber)
         addSubview(billNumber)
         addSubview(dataView)
         
         addConstraintsWithFormat(format: "H:[v0(100)]", views: restaurantImage)
         addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantName)
+        addConstraintsWithFormat(format: "H:|[v0]|", views: tableNumber)
         addConstraintsWithFormat(format: "H:|[v0]|", views: billNumber)
         addConstraintsWithFormat(format: "H:[v0]", views: dataView)
         
-        addConstraintsWithFormat(format: "V:|-16-[v0(100)]-8-[v1(24)]-[v2(30)]-12-[v3(26)]", views: restaurantImage, restaurantName, billNumber, dataView)
+        addConstraintsWithFormat(format: "V:|-16-[v0(100)]-8-[v1(24)]-[v2(18)]-[v3(30)]-12-[v4(26)]", views: restaurantImage, restaurantName, tableNumber, billNumber, dataView)
         
         addConstraint(NSLayoutConstraint.init(item: restaurantImage, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
         addConstraint(NSLayoutConstraint.init(item: restaurantName, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint.init(item: tableNumber, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
         addConstraint(NSLayoutConstraint.init(item: billNumber, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
         addConstraint(NSLayoutConstraint.init(item: dataView, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
     }
