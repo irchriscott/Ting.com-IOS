@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class RestaurantMapInfoWindowView: UIView {
     
@@ -99,7 +100,16 @@ class RestaurantMapInfoWindowView: UIView {
     var branch: Branch? {
         didSet {
             if let branch = self.branch {
-                self.restaurantImage.load(url: URL(string: "\(URLs.hostEndPoint)\(branch.restaurant!.logo)")!)
+                self.restaurantImage.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(branch.restaurant!.logo)")!,
+                    placeholder: UIImage(named: "default_restaurant"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
+                
                 self.restaurantName.text = branch.restaurant?.name
                 self.restaurantBranch.text = branch.name
                 self.restaurantAddress.text = branch.address

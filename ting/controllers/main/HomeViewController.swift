@@ -7,13 +7,13 @@
 //
 
 import UIKit
+import UserNotifications
 
 class HomeViewController: UITabBarController, UITabBarControllerDelegate {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.removeLabels()
-        
         self.delegate = self
     }
     

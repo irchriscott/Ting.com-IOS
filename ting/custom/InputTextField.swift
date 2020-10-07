@@ -41,7 +41,7 @@ class InputTextFieldElse: UITextField {
         super.init(frame: frame)
         self.layer.borderWidth = 1.0
         self.layer.borderColor = Colors.colorVeryLightGray.cgColor
-        self.layer.cornerRadius = 10
+        self.layer.cornerRadius = 4
         self.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMinXMinYCorner]
     }
     

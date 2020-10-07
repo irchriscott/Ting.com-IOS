@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import FittedSheets
+import ShimmerSwift
 
 class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     
@@ -22,6 +23,9 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
     var restaurantNameTextSize: CGFloat = 16
     var restaurantAddressTextSize: CGFloat = 13
     var restaurantImageConstant: CGFloat = 80
+    
+    var restaurantCuisinesHeight: CGFloat = 0
+    var restaurantCategoriesHeight: CGFloat = 0
     
     let viewCell: UIView = {
         let view = UIView()
@@ -109,9 +113,27 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         view.translatesAutoresizingMaskIntoConstraints = false
         view.dataSource = self
         view.delegate = self
+        view.isUserInteractionEnabled = true
         return view
     }()
     
+    let restaurantCuisines: InlineIconTextView = {
+        let view = InlineIconTextView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.icon = UIImage(named: "icon_cuisines_36_gray")!
+        view.size = .small
+        view.text = " - "
+        return view
+    }()
+    
+    let restaurantCategories: InlineIconTextView = {
+        let view = InlineIconTextView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.icon = UIImage(named: "icon_categories_36_gray")!
+        view.size = .small
+        view.text = " - "
+        return view
+    }()
     
     let restaurantStatusView: UIView = {
         let view = UIView()
@@ -168,24 +190,27 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         return view
     }()
     
-    lazy var mapView: RestaurantMapView = {
-        let view = RestaurantMapView()
-        view.restaurant = self.branch
-        view.controller = self.controller as? HomeRestaurantsViewController
-        view.cell = self
-        return view
-    }()
+    var mapView: RestaurantMapViewController!
     
     var controller: UIViewController? {
         didSet { self.setup() }
     }
     
     var menus: [RestaurantMenu]? {
-        didSet {}
+        didSet {
+            if let menus = self.menus {
+                self.shuffeledMenus = menus.filter({ (m) -> Bool in m.type?.id == 3 })
+                self.setup()
+                self.restaurantMenusView.reloadData()
+            }
+        }
     }
     
     var shuffeledMenus: [RestaurantMenu]? {
-        didSet {}
+        didSet {
+            self.setup()
+            self.restaurantMenusView.reloadData()
+        }
     }
     
     var branch: Branch? {
@@ -202,6 +227,22 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
                 self.restaurantReviewsView.text = numberFormatter.string(from: NSNumber(value: branch.reviews!.count)) ?? "0"
                 self.restaurantSpecialsView.text = String(branch.specials.count)
                 self.setTimeStatus()
+                
+                let restaurantCuisinesText = branch.categories.categories.map { (cuisine) -> String in
+                    cuisine.name
+                }.joined(separator: ", ")
+                
+                restaurantCuisines.text = restaurantCuisinesText
+                
+                var restaurantCategoriesText: String
+                
+                if let categories = branch.restaurant?.foodCategories?.categories {
+                    restaurantCategoriesText = categories.map { (category) -> String in category.name! }.joined(separator: ", ")
+                } else {
+                    restaurantCategoriesText = " - "
+                }
+                
+                restaurantCategories.text = restaurantCategoriesText
                 
                 if UIDevice.smallDevices.contains(device) {
                     restaurantImageConstant = 55
@@ -221,7 +262,21 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
                 restaurantAddressHeight = branchAddressRect.height
                 restaurantNameHeight = branchNameRect.height
                 
-                self.shuffeledMenus = (branch.menus.menus)!.filter({ (m) -> Bool in m.type?.id == 3 })
+                let restaurantCuisinesRect = NSString(string: restaurantCuisinesText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+                
+                let restaurantCategoriesRect = NSString(string: restaurantCategoriesText).boundingRect(with: CGSize(width: frameWidth - 18, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+                
+                restaurantCuisinesHeight = restaurantCuisinesRect.height
+                restaurantCategoriesHeight = restaurantCategoriesRect.height
+                
+                APIDataProvider.instance.getRestaurantTopMenus(branch: branch.id) { (menus) in
+                    DispatchQueue.main.async {
+                        if !menus.isEmpty {
+                            self.menus = menus
+                            self.restaurantMenusView.reloadData()
+                        }
+                    }
+                }
             }
             self.setup()
         }
@@ -231,10 +286,18 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         super.init(frame: frame)
         self.restaurantAddressView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantViewCell.openRestaurantMap)))
         self.restaurantDistanceView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantViewCell.openRestaurantMap)))
-        self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantViewCell.closeRestaurantMap)))
     }
     
     private func setup(){
+        
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        mapView = storyboard.instantiateViewController(withIdentifier: "RestaurantMapView") as? RestaurantMapViewController
+        mapView.controller = self.controller
+        mapView.restaurant = self.branch
+        mapView.modalPresentationStyle = .overFullScreen
+        
+        self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantViewCell.closeRestaurantMap)))
+        
         addSubview(viewCell)
         
         numberFormatter.numberStyle = .decimal
@@ -292,6 +355,8 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         restaurantProfileView.addSubview(restaurantRating)
         restaurantProfileView.addSubview(restaurantAddressView)
         restaurantProfileView.addSubview(restaurantMenusView)
+        restaurantProfileView.addSubview(restaurantCuisines)
+        restaurantProfileView.addSubview(restaurantCategories)
         restaurantProfileView.addSubview(restaurantStatusView)
         restaurantProfileView.addSubview(restaurantDataView)
         
@@ -301,9 +366,11 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
         restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantRating)
         restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantAddressView)
         restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenusView)
+        restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantCuisines)
+        restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantCategories)
         restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantStatusView)
         restaurantProfileView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDataView)
-        restaurantProfileView.addConstraintsWithFormat(format: "V:|[v0(\(restaurantNameHeight))]-2-[v1]-4-[v2(\(restaurantAddressHeight))]-8-[v3(45)]-8-[v4(26)]-8-[v5(26)]-12-|", views: restaurantName, restaurantRating, restaurantAddressView, restaurantMenusView, restaurantStatusView, restaurantDataView)
+        restaurantProfileView.addConstraintsWithFormat(format: "V:|[v0(\(restaurantNameHeight))]-2-[v1]-4-[v2(\(restaurantAddressHeight))]-8-[v3(45)]-8-[v4(\(restaurantCuisinesHeight))]-4-[v5(\(restaurantCategoriesHeight))]-8-[v6(26)]-8-[v7(26)]-12-|", views: restaurantName, restaurantRating, restaurantAddressView, restaurantMenusView, restaurantCuisines, restaurantCategories, restaurantStatusView, restaurantDataView)
         
         viewCell.addSubview(restaurantImageView)
         viewCell.addSubview(restaurantProfileView)
@@ -317,12 +384,38 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.menus?.count ?? 0 >= 4 ? 4 : self.menus?.count ?? 0
+        return self.menus?.count ?? 0 >= 4 ? 4 : self.menus?.count ?? 4
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! RestaurantViewCellMenuViewCell
-        cell.menu = self.menus?[indexPath.item]
+        
+        let viewShimmer: UIView = {
+            let view = UIView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.backgroundColor = Colors.colorVeryLightGray
+            view.layer.cornerRadius = 2.0
+            view.layer.masksToBounds = true
+            view.clipsToBounds = true
+            return view
+        }()
+        
+        if let menus = self.menus {
+            cell.menu = menus[indexPath.item]
+        } else {
+            
+            cell.addSubview(viewShimmer)
+            cell.addConstraintsWithFormat(format: "V:|[v0]|", views: viewShimmer)
+            cell.addConstraintsWithFormat(format: "H:|[v0]|", views: viewShimmer)
+            
+            let shimmerView = ShimmeringView(frame: CGRect(x: 0, y: 0, width: 70, height: 45))
+            cell.addSubview(shimmerView)
+            
+            shimmerView.contentView = viewShimmer
+            shimmerView.shimmerAnimationOpacity = 0.4
+            shimmerView.shimmerSpeed = 250
+            shimmerView.isShimmering = true
+        }
         return cell
     }
     
@@ -377,24 +470,23 @@ class RestaurantViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayo
             let parentController = self.controller as? HomeRestaurantsViewController
             window.windowLevel = UIWindow.Level.statusBar
             mapView.mapCenter = CLLocation(latitude: CLLocationDegrees(Double(branch!.latitude)!), longitude: CLLocationDegrees(Double(branch!.longitude)!))
-            mapView.frame = window.frame
-            mapView.center = window.center
+            
             mapView.restaurant = self.branch
             mapView.controller = self.controller
             mapView.cell = self
             parentController?.isMapOpened = true
             parentController?.mapCenter = CLLocation(latitude: CLLocationDegrees(Double(branch!.latitude)!), longitude: CLLocationDegrees(Double(branch!.longitude)!))
             parentController?.selectedBranch = self.branch
-            window.addSubview(mapView)
+            
+            controller?.present(mapView, animated: true, completion: nil)
         }
     }
     
     @objc func closeRestaurantMap(){
         UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
-        self.mapView.closeImageView.removeFromSuperview()
-        self.mapView.closeButtonView.removeFromSuperview()
         self.mapView.restaurantView.removeFromSuperview()
-        self.mapView.removeFromSuperview()
+        
+        mapView.dismiss(animated: true, completion: nil)
         
         let parentController = self.controller as? HomeRestaurantsViewController
         parentController?.isMapOpened = false
@@ -425,15 +517,30 @@ class RestaurantViewCellMenuViewCell: UICollectionViewCell {
             if let menu = self.menu {
                 let images = menu.menu?.images?.images
                 let image = images![Int.random(in: 0...images!.count - 1)]
-                self.menuImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(image.image)")!)
+                self.menuImageView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(image.image)")!,
+                    placeholder: UIImage(named: "default_meal"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
+                
                 self.menuImageView.alpha = 1.0
                 self.menuImageView.contentMode = .scaleAspectFill
             }
+            self.setup()
         }
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.setup()
+    }
+    
+    private func setup() {
+        backgroundColor = Colors.colorLightGray
         addSubview(menuImageView)
         addConstraintsWithFormat(format: "H:|[v0(\(frame.width))]|", views: menuImageView)
         addConstraintsWithFormat(format: "V:|[v0(\(frame.height))]|", views: menuImageView)

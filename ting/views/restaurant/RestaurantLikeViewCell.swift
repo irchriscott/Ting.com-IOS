@@ -108,7 +108,16 @@ class RestaurantLikeViewCell: UITableViewCell {
                 
                 if self.fromUser {
                     if let branch = like.branch, let restaurant = like.branch?.restaurant {
-                        userImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(restaurant.logo)")!)
+                        userImageView.kf.setImage(
+                            with: URL(string: "\(URLs.hostEndPoint)\(restaurant.logo)")!,
+                            placeholder: UIImage(named: "default_restaurant"),
+                            options: [
+                                .scaleFactor(UIScreen.main.scale),
+                                .transition(.fade(1)),
+                                .cacheOriginalImage
+                            ]
+                        )
+                        
                         userNameView.text = "\(restaurant.name), \(branch.name)"
                         restaurantAddress.text = branch.address
                         let userNameRect = NSString(string: "\(restaurant.name), \(branch.name)").boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: userNameTextSize)!], context: nil)
@@ -120,7 +129,16 @@ class RestaurantLikeViewCell: UITableViewCell {
                     }
                 } else {
                     if let user = like.user {
-                        userImageView.load(url: URL(string: "\(URLs.uploadEndPoint)\(user.image)")!)
+                        userImageView.kf.setImage(
+                            with: URL(string: "\(URLs.hostEndPoint)\(user.image)")!,
+                            placeholder: UIImage(named: "default_user"),
+                            options: [
+                                .scaleFactor(UIScreen.main.scale),
+                                .transition(.fade(1)),
+                                .cacheOriginalImage
+                            ]
+                        )
+                        
                         userNameView.text = user.name
                         restaurantAddress.text = "\(user.town), \(user.country)"
                         let userNameRect = NSString(string: user.name).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: userNameTextSize)!], context: nil)

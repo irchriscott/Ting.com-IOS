@@ -9,6 +9,7 @@
 import UIKit
 import ImageViewer
 import FittedSheets
+import ShimmerSwift
 
 class PromotionMenuViewController: UITableViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, GalleryDisplacedViewsDataSource, GalleryItemsDataSource, GalleryItemsDelegate {
     
@@ -33,29 +34,23 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
             if let promotion = self.promotion {
                 switch promotion.promotionItem.type.id {
                 case "00":
-                    if let branch = promotion.branch {
-                        self.promotedMenus = branch.menus.menus
+                    if let menus = promotion.menus.menus {
+                        self.promotedMenus = menus
                     }
                     break
                 case "01":
-                    if let branch = promotion.branch {
-                        self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
-                            menu.type?.id == 1
-                            })
+                    if let menus = promotion.menus.menus {
+                        self.promotedMenus = menus
                     }
                     break
                 case "02":
-                    if let branch = promotion.branch {
-                        self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
-                            menu.type?.id == 2
-                            })
+                    if let menus = promotion.menus.menus {
+                        self.promotedMenus = menus
                     }
                     break
                 case "03":
-                    if let branch = promotion.branch {
-                        self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
-                            menu.type?.id == 3
-                            })
+                    if let menus = promotion.menus.menus {
+                        self.promotedMenus = menus
                     }
                     break
                 case "04":
@@ -64,16 +59,16 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
                     }
                     break
                 case "05":
-                    if let branch = promotion.branch, let category = promotion.promotionItem.category {
-                        self.promotedMenus = branch.menus.menus?.filter({ (menu) -> Bool in
-                            menu.menu?.category?.id == category.id
-                            })
+                    if let menus = promotion.menus.menus {
+                        self.promotedMenus = menus
                     }
                     break
                 default: break
                     
                 }
                 self.tableView.reloadData()
+                self.promotionDetailsView.reloadData()
+                self.promotedMenusView.reloadData()
             }
         }
     }
@@ -85,6 +80,8 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
             }
         }
     }
+    
+    var shouldLoad = false
     
     var controller: UIViewController? {
         didSet {}
@@ -140,7 +137,10 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
     private func getMenuPromotion(url: String) {
         APIDataProvider.instance.getPromotionMenu(url: "\(URLs.hostEndPoint)\(url)") { (promo) in
             DispatchQueue.main.async {
+                self.shouldLoad = true
                 self.promotion = promo
+                self.tableView.reloadData()
+                self.promotedMenusView.reloadData()
             }
         }
     }
@@ -212,44 +212,70 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch tableView {
-        case self.tableView:
-            return 2
-        case self.promotedMenusView:
-            return self.promotedMenus?.count ?? 0
-        default:
-            return 0
-        }
+        if self.promotion != nil && self.shouldLoad {
+            switch tableView {
+            case self.tableView:
+                return 2
+            case self.promotedMenusView:
+                return self.promotedMenus?.count ?? 0
+            default:
+                return 0
+            }
+        } else { return 1 }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch tableView {
-        case self.tableView:
-            switch indexPath.item {
-            case 0:
-                let promotionDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.tableViewCellId, for: indexPath)
-                promotionDetailsCell.addSubview(promotionDetailsView)
-                promotionDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: promotionDetailsView)
-                promotionDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: promotionDetailsView)
-                promotionDetailsCell.selectionStyle = .none
-                return promotionDetailsCell
-            case 1:
-                let promotedMenusCell = tableView.dequeueReusableCell(withIdentifier: self.tableViewCellId, for: indexPath)
-                promotedMenusCell.addSubview(promotedMenusView)
-                promotedMenusCell.addConstraintsWithFormat(format: "H:|[v0]|", views: promotedMenusView)
-                promotedMenusCell.addConstraintsWithFormat(format: "V:|[v0]|", views: promotedMenusView)
-                promotedMenusCell.selectionStyle = .none
-                return promotedMenusCell
+        if self.promotion != nil && self.shouldLoad {
+            switch tableView {
+            case self.tableView:
+                switch indexPath.item {
+                case 0:
+                    let promotionDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.tableViewCellId, for: indexPath)
+                    promotionDetailsCell.addSubview(promotionDetailsView)
+                    promotionDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: promotionDetailsView)
+                    promotionDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: promotionDetailsView)
+                    promotionDetailsCell.selectionStyle = .none
+                    return promotionDetailsCell
+                case 1:
+                    let promotedMenusCell = tableView.dequeueReusableCell(withIdentifier: self.tableViewCellId, for: indexPath)
+                    promotedMenusCell.addSubview(promotedMenusView)
+                    promotedMenusCell.addConstraintsWithFormat(format: "H:|[v0]|", views: promotedMenusView)
+                    promotedMenusCell.addConstraintsWithFormat(format: "V:|[v0]|", views: promotedMenusView)
+                    promotedMenusCell.selectionStyle = .none
+                    return promotedMenusCell
+                default:
+                    return tableView.dequeueReusableCell(withIdentifier: self.tableViewCellId, for: indexPath)
+                }
+            case self.promotedMenusView:
+                let promotedMenuCell = tableView.dequeueReusableCell(withIdentifier: self.restaurantMenuItemCellId, for: indexPath) as! PromotedMenuViewCell
+                promotedMenuCell.selectionStyle = .none
+                promotedMenuCell.restaurantMenu = self.promotedMenus![indexPath.item]
+                return promotedMenuCell
             default:
                 return tableView.dequeueReusableCell(withIdentifier: self.tableViewCellId, for: indexPath)
             }
-        case self.promotedMenusView:
-            let promotedMenuCell = tableView.dequeueReusableCell(withIdentifier: self.restaurantMenuItemCellId, for: indexPath) as! PromotedMenuViewCell
-            promotedMenuCell.selectionStyle = .none
-            promotedMenuCell.restaurantMenu = self.promotedMenus![indexPath.item]
-            return promotedMenuCell
-        default:
-            return tableView.dequeueReusableCell(withIdentifier: self.tableViewCellId, for: indexPath)
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: self.tableViewCellId, for: indexPath)
+            
+            let view: DetailsShimmerView = {
+                let view = DetailsShimmerView()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                return view
+            }()
+            
+            cell.addSubview(view)
+            cell.addConstraintsWithFormat(format: "V:|[v0]|", views: view)
+            cell.addConstraintsWithFormat(format: "H:|[v0]|", views: view)
+                       
+            let shimmerView = ShimmeringView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 447))
+            cell.addSubview(shimmerView)
+                       
+            shimmerView.contentView = view
+            shimmerView.shimmerAnimationOpacity = 0.4
+            shimmerView.shimmerSpeed = 250
+            shimmerView.isShimmering = true
+            
+            return cell
         }
     }
     
@@ -279,31 +305,33 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch tableView {
-        case self.tableView:
-            switch indexPath.item {
-            case 0:
-                return self.promotionDetailsCellHeight + 320
-            case 1:
-                var height: CGFloat = 0
-                if self.promotedMenus?.count ?? 0 > 0 {
-                    height += 50
-                    if let menus = self.promotedMenus {
-                        for (index, _) in menus.enumerated() {
-                            height += self.promotedMenuCellHeight(index: index)
+        if self.promotion != nil && self.shouldLoad {
+            switch tableView {
+            case self.tableView:
+                switch indexPath.item {
+                case 0:
+                    return self.promotionDetailsCellHeight + 320
+                case 1:
+                    var height: CGFloat = 0
+                    if self.promotedMenus?.count ?? 0 > 0 {
+                        height += 50
+                        if let menus = self.promotedMenus {
+                            for (index, _) in menus.enumerated() {
+                                height += self.promotedMenuCellHeight(index: index)
+                            }
+                            height += 2
                         }
-                        height += 2
                     }
+                    return height
+                default:
+                    return 0
                 }
-                return height
+            case self.promotedMenusView:
+                return self.promotedMenuCellHeight(index: indexPath.item)
             default:
                 return 0
             }
-        case self.promotedMenusView:
-            return self.promotedMenuCellHeight(index: indexPath.item)
-        default:
-            return 0
-        }
+        } else { return 447 }
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -538,7 +566,15 @@ class PromotionMenuHeaderImageViewCell: UICollectionViewCell {
     }
     
     private func setup(){
-        menuImageView.load(url: URL(string: self.imageURL!)!)
+        menuImageView.kf.setImage(
+            with: URL(string: self.imageURL!)!,
+            placeholder: UIImage(named: "default_meal"),
+            options: [
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(1)),
+                .cacheOriginalImage
+            ]
+        )
         addSubview(menuImageView)
         addConstraintsWithFormat(format: "H:|[v0]|", views: menuImageView)
         addConstraintsWithFormat(format: "V:|[v0]|", views: menuImageView)

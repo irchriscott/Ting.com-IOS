@@ -65,7 +65,7 @@ class BottomSheetMenuControllerView: UICollectionViewController, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: self.view.frame.width, height: 320)
+        return self.menu?.menu?.promotions?.todayPromotion != nil ? CGSize(width: self.view.frame.width, height: 355) : CGSize(width: self.view.frame.width, height: 320)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -119,7 +119,15 @@ class BottomSheetMenuHeaderViewCell: UICollectionViewCell {
                 self.setup()
                 let images = menu.menu?.images?.images
                 let image = images![self.imageIndex]
-                self.menuImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(image.image)")!)
+                self.menuImageView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(image.image)")!,
+                    placeholder: UIImage(named: "default_meal"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
             }
         }
     }
@@ -152,6 +160,9 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
     
     var restaurantMenuNameTextSize: CGFloat = 16
     var restaurantDescriptionTextSize: CGFloat = 13
+    
+    var promotionReductionHeight: CGFloat = 0
+    var promotionSupplementHeight: CGFloat = 0
     
     lazy var menuNameTextView: UILabel = {
         let view = UILabel()
@@ -231,6 +242,13 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         return view
     }()
     
+    let restaurantMenuCuisineView: ImageTextView = {
+        let view = ImageTextView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.text = "Fast Food"
+        return view
+    }()
+    
     let separatorOne: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -307,6 +325,47 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         return view
     }()
     
+    let separatorThree: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = Colors.colorVeryLightGray
+        return view
+    }()
+    
+    let restaurantMenuPromotionView: UIStackView = {
+        let view = UIStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.axis = .vertical
+        view.alignment = .top
+        view.distribution = .equalSpacing
+        view.spacing = 10.0
+        return view
+    }()
+    
+    let promotionTitleTextView: UILabel = {
+        let view = UILabel()
+        view.font = UIFont(name: "Poppins-Regular", size: 17)
+        view.text = "Today Promotion".uppercased()
+        view.textColor = Colors.colorGray
+        return view
+    }()
+    
+    let promotionReductionView: InlineIconTextView = {
+        let view = InlineIconTextView()
+        view.icon = UIImage(named: "icon_promo_minus_gray")!
+        view.size = .small
+        view.text = "Reduction"
+        return view
+    }()
+    
+    let promotionSupplementView: InlineIconTextView = {
+        let view = InlineIconTextView()
+        view.icon = UIImage(named: "icon_promo_plus_gray")!
+        view.size = .small
+        view.text = "Supplement"
+        return view
+    }()
+    
     var menu: RestaurantMenu? {
         didSet {
             numberFormatter.numberStyle = .decimal
@@ -318,6 +377,9 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
                 if menu.type?.id != 2 {
                     self.restaurantMenuCategoryView.imageURL = "\(URLs.hostEndPoint)\((menu.menu?.category?.image)!)"
                     self.restaurantMenuCategoryView.text = (menu.menu?.category?.name)!
+                    
+                    self.restaurantMenuCuisineView.imageURL = "\(URLs.hostEndPoint)\((menu.menu?.cuisine?.image)!)"
+                    self.restaurantMenuCuisineView.text = (menu.menu?.cuisine?.name)!
                 }
                 
                 if menu.menu?.foodType != nil {
@@ -393,6 +455,16 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
                     restaurantMenuAvailabilityView.background = Colors.colorStatusTimeRed
                 }
                 
+                if let promotion = menu.menu?.promotions?.todayPromotion {
+                    if let supplement = promotion.supplement {
+                        promotionSupplementView.text = supplement
+                    }
+                    
+                    if let reduction = promotion.reduction {
+                        promotionReductionView.text = reduction
+                    }
+                }
+                
                 let frameWidth = frame.width - 16
                 
                 let menuNameRect = NSString(string: (menu.menu?.name!)!).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: restaurantMenuNameTextSize)!], context: nil)
@@ -401,6 +473,20 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
                 
                 restaurantMenuNameHeight = menuNameRect.height
                 restaurantMenuDescriptionHeight = menuDescriptionRect.height
+                
+                if let promotion = menu.menu?.promotions?.todayPromotion {
+                    if let supplement = promotion.supplement {
+                        promotionSupplementView.text = supplement
+                        let promotionSupplementRect = NSString(string: supplement).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+                        promotionSupplementHeight = promotionSupplementRect.height
+                    }
+                    
+                    if let reduction = promotion.reduction {
+                        promotionReductionView.text = reduction
+                        let promotionReductionRect = NSString(string: reduction).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
+                        promotionReductionHeight = promotionReductionRect.height
+                    }
+                }
             }
             self.setup()
         }
@@ -418,19 +504,21 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         
         if menu?.type?.id != 2 {
             restaurantMenuView.addSubview(restaurantMenuCategoryView)
+            restaurantMenuView.addSubview(restaurantMenuCuisineView)
         }
         
         restaurantMenuView.addSubview(restaurantMenuGroupView)
         restaurantMenuView.addSubview(restaurantMenuTypeView)
         
         if menu?.type?.id != 2 {
-            restaurantMenuView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]-8-[v2]", views: restaurantMenuCategoryView, restaurantMenuGroupView, restaurantMenuTypeView)
+            restaurantMenuView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]-8-[v2]-8-[v3]", views: restaurantMenuCategoryView, restaurantMenuGroupView, restaurantMenuTypeView, restaurantMenuCuisineView)
         } else {
             restaurantMenuView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]", views: restaurantMenuGroupView, restaurantMenuTypeView)
         }
         
         if menu?.type?.id != 2 {
             restaurantMenuView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: restaurantMenuCategoryView)
+            restaurantMenuView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: restaurantMenuCuisineView)
         }
         
         restaurantMenuView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: restaurantMenuGroupView)
@@ -479,6 +567,16 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         restaurantMenuDataView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: restaurantMenuReviewsView)
         restaurantMenuDataView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: restaurantMenuAvailabilityView)
         
+        if let promotion = self.menu?.menu?.promotions?.todayPromotion {
+            restaurantMenuPromotionView.addArrangedSubview(promotionTitleTextView)
+            if promotion.reduction != nil {
+                restaurantMenuPromotionView.addArrangedSubview(promotionReductionView)
+            }
+            if promotion.supplement != nil {
+                restaurantMenuPromotionView.addArrangedSubview(promotionSupplementView)
+            }
+        }
+        
         addSubview(menuNameTextView)
         addSubview(restaurantMenuRating)
         addSubview(restaurantMenuDescriptionView)
@@ -487,6 +585,11 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         addSubview(restaurantMenuPriceView)
         addSubview(separatorTwo)
         addSubview(restaurantMenuDataView)
+        
+        if let _ = self.menu?.menu?.promotions?.todayPromotion {
+            addSubview(separatorThree)
+            addSubview(restaurantMenuPromotionView)
+        }
         
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: menuNameTextView)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuRating)
@@ -497,7 +600,17 @@ class BottomSheetMenuViewCell: UICollectionViewCell {
         addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorTwo)
         addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuDataView)
         
-        addConstraintsWithFormat(format: "V:|-8-[v0(\(restaurantMenuNameHeight - 5))]-8-[v1]-8-[v2(\(restaurantMenuDescriptionHeight))]-8-[v3(26)]-8-[v4(0.5)]-8-[v5(\(menuPriceHeight))]-8-[v6(0.5)]-8-[v7(26)]", views: menuNameTextView, restaurantMenuRating, restaurantMenuDescriptionView, restaurantMenuView, separatorOne, restaurantMenuPriceView, separatorTwo, restaurantMenuDataView)
+        if let _ = self.menu?.menu?.promotions?.todayPromotion {
+            addConstraintsWithFormat(format: "H:|-8-[v0]-8-|", views: separatorThree)
+            addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuPromotionView)
+        }
+        
+        if let _ = self.menu?.menu?.promotions?.todayPromotion {
+            let promotionViewHeight: CGFloat = promotionReductionHeight + promotionSupplementHeight + 5
+            addConstraintsWithFormat(format: "V:|-8-[v0(\(restaurantMenuNameHeight - 5))]-8-[v1]-8-[v2(\(restaurantMenuDescriptionHeight))]-8-[v3(26)]-8-[v4(0.5)]-8-[v5(\(menuPriceHeight))]-8-[v6(0.5)]-8-[v7(26)]-8-[v8(0.5)]-12-[v9(\(promotionViewHeight))]", views: menuNameTextView, restaurantMenuRating, restaurantMenuDescriptionView, restaurantMenuView, separatorOne, restaurantMenuPriceView, separatorTwo, restaurantMenuDataView, separatorThree, restaurantMenuPromotionView)
+        } else {
+            addConstraintsWithFormat(format: "V:|-8-[v0(\(restaurantMenuNameHeight - 5))]-8-[v1]-8-[v2(\(restaurantMenuDescriptionHeight))]-8-[v3(26)]-8-[v4(0.5)]-8-[v5(\(menuPriceHeight))]-8-[v6(0.5)]-8-[v7(26)]", views: menuNameTextView, restaurantMenuRating, restaurantMenuDescriptionView, restaurantMenuView, separatorOne, restaurantMenuPriceView, separatorTwo, restaurantMenuDataView)
+        }
     }
     
     required init?(coder: NSCoder) {

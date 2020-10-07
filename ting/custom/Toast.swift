@@ -30,7 +30,7 @@ class Toast : NSObject {
         
         if let window =  UIApplication.shared.keyWindow {
             let toastView = UIView()
-            let height: CGFloat = 50.0
+            let height: CGFloat = 45.0
             let y = window.frame.height - (height + 25)
             
             toastView.frame = CGRect(x: 20, y: window.frame.height, width: window.frame.width - 40, height: height)
@@ -55,16 +55,16 @@ class Toast : NSObject {
                 break
             }
             
-            toastView.layer.cornerRadius = 15.0
+            toastView.layer.cornerRadius = 6.0
             
             let messageLabel = UILabel()
-            messageLabel.frame = CGRect(x: 45, y: 0, width: toastView.frame.width - 59, height: 50)
+            messageLabel.frame = CGRect(x: 45, y: 0, width: toastView.frame.width - 59, height: 45)
             messageLabel.textColor = Colors.colorGray
             messageLabel.text = message
             messageLabel.font = UIFont(name: "Poppins-Regular", size: 14.0)
             
             let toastIconView = UIImageView()
-            toastIconView.frame = CGRect(x: 15, y: 15, width: 20, height: 20)
+            toastIconView.frame = CGRect(x: 15, y: 13, width: 20, height: 20)
             toastIconView.image = toastIcon
             toastIconView.alpha = 0.5
             

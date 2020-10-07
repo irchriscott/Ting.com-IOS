@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Kingfisher
 
 class ImageTextView: UIView {
     
@@ -56,10 +57,17 @@ class ImageTextView: UIView {
         self.layer.masksToBounds = true
         
         if let url = self.imageURL {
-            self.iconView.load(url: URL(string: url)!)
-        } else {
-            self.iconView.image = UIImage(named: "default_restaurant")!
-        }
+            self.iconView.kf.setImage(
+                with: URL(string: url)!,
+                placeholder: UIImage(named: "default_restaurant"),
+                options: [
+                    .scaleFactor(UIScreen.main.scale),
+                    .transition(.fade(1)),
+                    .cacheOriginalImage
+                ]
+            )
+        } else { self.iconView.image = UIImage(named: "default_restaurant")! }
+        
         self.iconView.contentMode = .scaleAspectFill
         self.iconView.alpha = self.iconAlpha
         

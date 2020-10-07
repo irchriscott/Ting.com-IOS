@@ -151,12 +151,14 @@ class LoginViewController: UIViewController {
     @IBAction func signupNow(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let signupController = storyboard.instantiateViewController(withIdentifier: "SignUp") as! SignUpViewController
+        signupController.modalPresentationStyle = .fullScreen
         self.present(signupController, animated: true, completion: nil)
     }
     
     @IBAction func resetPassword(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let resetPasswordController = storyboard.instantiateViewController(withIdentifier: "ResetPassword") as! ResetPasswordViewController
+        resetPasswordController.modalPresentationStyle = .fullScreen
         self.present(resetPasswordController, animated: true, completion: nil)
     }
 }

@@ -146,7 +146,16 @@ class RestaurantPromotionViewCell: UITableViewCell {
         didSet {
             numberFormatter.numberStyle = .decimal
             if let promotion = self.promotion {
-                promotionPosterView.load(url: URL(string: "\(URLs.hostEndPoint)\(promotion.posterImage)")!)
+                promotionPosterView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(promotion.posterImage)")!,
+                    placeholder: UIImage(named: "default_restaurant"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
+                
                 promotionOccasionView.text = promotion.occasionEvent
                 promotionOnView.text = promotion.promotionItem.type.name
                 promotionPeriodView.text = promotion.period

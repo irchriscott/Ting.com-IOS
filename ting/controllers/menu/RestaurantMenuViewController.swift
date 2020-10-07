@@ -9,6 +9,7 @@
 import UIKit
 import ImageViewer
 import FittedSheets
+import ShimmerSwift
 
 class RestaurantMenuViewController: UITableViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource, GalleryDisplacedViewsDataSource, GalleryItemsDataSource, GalleryItemsDelegate {
     
@@ -39,10 +40,13 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             if let url = self.menuURL {
                 APIDataProvider.instance.getRestaurantMenu(url: url) { (restoMenu) in
                     DispatchQueue.main.async {
+                        self.shouldLoad = true
                         self.restaurantMenu = restoMenu
+                        self.tableView.reloadData()
                         self.restaurantDetailsView.reloadData()
                         self.restaurantMenuReviewsView.reloadData()
                         self.restaurantMenuPromotionsView.reloadData()
+                        self.restaurantMenuDishFoodsView.reloadData()
                     }
                 }
             }
@@ -60,6 +64,8 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             }
         }
     }
+    
+    var shouldLoad = false
     
     var controller: UIViewController? {
         didSet {}
@@ -186,10 +192,13 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         if let menu = self.restaurantMenu {
             APIDataProvider.instance.getRestaurantMenu(url: "\(URLs.hostEndPoint)\((menu.urls?.apiGet)!)") { (restoMenu) in
                 DispatchQueue.main.async {
+                    self.shouldLoad = true
                     self.restaurantMenu = restoMenu
+                    self.tableView.reloadData()
                     self.restaurantDetailsView.reloadData()
                     self.restaurantMenuReviewsView.reloadData()
                     self.restaurantMenuPromotionsView.reloadData()
+                    self.restaurantMenuDishFoodsView.reloadData()
                 }
             }
         }
@@ -257,200 +266,228 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch tableView {
-        case self.tableView:
-            if promotions?.count ?? 0 > 0 {
-                return (self.restaurantMenu?.type!.id)! == 3 ? 4 : 3
-            } else { return (self.restaurantMenu?.type!.id)! == 3 ? 3 : 2 }
-        case restaurantMenuDishFoodsView:
-            return (self.restaurantMenu?.type!.id)! == 3 ? (self.restaurantMenu?.menu?.foods!.count)! : 0
-        case restaurantMenuPromotionsView:
-            return self.promotions?.count ?? 0
-        case restaurantMenuReviewsView:
-            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
-                return self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 ? 5 : self.restaurantMenu?.menu?.reviews?.count ?? 0
-            } else { return 1 }
-        default:
-            return 0
+        if self.restaurantMenu != nil && shouldLoad {
+            switch tableView {
+            case self.tableView:
+                if promotions?.count ?? 0 > 0 {
+                    return self.restaurantMenu?.type!.id == 3 ? 4 : 3
+                } else { return self.restaurantMenu?.type!.id == 3 ? 3 : 2 }
+            case restaurantMenuDishFoodsView:
+                return self.restaurantMenu?.type!.id == 3 ? (self.restaurantMenu?.menu?.foods!.count)! : 0
+            case restaurantMenuPromotionsView:
+                return self.promotions?.count ?? 0
+            case restaurantMenuReviewsView:
+                if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                    return self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 ? 5 : self.restaurantMenu?.menu?.reviews?.count ?? 0
+                } else { return 1 }
+            default:
+                return 0
+            }
+        } else {
+            return 1
         }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        switch tableView {
-        case self.tableView:
-            if promotions?.count ?? 0 > 0 {
-                if (self.restaurantMenu?.type!.id)! == 3 {
-                    switch indexPath.item {
-                    case 0:
-                        let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
-                        menuDetailsCell.addSubview(restaurantDetailsView)
-                        menuDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDetailsView)
-                        menuDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantDetailsView)
-                        menuDetailsCell.selectionStyle = .none
-                        return menuDetailsCell
-                    case 1:
-                        let menuFoodsCell = tableView.dequeueReusableCell(withIdentifier: self.cellIdTableDishFoodView, for: indexPath)
-                        menuFoodsCell.addSubview(restaurantMenuDishFoodsView)
-                        menuFoodsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuDishFoodsView)
-                        menuFoodsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuDishFoodsView)
-                        menuFoodsCell.selectionStyle = .none
-                        return menuFoodsCell
-                    case 2:
-                        let promotionsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdPromotions, for: indexPath)
-                        promotionsCell.addSubview(restaurantMenuPromotionsView)
-                        promotionsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuPromotionsView)
-                        promotionsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuPromotionsView)
-                        return promotionsCell
-                    case 3:
-                        let reviewsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReviews, for: indexPath)
-                        reviewsCell.addSubview(restaurantMenuReviewsView)
-                        reviewsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuReviewsView)
-                        reviewsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuReviewsView)
-                        return reviewsCell
-                    default:
-                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+        if self.restaurantMenu != nil && shouldLoad {
+            switch tableView {
+            case self.tableView:
+                if promotions?.count ?? 0 > 0 {
+                    if self.restaurantMenu?.type!.id == 3 {
+                        switch indexPath.item {
+                        case 0:
+                            let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
+                            menuDetailsCell.addSubview(restaurantDetailsView)
+                            menuDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDetailsView)
+                            menuDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantDetailsView)
+                            menuDetailsCell.selectionStyle = .none
+                            return menuDetailsCell
+                        case 1:
+                            let menuFoodsCell = tableView.dequeueReusableCell(withIdentifier: self.cellIdTableDishFoodView, for: indexPath)
+                            menuFoodsCell.addSubview(restaurantMenuDishFoodsView)
+                            menuFoodsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuDishFoodsView)
+                            menuFoodsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuDishFoodsView)
+                            menuFoodsCell.selectionStyle = .none
+                            return menuFoodsCell
+                        case 2:
+                            let promotionsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdPromotions, for: indexPath)
+                            promotionsCell.addSubview(restaurantMenuPromotionsView)
+                            promotionsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuPromotionsView)
+                            promotionsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuPromotionsView)
+                            return promotionsCell
+                        case 3:
+                            let reviewsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReviews, for: indexPath)
+                            reviewsCell.addSubview(restaurantMenuReviewsView)
+                            reviewsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuReviewsView)
+                            reviewsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuReviewsView)
+                            return reviewsCell
+                        default:
+                            return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                        }
+                    } else {
+                        switch indexPath.item {
+                        case 0:
+                            let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
+                            menuDetailsCell.addSubview(restaurantDetailsView)
+                            menuDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDetailsView)
+                            menuDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantDetailsView)
+                            menuDetailsCell.selectionStyle = .none
+                            return menuDetailsCell
+                        case 1:
+                            let promotionsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdPromotions, for: indexPath)
+                            promotionsCell.addSubview(restaurantMenuPromotionsView)
+                            promotionsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuPromotionsView)
+                            promotionsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuPromotionsView)
+                            return promotionsCell
+                        case 2:
+                            let reviewsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReviews, for: indexPath)
+                            reviewsCell.addSubview(restaurantMenuReviewsView)
+                            reviewsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuReviewsView)
+                            reviewsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuReviewsView)
+                            return reviewsCell
+                        default:
+                            return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                        }
                     }
                 } else {
-                    switch indexPath.item {
-                    case 0:
-                        let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
-                        menuDetailsCell.addSubview(restaurantDetailsView)
-                        menuDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDetailsView)
-                        menuDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantDetailsView)
-                        menuDetailsCell.selectionStyle = .none
-                        return menuDetailsCell
-                    case 1:
-                        let promotionsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdPromotions, for: indexPath)
-                        promotionsCell.addSubview(restaurantMenuPromotionsView)
-                        promotionsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuPromotionsView)
-                        promotionsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuPromotionsView)
-                        return promotionsCell
-                    case 2:
-                        let reviewsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReviews, for: indexPath)
-                        reviewsCell.addSubview(restaurantMenuReviewsView)
-                        reviewsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuReviewsView)
-                        reviewsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuReviewsView)
-                        return reviewsCell
-                    default:
-                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                    if self.restaurantMenu?.type!.id == 3 {
+                        switch indexPath.item {
+                        case 0:
+                            let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
+                            menuDetailsCell.addSubview(restaurantDetailsView)
+                            menuDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDetailsView)
+                            menuDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantDetailsView)
+                            menuDetailsCell.selectionStyle = .none
+                            return menuDetailsCell
+                        case 1:
+                            let menuFoodsCell = tableView.dequeueReusableCell(withIdentifier: self.cellIdTableDishFoodView, for: indexPath)
+                            menuFoodsCell.addSubview(restaurantMenuDishFoodsView)
+                            menuFoodsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuDishFoodsView)
+                            menuFoodsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuDishFoodsView)
+                            menuFoodsCell.selectionStyle = .none
+                            return menuFoodsCell
+                        case 2:
+                            let reviewsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReviews, for: indexPath)
+                            reviewsCell.addSubview(restaurantMenuReviewsView)
+                            reviewsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuReviewsView)
+                            reviewsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuReviewsView)
+                            return reviewsCell
+                        default:
+                            return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                        }
+                    } else {
+                        switch indexPath.item {
+                        case 0:
+                            let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
+                            menuDetailsCell.addSubview(restaurantDetailsView)
+                            menuDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDetailsView)
+                            menuDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantDetailsView)
+                            menuDetailsCell.selectionStyle = .none
+                            return menuDetailsCell
+                        case 1:
+                            let reviewsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReviews, for: indexPath)
+                            reviewsCell.addSubview(restaurantMenuReviewsView)
+                            reviewsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuReviewsView)
+                            reviewsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuReviewsView)
+                            return reviewsCell
+                        default:
+                            return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                        }
                     }
                 }
-            } else {
-                if (self.restaurantMenu?.type!.id)! == 3 {
-                    switch indexPath.item {
-                    case 0:
-                        let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
-                        menuDetailsCell.addSubview(restaurantDetailsView)
-                        menuDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDetailsView)
-                        menuDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantDetailsView)
-                        menuDetailsCell.selectionStyle = .none
-                        return menuDetailsCell
-                    case 1:
-                        let menuFoodsCell = tableView.dequeueReusableCell(withIdentifier: self.cellIdTableDishFoodView, for: indexPath)
-                        menuFoodsCell.addSubview(restaurantMenuDishFoodsView)
-                        menuFoodsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuDishFoodsView)
-                        menuFoodsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuDishFoodsView)
-                        menuFoodsCell.selectionStyle = .none
-                        return menuFoodsCell
-                    case 2:
-                        let reviewsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReviews, for: indexPath)
-                        reviewsCell.addSubview(restaurantMenuReviewsView)
-                        reviewsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuReviewsView)
-                        reviewsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuReviewsView)
-                        return reviewsCell
-                    default:
-                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
-                    }
+            case restaurantMenuDishFoodsView:
+                let cell = tableView.dequeueReusableCell(withIdentifier: self.cellIdTableDishFood, for: indexPath) as! MenuDishFoodViewCell
+                cell.menuFood = self.restaurantMenu?.menu?.foods?.foods![indexPath.item]
+                cell.selectionStyle = .none
+                return cell
+            case restaurantMenuPromotionsView:
+                let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdPromotion, for: indexPath) as! MenuPromotionViewCell
+                cell.promotion = self.promotions![indexPath.item]
+                cell.selectionStyle = .none
+                return cell
+            case restaurantMenuReviewsView:
+                if self.restaurantMenu?.menu?.reviews?.reviews?.count ?? 0 > 0 {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReview, for: indexPath) as! MenuReviewViewCell
+                    cell.selectionStyle = .none
+                    cell.review = self.restaurantMenu?.menu?.reviews?.reviews![indexPath.item]
+                    return cell
                 } else {
-                    switch indexPath.item {
-                    case 0:
-                        let menuDetailsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDetails, for: indexPath)
-                        menuDetailsCell.addSubview(restaurantDetailsView)
-                        menuDetailsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantDetailsView)
-                        menuDetailsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantDetailsView)
-                        menuDetailsCell.selectionStyle = .none
-                        return menuDetailsCell
-                    case 1:
-                        let reviewsCell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReviews, for: indexPath)
-                        reviewsCell.addSubview(restaurantMenuReviewsView)
-                        reviewsCell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuReviewsView)
-                        reviewsCell.addConstraintsWithFormat(format: "V:|[v0]|", views: restaurantMenuReviewsView)
-                        return reviewsCell
-                    default:
-                        return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
-                    }
+                    let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+                    
+                    let cellView: UIView = {
+                        let view = UIView()
+                        view.translatesAutoresizingMaskIntoConstraints = false
+                        return view
+                    }()
+                    
+                    let emptyImageView: UIImageView = {
+                        let view = UIImageView()
+                        view.translatesAutoresizingMaskIntoConstraints = false
+                        view.image = UIImage(named: "icon_bubble_chat_96_gray")!
+                        view.contentMode = .scaleAspectFill
+                        view.alpha = 0.2
+                        return view
+                    }()
+                    
+                    let emptyTextView: UILabel = {
+                        let view = UILabel()
+                        view.translatesAutoresizingMaskIntoConstraints = false
+                        view.text = "No Reviews For This Menu"
+                        view.font = UIFont(name: "Poppins-SemiBold", size: 23)
+                        view.textColor = Colors.colorVeryLightGray
+                        view.textAlignment = .center
+                        return view
+                    }()
+                    
+                    let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: cell.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
+                    
+                    cellView.addSubview(emptyImageView)
+                    cellView.addSubview(emptyTextView)
+                    
+                    cellView.addConstraintsWithFormat(format: "H:[v0(90)]", views: emptyImageView)
+                    cellView.addConstraintsWithFormat(format: "H:|[v0]|", views: emptyTextView)
+                    cellView.addConstraintsWithFormat(format: "V:|[v0(90)]-6-[v1(\(emptyTextRect.height))]|", views: emptyImageView, emptyTextView)
+                    
+                    cellView.addConstraint(NSLayoutConstraint(item: cellView, attribute: .centerX, relatedBy: .equal, toItem: emptyImageView, attribute: .centerX, multiplier: 1, constant: 0))
+                    cellView.addConstraint(NSLayoutConstraint(item: cellView, attribute: .centerX, relatedBy: .equal, toItem: emptyTextView, attribute: .centerX, multiplier: 1, constant: 0))
+                    
+                    cell.selectionStyle = .none
+                    
+                    cell.addSubview(cellView)
+                    cell.addConstraintsWithFormat(format: "H:[v0]", views: cellView)
+                    cell.addConstraintsWithFormat(format: "V:|-30-[v0(\(90 + 12 + emptyTextRect.height))]-30-|", views: cellView)
+                    
+                    cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerX, relatedBy: .equal, toItem: cellView, attribute: .centerX, multiplier: 1, constant: 0))
+                    cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerY, relatedBy: .equal, toItem: cellView, attribute: .centerY, multiplier: 1, constant: 0))
+                    
+                    return cell
                 }
+            default:
+                return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
             }
-        case restaurantMenuDishFoodsView:
-            let cell = tableView.dequeueReusableCell(withIdentifier: self.cellIdTableDishFood, for: indexPath) as! MenuDishFoodViewCell
-            cell.menuFood = self.restaurantMenu?.menu?.foods?.foods![indexPath.item]
-            cell.selectionStyle = .none
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
+            
+            let view: DetailsShimmerView = {
+                let view = DetailsShimmerView()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                return view
+            }()
+            
+            cell.addSubview(view)
+            cell.addConstraintsWithFormat(format: "V:|[v0]|", views: view)
+            cell.addConstraintsWithFormat(format: "H:|[v0]|", views: view)
+                       
+            let shimmerView = ShimmeringView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 447))
+            cell.addSubview(shimmerView)
+                       
+            shimmerView.contentView = view
+            shimmerView.shimmerAnimationOpacity = 0.4
+            shimmerView.shimmerSpeed = 250
+            shimmerView.isShimmering = true
+            
             return cell
-        case restaurantMenuPromotionsView:
-            let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdPromotion, for: indexPath) as! MenuPromotionViewCell
-            cell.promotion = self.promotions![indexPath.item]
-            cell.selectionStyle = .none
-            return cell
-        case restaurantMenuReviewsView:
-            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
-                let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdReview, for: indexPath) as! MenuReviewViewCell
-                cell.selectionStyle = .none
-                cell.review = self.restaurantMenu?.menu?.reviews?.reviews![indexPath.item]
-                return cell
-            } else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
-                
-                let cellView: UIView = {
-                    let view = UIView()
-                    view.translatesAutoresizingMaskIntoConstraints = false
-                    return view
-                }()
-                
-                let emptyImageView: UIImageView = {
-                    let view = UIImageView()
-                    view.translatesAutoresizingMaskIntoConstraints = false
-                    view.image = UIImage(named: "icon_bubble_chat_96_gray")!
-                    view.contentMode = .scaleAspectFill
-                    view.alpha = 0.2
-                    return view
-                }()
-                
-                let emptyTextView: UILabel = {
-                    let view = UILabel()
-                    view.translatesAutoresizingMaskIntoConstraints = false
-                    view.text = "No Reviews For This Menu"
-                    view.font = UIFont(name: "Poppins-SemiBold", size: 23)
-                    view.textColor = Colors.colorVeryLightGray
-                    view.textAlignment = .center
-                    return view
-                }()
-                
-                let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: cell.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
-                
-                cellView.addSubview(emptyImageView)
-                cellView.addSubview(emptyTextView)
-                
-                cellView.addConstraintsWithFormat(format: "H:[v0(90)]", views: emptyImageView)
-                cellView.addConstraintsWithFormat(format: "H:|[v0]|", views: emptyTextView)
-                cellView.addConstraintsWithFormat(format: "V:|[v0(90)]-6-[v1(\(emptyTextRect.height))]|", views: emptyImageView, emptyTextView)
-                
-                cellView.addConstraint(NSLayoutConstraint(item: cellView, attribute: .centerX, relatedBy: .equal, toItem: emptyImageView, attribute: .centerX, multiplier: 1, constant: 0))
-                cellView.addConstraint(NSLayoutConstraint(item: cellView, attribute: .centerX, relatedBy: .equal, toItem: emptyTextView, attribute: .centerX, multiplier: 1, constant: 0))
-                
-                cell.selectionStyle = .none
-                
-                cell.addSubview(cellView)
-                cell.addConstraintsWithFormat(format: "H:[v0]", views: cellView)
-                cell.addConstraintsWithFormat(format: "V:|-30-[v0(\(90 + 12 + emptyTextRect.height))]-30-|", views: cellView)
-                
-                cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerX, relatedBy: .equal, toItem: cellView, attribute: .centerX, multiplier: 1, constant: 0))
-                cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerY, relatedBy: .equal, toItem: cellView, attribute: .centerY, multiplier: 1, constant: 0))
-                
-                return cell
-            }
-        default:
-            return tableView.dequeueReusableCell(withIdentifier: self.cellTableViewIdDefault, for: indexPath)
         }
     }
     
@@ -499,199 +536,201 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        switch tableView {
-        case self.tableView:
-            if promotions?.count ?? 0 > 0 {
-                if (self.restaurantMenu?.type!.id)! == 3 {
-                    switch indexPath.item {
-                    case 0:
-                        return self.restaurantDetailsViewHeight
-                    case 1:
-                        var height: CGFloat = 0
-                        if self.restaurantMenu?.menu?.foods?.count ?? 0 > 0 {
-                            height += 50
-                            if let foods = self.restaurantMenu?.menu?.foods?.foods {
-                                for (index, _) in foods.enumerated() {
-                                    height += self.dishFoodViewCellHeight(index: index)
-                                }
-                                height -= 10
-                            }
-                        }
-                        return height
-                    case 2:
-                        var height: CGFloat = 0
-                        if promotions?.count ?? 0 > 0 {
-                            height += 50
-                            if let promotions = self.promotions {
-                                for (index, _) in promotions.enumerated() {
-                                    height += self.menuPromotionViewCellHeight(index: index)
-                                }
-                                height -= 10
-                            }
-                        }
-                        return height
-                    case 3:
-                        var height: CGFloat = 128
-                        if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
-                            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 {
-                                let reviews = self.restaurantMenu?.menu?.reviews?.reviews?.prefix(5)
-                                if let reviews = reviews {
-                                    for (index, _) in reviews.enumerated() {
-                                        height += self.menuReviewViewCellHeight(index: index)
-                                    }
-                                }
+        if self.restaurantMenu != nil && shouldLoad {
+            switch tableView {
+            case self.tableView:
+                if promotions?.count ?? 0 > 0 {
+                    if self.restaurantMenu?.type!.id == 3 {
+                        switch indexPath.item {
+                        case 0:
+                            return self.restaurantDetailsViewHeight
+                        case 1:
+                            var height: CGFloat = 0
+                            if self.restaurantMenu?.menu?.foods?.count ?? 0 > 0 {
                                 height += 50
-                            } else {
-                                if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
-                                    for (index, _) in reviews.enumerated() {
-                                        height += self.menuReviewViewCellHeight(index: index)
+                                if let foods = self.restaurantMenu?.menu?.foods?.foods {
+                                    for (index, _) in foods.enumerated() {
+                                        height += self.dishFoodViewCellHeight(index: index)
                                     }
+                                    height -= 10
                                 }
                             }
-                            height += 12
-                        } else {
-                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
-                            height += 30 + 90 + 12 + emptyTextRect.height + 30
+                            return height
+                        case 2:
+                            var height: CGFloat = 0
+                            if promotions?.count ?? 0 > 0 {
+                                height += 50
+                                if let promotions = self.promotions {
+                                    for (index, _) in promotions.enumerated() {
+                                        height += self.menuPromotionViewCellHeight(index: index)
+                                    }
+                                    height -= 10
+                                }
+                            }
+                            return height
+                        case 3:
+                            var height: CGFloat = 128
+                            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                                if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 {
+                                    let reviews = self.restaurantMenu?.menu?.reviews?.reviews?.prefix(5)
+                                    if let reviews = reviews {
+                                        for (index, _) in reviews.enumerated() {
+                                            height += self.menuReviewViewCellHeight(index: index)
+                                        }
+                                    }
+                                    height += 50
+                                } else {
+                                    if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
+                                        for (index, _) in reviews.enumerated() {
+                                            height += self.menuReviewViewCellHeight(index: index)
+                                        }
+                                    }
+                                }
+                                height += 12
+                            } else {
+                                let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
+                                height += 30 + 90 + 12 + emptyTextRect.height + 30
+                            }
+                            return height
+                        default:
+                            return 0
                         }
-                        return height
-                    default:
-                        return 0
+                    } else {
+                        switch indexPath.item {
+                        case 0:
+                            return self.restaurantDetailsViewHeight
+                        case 1:
+                            var height: CGFloat = 0
+                            if promotions?.count ?? 0 > 0 {
+                                height += 50
+                                if let promotions = self.promotions {
+                                    for (index, _) in promotions.enumerated() {
+                                        height += self.menuPromotionViewCellHeight(index: index)
+                                    }
+                                    height -= 10
+                                }
+                            }
+                            return height
+                        case 2:
+                            var height: CGFloat = 128
+                            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                                if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 {
+                                    let reviews = self.restaurantMenu?.menu?.reviews?.reviews?.prefix(5)
+                                    if let reviews = reviews {
+                                        for (index, _) in reviews.enumerated() {
+                                            height += self.menuReviewViewCellHeight(index: index)
+                                        }
+                                    }
+                                    height += 50
+                                } else {
+                                    if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
+                                        for (index, _) in reviews.enumerated() {
+                                            height += self.menuReviewViewCellHeight(index: index)
+                                        }
+                                    }
+                                }
+                                height += 12
+                            } else {
+                                let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
+                                height += 30 + 90 + 12 + emptyTextRect.height + 30
+                            }
+                            return height
+                        default:
+                            return 0
+                        }
                     }
                 } else {
-                    switch indexPath.item {
-                    case 0:
-                        return self.restaurantDetailsViewHeight
-                    case 1:
-                        var height: CGFloat = 0
-                        if promotions?.count ?? 0 > 0 {
-                            height += 50
-                            if let promotions = self.promotions {
-                                for (index, _) in promotions.enumerated() {
-                                    height += self.menuPromotionViewCellHeight(index: index)
-                                }
-                                height -= 10
-                            }
-                        }
-                        return height
-                    case 2:
-                        var height: CGFloat = 128
-                        if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
-                            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 {
-                                let reviews = self.restaurantMenu?.menu?.reviews?.reviews?.prefix(5)
-                                if let reviews = reviews {
-                                    for (index, _) in reviews.enumerated() {
-                                        height += self.menuReviewViewCellHeight(index: index)
-                                    }
-                                }
+                    if self.restaurantMenu?.type!.id == 3 {
+                        switch indexPath.item {
+                        case 0:
+                            return self.restaurantDetailsViewHeight
+                        case 1:
+                            var height: CGFloat = 0
+                            if self.restaurantMenu?.menu?.foods?.count ?? 0 > 0 {
                                 height += 50
-                            } else {
-                                if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
-                                    for (index, _) in reviews.enumerated() {
-                                        height += self.menuReviewViewCellHeight(index: index)
+                                if let foods = self.restaurantMenu?.menu?.foods?.foods {
+                                    for (index, _) in foods.enumerated() {
+                                        height += self.dishFoodViewCellHeight(index: index)
                                     }
+                                    height -= 10
                                 }
                             }
-                            height += 12
-                        } else {
-                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
-                            height += 30 + 90 + 12 + emptyTextRect.height + 30
+                            return height
+                        case 2:
+                            var height: CGFloat = 128
+                            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                                if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 {
+                                    let reviews = self.restaurantMenu?.menu?.reviews?.reviews?.prefix(5)
+                                    if let reviews = reviews {
+                                        for (index, _) in reviews.enumerated() {
+                                            height += self.menuReviewViewCellHeight(index: index)
+                                        }
+                                    }
+                                    height += 50
+                                } else {
+                                    if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
+                                        for (index, _) in reviews.enumerated() {
+                                            height += self.menuReviewViewCellHeight(index: index)
+                                        }
+                                    }
+                                }
+                                height += 12
+                            } else {
+                                let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
+                                height += 30 + 90 + 12 + emptyTextRect.height + 30
+                            }
+                            return height
+                        default:
+                            return 0
                         }
-                        return height
-                    default:
-                        return 0
+                    } else {
+                        switch indexPath.item {
+                        case 0:
+                            return self.restaurantDetailsViewHeight
+                        case 1:
+                            var height: CGFloat = 128
+                            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                                if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 {
+                                    let reviews = self.restaurantMenu?.menu?.reviews?.reviews?.prefix(5)
+                                    if let reviews = reviews {
+                                        for (index, _) in reviews.enumerated() {
+                                            height += self.menuReviewViewCellHeight(index: index)
+                                        }
+                                    }
+                                    height += 50
+                                } else {
+                                    if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
+                                        for (index, _) in reviews.enumerated() {
+                                            height += self.menuReviewViewCellHeight(index: index)
+                                        }
+                                    }
+                                }
+                                height += 12
+                            } else {
+                                let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
+                                height += 30 + 90 + 12 + emptyTextRect.height + 30
+                            }
+                            return height
+                        default:
+                            return 0
+                        }
                     }
                 }
-            } else {
-                if (self.restaurantMenu?.type!.id)! == 3 {
-                    switch indexPath.item {
-                    case 0:
-                        return self.restaurantDetailsViewHeight
-                    case 1:
-                        var height: CGFloat = 0
-                        if self.restaurantMenu?.menu?.foods?.count ?? 0 > 0 {
-                            height += 50
-                            if let foods = self.restaurantMenu?.menu?.foods?.foods {
-                                for (index, _) in foods.enumerated() {
-                                    height += self.dishFoodViewCellHeight(index: index)
-                                }
-                                height -= 10
-                            }
-                        }
-                        return height
-                    case 2:
-                        var height: CGFloat = 128
-                        if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
-                            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 {
-                                let reviews = self.restaurantMenu?.menu?.reviews?.reviews?.prefix(5)
-                                if let reviews = reviews {
-                                    for (index, _) in reviews.enumerated() {
-                                        height += self.menuReviewViewCellHeight(index: index)
-                                    }
-                                }
-                                height += 50
-                            } else {
-                                if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
-                                    for (index, _) in reviews.enumerated() {
-                                        height += self.menuReviewViewCellHeight(index: index)
-                                    }
-                                }
-                            }
-                            height += 12
-                        } else {
-                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
-                            height += 30 + 90 + 12 + emptyTextRect.height + 30
-                        }
-                        return height
-                    default:
-                        return 0
-                    }
+            case self.restaurantMenuDishFoodsView:
+                return self.dishFoodViewCellHeight(index: indexPath.item)
+            case self.restaurantMenuPromotionsView:
+                return self.menuPromotionViewCellHeight(index: indexPath.item)
+            case self.restaurantMenuReviewsView:
+                if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
+                    return self.menuReviewViewCellHeight(index: indexPath.item)
                 } else {
-                    switch indexPath.item {
-                    case 0:
-                        return self.restaurantDetailsViewHeight
-                    case 1:
-                        var height: CGFloat = 128
-                        if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
-                            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 5 {
-                                let reviews = self.restaurantMenu?.menu?.reviews?.reviews?.prefix(5)
-                                if let reviews = reviews {
-                                    for (index, _) in reviews.enumerated() {
-                                        height += self.menuReviewViewCellHeight(index: index)
-                                    }
-                                }
-                                height += 50
-                            } else {
-                                if let reviews = self.restaurantMenu?.menu?.reviews?.reviews {
-                                    for (index, _) in reviews.enumerated() {
-                                        height += self.menuReviewViewCellHeight(index: index)
-                                    }
-                                }
-                            }
-                            height += 12
-                        } else {
-                            let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
-                            height += 30 + 90 + 12 + emptyTextRect.height + 30
-                        }
-                        return height
-                    default:
-                        return 0
-                    }
+                    let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
+                    return  128 + 30 + 90 + 12 + emptyTextRect.height + 30
                 }
+            default:
+                return 0
             }
-        case self.restaurantMenuDishFoodsView:
-            return self.dishFoodViewCellHeight(index: indexPath.item)
-        case self.restaurantMenuPromotionsView:
-            return self.menuPromotionViewCellHeight(index: indexPath.item)
-        case self.restaurantMenuReviewsView:
-            if self.restaurantMenu?.menu?.reviews?.count ?? 0 > 0 {
-                return self.menuReviewViewCellHeight(index: indexPath.item)
-            } else {
-                let emptyTextRect = NSString(string: "No Reviews For This Menu").boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
-                return  128 + 30 + 90 + 12 + emptyTextRect.height + 30
-            }
-        default:
-            return 0
-        }
+        } else { return 447 }
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -990,7 +1029,13 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             promotionSupplementHeight = promotionSupplementRect.height
         }
         
-        return 40 + promotionOccasionHeight + promotionPeriodHeight + promotionReductionHeight + promotionSupplementHeight + 12 + 32
+        var valueToAdd: CGFloat = 0
+        
+        if promotion.reduction.hasReduction && promotion.supplement.hasSupplement {
+            valueToAdd = 4
+        }
+        
+        return 40 + promotionOccasionHeight + promotionPeriodHeight + promotionReductionHeight + promotionSupplementHeight + 12 + 32 + valueToAdd
     }
     
     private func menuReviewViewCellHeight(index: Int) -> CGFloat {
@@ -1188,7 +1233,15 @@ class RestaurantMenuHeaderImageViewCell: UICollectionViewCell {
     }
     
     private func setup(){
-        menuImageView.load(url: URL(string: self.imageURL!)!)
+        menuImageView.kf.setImage(
+            with: URL(string: self.imageURL!)!,
+            placeholder: UIImage(named: "default_meal"),
+            options: [
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(1)),
+                .cacheOriginalImage
+            ]
+        )
         addSubview(menuImageView)
         addConstraintsWithFormat(format: "H:|[v0]|", views: menuImageView)
         addConstraintsWithFormat(format: "V:|[v0]|", views: menuImageView)

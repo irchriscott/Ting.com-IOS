@@ -4,9 +4,13 @@ PODS:
     - AppAuth/ExternalUserAgent (= 1.3.0)
   - AppAuth/Core (1.3.0)
   - AppAuth/ExternalUserAgent (1.3.0)
+  - BEMCheckBox (1.4.1)
   - Charts (3.4.0):
     - Charts/Core (= 3.4.0)
   - Charts/Core (3.4.0)
+  - CircularRevealKit (0.9.1)
+  - CryptoSwift (0.15.0)
+  - FaveButton (3.2.1)
   - FittedSheets (1.4.5)
   - Floaty (4.2.0)
   - GoogleMaps (3.7.0):
@@ -35,11 +39,29 @@ PODS:
     - Kingfisher/Core (= 5.12.0)
   - Kingfisher/Core (5.12.0)
   - LightweightObservable (1.0.3)
-  - ReachabilitySwift (5.0.0)
+  - LoadingShimmer (1.0.3)
+  - MercariQRScanner (1.6)
+  - PubNubSwift (3.0.1)
+  - PusherSwift (7.2.0):
+    - CryptoSwift (~> 0.9)
+    - ReachabilitySwift (= 4.3.0)
+    - Starscream (~> 3.0.5)
+  - PushNotifications (3.0.4)
+  - ReachabilitySwift (4.3.0)
+  - ScalingCarousel (3.0.2)
+  - ShimmerSwift (2.1.1)
+  - SimpleCheckbox (2.1.0)
+  - Starscream (3.0.6)
+  - ToosieSlide (1.1.1)
+  - ViewPager-Swift (2.0.1)
+  - Windless (0.1.5)
   - XLPagerTabStrip (9.0.0)
 
 DEPENDENCIES:
+  - BEMCheckBox
   - Charts
+  - CircularRevealKit
+  - FaveButton
   - FittedSheets
   - Floaty
   - GoogleMaps
@@ -48,13 +70,28 @@ DEPENDENCIES:
   - GradientLoadingBar
   - ImageViewer (from `https://github.com/Krisiacik/ImageViewer.git`)
   - Kingfisher
-  - ReachabilitySwift
+  - LoadingShimmer
+  - MercariQRScanner
+  - PubNubSwift
+  - PusherSwift (= 7.2.0)
+  - PushNotifications
+  - ReachabilitySwift (= 4.3.0)
+  - ScalingCarousel
+  - ShimmerSwift
+  - SimpleCheckbox
+  - ToosieSlide (~> 1.1)
+  - ViewPager-Swift
+  - Windless
   - XLPagerTabStrip
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AppAuth
+    - BEMCheckBox
     - Charts
+    - CircularRevealKit
+    - CryptoSwift
+    - FaveButton
     - FittedSheets
     - Floaty
     - GoogleMaps
@@ -65,7 +102,19 @@ SPEC REPOS:
     - GTMSessionFetcher
     - Kingfisher
     - LightweightObservable
+    - LoadingShimmer
+    - MercariQRScanner
+    - PubNubSwift
+    - PusherSwift
+    - PushNotifications
     - ReachabilitySwift
+    - ScalingCarousel
+    - ShimmerSwift
+    - SimpleCheckbox
+    - Starscream
+    - ToosieSlide
+    - ViewPager-Swift
+    - Windless
     - XLPagerTabStrip
 
 EXTERNAL SOURCES:
@@ -79,7 +128,11 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AppAuth: 73574f3013a1e65b9601a3ddc8b3158cce68c09d
+  BEMCheckBox: 5ba6e37ade3d3657b36caecc35c8b75c6c2b1a4e
   Charts: 74c9f256eaf0460c0c416522d1cf8c634ea6b286
+  CircularRevealKit: 680ac8c2b67e198f8fea0561abd2acf8ca7c932c
+  CryptoSwift: 769f58a9e89f64e8796c2e59ce5f002dc81a2438
+  FaveButton: 93cfebf6030336fa7653fad2068c3152ed668b39
   FittedSheets: 7f754c9f6fb4ea330cbc57c652b594255f2a6819
   Floaty: e2bd5a0f6f7f70899e26ff2da31081c8bee8d1b0
   GoogleMaps: 55da829c68aa931f3ae982b9e341cc2f3d89c587
@@ -91,9 +144,21 @@ SPEC CHECKSUMS:
   ImageViewer: cb88ef1c0ba19161bc10702adfdcebc116a7a59d
   Kingfisher: dc6e0f53bb5b12c3e75bedb0e01bbd7a640eea69
   LightweightObservable: 8687e8e1e2940ae2f64d7f71fe78c036d89c966f
-  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
+  LoadingShimmer: dd681218498ec9648f572b845a7299b9c62e8e30
+  MercariQRScanner: e1ee83878c2b4606661afa72d54af82bb6e355aa
+  PubNubSwift: db8d3a556ecd546d7cbf9cb0df2b79dafb67603c
+  PusherSwift: a5369a01e8a9106b4897e9186265af1426726062
+  PushNotifications: 6e3d148e5e129af9d4a9279b288c934f9a7f9066
+  ReachabilitySwift: 408477d1b6ed9779dba301953171e017c31241f3
+  ScalingCarousel: a458c9a689076e647cd5cafe36e1664a12738ea8
+  ShimmerSwift: f7ed2daf9c246de8299dfd9e12c6ab465cba9842
+  SimpleCheckbox: ddcd433ab8c3a8f57300bebda13151a8f302c7f9
+  Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
+  ToosieSlide: b410e89e0e1c00aecddeecebd1b4a8ed66385cac
+  ViewPager-Swift: 7d83f5d4888a0fa808c08c8405ba84e603a2eb58
+  Windless: c6b7d63ac3a0c7e6b241e316650d4605abf71894
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
 
-PODFILE CHECKSUM: 357cf416629878b3eebc9f9c745e381dc86fd7a8
+PODFILE CHECKSUM: 31212dee9977f47575f790373874ed365126cf16
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.3

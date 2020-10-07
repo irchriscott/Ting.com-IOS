@@ -10,12 +10,19 @@ import Foundation
 import UIKit
 
 var vSpinner: UIView?
+var closeMessageCallBack: (() -> Void)?
+
+let overlayView: UIView = {
+    let view =  UIView()
+    view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+    return view
+}()
 
 extension UIViewController {
     
     func showSpinner(onView: UIView){
         let spinnerView = UIView(frame: onView.bounds)
-        spinnerView.backgroundColor = Colors.colorTransparent
+        spinnerView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         let ai = UIActivityIndicatorView(style: .white)
         ai.startAnimating()
         ai.center = spinnerView.center
@@ -53,9 +60,9 @@ extension UIViewController {
         })
     }
     
-    func showErrorMessage(message: String){
+    func showErrorMessage(message: String, title: String = "Error"){
         DispatchQueue.main.async {
-            let alertDialog = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertController.Style.alert)
+            let alertDialog = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
             alertDialog.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
             self.present(alertDialog, animated: true, completion: nil)
         }
@@ -65,15 +72,15 @@ extension UIViewController {
         successOverlayView.bounds.size.width = self.view.bounds.width
         successOverlayView.bounds.size.height = self.view.bounds.height
         successOverlayView.center = self.view.center
-        successOverlayView.backgroundColor = Colors.colorTransparent
+        successOverlayView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         successOverlayView.alpha = 0.0
     
         DispatchQueue.main.async {
             self.view.addSubview(successOverlayView)
-            UIView.animate(withDuration: 2.5, animations: {
+            UIView.animate(withDuration: 1.5, animations: {
                 successOverlayView.alpha = 1.0
                 label.text = message
-                UIView.animate(withDuration: 1.5, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0, options: [], animations: {
+                UIView.animate(withDuration: 1.0, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0, options: [], animations: {
                     image.transform = CGAffineTransform(translationX: 0, y: -40)
                     image.transform = CGAffineTransform(rotationAngle: -180)
                 }, completion: { (success) in
@@ -81,12 +88,88 @@ extension UIViewController {
                         image.transform = CGAffineTransform(translationX: 0, y: 0)
                         image.transform = CGAffineTransform(rotationAngle: 0)
                     }, completion: {(success) in
-                        sleep(2)
+                        sleep(3)
                         successOverlayView.removeFromSuperview()
                     })
                 })
             })
         }
+    }
+    
+    func showAlertMessage(image: String, message: String, onClick: @escaping () -> ()) {
+        
+        closeMessageCallBack = onClick
+        
+        let contentView: UIView = {
+            let view = UIView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.backgroundColor = Colors.colorTransparent
+            return view
+        }()
+        
+        let imageView: UIImageView = {
+            let view = UIImageView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.image = UIImage(named: image)
+            return view
+        }()
+        
+        let labelView: UILabel = {
+            let view = UILabel()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.text = message
+            view.font = UIFont(name: "Poppins-SemiBold", size: 20)
+            view.textColor = Colors.colorWhite
+            view.textAlignment = .center
+            return view
+        }()
+        
+        contentView.addSubview(imageView)
+        contentView.addSubview(labelView)
+        
+        contentView.addConstraintsWithFormat(format: "H:[v0(60)]", views: imageView)
+        contentView.addConstraintsWithFormat(format: "H:|[v0]|", views: labelView)
+        contentView.addConstraintsWithFormat(format: "V:[v0(60)]-12-[v1(30)]", views: imageView, labelView)
+        
+        contentView.addConstraint(NSLayoutConstraint(item: imageView, attribute: .centerX, relatedBy: .equal, toItem: contentView, attribute: .centerX, multiplier: 1, constant: 0))
+        
+        overlayView.addSubview(contentView)
+        overlayView.addConstraintsWithFormat(format: "H:|[v0]|", views: contentView)
+        overlayView.addConstraintsWithFormat(format: "V:[v0]", views: contentView)
+        
+        overlayView.addConstraint(NSLayoutConstraint(item: contentView, attribute: .centerX, relatedBy: .equal, toItem: overlayView, attribute: .centerX, multiplier: 1, constant: 0))
+        overlayView.addConstraint(NSLayoutConstraint(item: contentView, attribute: .centerY, relatedBy: .equal, toItem: overlayView, attribute: .centerY, multiplier: 1, constant: 0))
+        
+        overlayView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeMessageAlert)))
+        
+        if let window = UIApplication.shared.keyWindow {
+            overlayView.frame.size.width = window.frame.width
+            overlayView.frame.size.height = window.frame.height
+            overlayView.center = window.center
+            overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+            overlayView.alpha = 0.0
+            
+            DispatchQueue.main.async {
+                window.addSubview(overlayView)
+                UIView.animate(withDuration: 1.5, animations: {
+                    overlayView.alpha = 1.0
+                    UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0, options: [], animations: {
+                        imageView.transform = CGAffineTransform(translationX: 0, y: -40)
+                        imageView.transform = CGAffineTransform(rotationAngle: -180)
+                    }, completion: { (success) in
+                        UIView.animate(withDuration: 0.5, animations: {
+                            imageView.transform = CGAffineTransform(translationX: 0, y: 0)
+                            imageView.transform = CGAffineTransform(rotationAngle: 0)
+                        }, completion: nil)
+                    })
+                })
+            }
+        }
+    }
+    
+    @objc private func closeMessageAlert() {
+        overlayView.removeFromSuperview()
+        closeMessageCallBack!()
     }
     
     func topMostViewController() -> UIViewController {

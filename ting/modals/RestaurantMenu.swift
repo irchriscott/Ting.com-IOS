@@ -13,7 +13,13 @@ struct RestaurantMenu: Codable {
     let type: MenuType?
     let urls: MenuUrls?
     let url: String?
+    let restaurant: RestaurantAbout?
     let menu: Menu?
+}
+
+struct RestaurantAbout : Codable {
+    let name: String
+    let logo: String
 }
 
 struct MenuType: Codable {
@@ -38,6 +44,7 @@ struct Menu: Codable {
     let branch: Branch?
     let name: String?
     let category: FoodCategory?
+    let cuisine: RestaurantCategory?
     let dishTimeId: Int?
     let dishTime: String?
     let foodType: String?
@@ -67,6 +74,7 @@ struct Menu: Codable {
 
 struct MenuPromotions: Codable {
     let count: Int
+    let todayPromotion: PromotionDataString?
     let promotions: [MenuPromotion]?
 }
 
@@ -79,7 +87,7 @@ struct MenuReviews: Codable {
 
 struct MenuLikes: Codable {
     let count: Int
-    let likes: [MenuLike]?
+    let likes: [Int]?
 }
 
 struct MenuFoods: Codable {

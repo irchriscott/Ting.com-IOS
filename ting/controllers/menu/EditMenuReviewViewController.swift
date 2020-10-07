@@ -119,7 +119,7 @@ class EditMenuReviewViewController: UIViewController, UITextViewDelegate {
         view.isEditable = true
         view.text = "Write your review comment"
         view.textColor = Colors.colorLightGray
-        view.font = UIFont(name: "Poppins-Medium", size: 16)!
+        view.font = UIFont(name: "Poppins-Regular", size: 16)!
         view.backgroundColor = Colors.colorDarkTransparent
         view.textContainerInset = UIEdgeInsets(top: 12, left: 8, bottom: 8, right: 8)
         view.delegate = self
@@ -132,9 +132,8 @@ class EditMenuReviewViewController: UIViewController, UITextViewDelegate {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.titleLabel?.text = "Submit".uppercased()
         view.titleLabel?.textColor = Colors.colorWhite
-        view.titleLabel?.font = UIFont(name: "Poppins-Medium", size: 17)!
+        view.titleLabel?.font = UIFont(name: "Poppins-SemiBold", size: 17)!
         view.titleLabel?.textAlignment = .center
-        view.backgroundColor = Colors.colorPrimary
         view.layer.cornerRadius = 4.0
         return view
     }()
@@ -146,7 +145,9 @@ class EditMenuReviewViewController: UIViewController, UITextViewDelegate {
         
         submitButton.addTarget(self, action: #selector(submitReview(_:)), for: .touchUpInside)
         submitButton.setTitle("Submit".uppercased(), for: .normal)
-        submitButton.setLinearGradientBackgroundColor(colorOne: Colors.colorPrimary, colorTwo: Colors.colorPrimaryDark)
+        submitButton.setTitleColor(Colors.colorWhite, for: .normal)
+        submitButton.titleLabel?.font = UIFont(name: "Poppins-SemiBold", size: 17)!
+        submitButton.setLinearGradientBackgroundColorElse(colorOne: Colors.colorPrimary, colorTwo: Colors.colorPrimaryDark, frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 55))
         
         self.view.addSubview(cancelText)
         self.view.addConstraintsWithFormat(format: "V:|-16-[v0]", views: cancelText)
@@ -166,7 +167,7 @@ class EditMenuReviewViewController: UIViewController, UITextViewDelegate {
         
         self.view.addConstraint(NSLayoutConstraint(item: self.view, attribute: .centerX, relatedBy: .equal, toItem: reviewRating, attribute: .centerX, multiplier: 1, constant: 0))
         
-        self.view.addConstraintsWithFormat(format: "V:|-86-[v0]-4-[v1]-20-[v2]-20-[v3(130)]-12-[v4(45)]", views: reviewText, reviewDescriptionText, reviewRating, reviewComment, submitButton)
+        self.view.addConstraintsWithFormat(format: "V:|-86-[v0]-4-[v1]-20-[v2]-20-[v3(130)]-12-[v4(55)]", views: reviewText, reviewDescriptionText, reviewRating, reviewComment, submitButton)
     }
     
     @objc func onCancel(_ sender: Any?){

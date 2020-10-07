@@ -247,7 +247,7 @@ class UserAddressesView: UIView, UITableViewDelegate, UITableViewDataSource, CLL
         
         if let window = UIApplication.shared.keyWindow {
             
-            self.mapOverlay.backgroundColor =  Colors.colorTransparent
+            self.mapOverlay.backgroundColor = UIColor.black.withAlphaComponent(0.7)
             self.mapOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.closeMapsUserLocation)))
             
             let _ = UIApplication.shared.statusBarFrame.height

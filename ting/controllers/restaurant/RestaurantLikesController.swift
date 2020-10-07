@@ -15,11 +15,7 @@ class RestaurantLikesController: UITableViewController {
     var headerHeight: CGFloat = 200
     
     var branch: Branch? {
-        didSet {
-            if let branch = self.branch {
-                self.likes = branch.likes?.likes
-            }
-        }
+        didSet {}
     }
     
     var likes: [UserRestaurant]? {

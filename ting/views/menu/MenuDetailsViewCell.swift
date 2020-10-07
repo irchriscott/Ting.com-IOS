@@ -9,8 +9,9 @@
 import Foundation
 import UIKit
 import MapKit
+import FaveButton
 
-class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
+class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, FaveButtonDelegate {
     
     let numberFormatter = NumberFormatter()
     
@@ -114,6 +115,13 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         return view
     }()
     
+    let restaurantMenuCuisineView: ImageTextView = {
+        let view = ImageTextView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.text = "Fast Food"
+        return view
+    }()
+    
     let separatorZero: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -193,6 +201,15 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         view.frame = CGRect(x: 0, y: 0, width: 28, height: 28)
         view.contentMode = .scaleAspectFill
         view.image = UIImage(named: "icon_heart_like_32_gray")
+        return view
+    }()
+    
+    lazy var faveButtonLike: FaveButton = {
+        let view = FaveButton(frame: CGRect(x: 0, y: 0, width: 28, height: 28), faveIconNormal: UIImage(named: "icon_heart_fill_25_gray"))
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        view.selectedColor = Colors.colorPrimary
+        view.normalColor = Colors.colorGray
         return view
     }()
     
@@ -301,6 +318,9 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
                 if menu.type?.id != 2 {
                     self.restaurantMenuCategoryView.imageURL = "\(URLs.hostEndPoint)\((menu.menu?.category?.image)!)"
                     self.restaurantMenuCategoryView.text = (menu.menu?.category?.name)!
+                    
+                    self.restaurantMenuCuisineView.imageURL = "\(URLs.hostEndPoint)\((menu.menu?.cuisine?.image)!)"
+                    self.restaurantMenuCuisineView.text = (menu.menu?.cuisine?.name)!
                 }
                 
                 if menu.menu?.foodType != nil {
@@ -409,8 +429,9 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
                 }
                 
                 if let likes = menu.menu?.likes?.likes {
-                    let checkLike = likes.first { (like) -> Bool in like.user.id == session.id }
-                    if checkLike != nil { restaurantLikeImage.image =  UIImage(named: "icon_heart_like_32_primary") }
+                    if likes.contains(session.id) {
+                        restaurantLikeImage.image =  UIImage(named: "icon_heart_like_32_primary")
+                    }
                 }
                 
                 self.setRestaurantDistance()
@@ -419,12 +440,7 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         }
     }
     
-    lazy var mapView: RestaurantMapView = {
-        let view = RestaurantMapView()
-        view.controller = self.controller
-        view.restaurant = self.menu?.menu?.branch
-        return view
-    }()
+    var mapView: RestaurantMapViewController!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -432,7 +448,6 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         self.restaurantName.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(navigateToRestaurant(_:))))
         self.restaurantLikeView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MenuDetailsViewCell.likeRestaurantMenuToggle)))
         self.restaurantDistanceView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openRestaurantMap)))
-        self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeRestaurantMap)))
         
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -440,6 +455,14 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
     }
     
     private func setup() {
+        
+        let storyboard = UIStoryboard(name: "Home", bundle: nil)
+        mapView = storyboard.instantiateViewController(withIdentifier: "RestaurantMapView") as? RestaurantMapViewController
+        mapView.controller = self.controller
+        mapView.restaurant = self.menu?.menu?.branch
+        mapView.modalPresentationStyle = .overFullScreen
+        
+        self.mapView.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeRestaurantMap)))
         
         restaurantMenuDescriptionView.addSubview(restaurantMenuDescriptionIcon)
         restaurantMenuDescriptionView.addSubview(restaurantMenuDescriptionText)
@@ -452,19 +475,21 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         
         if menu?.type?.id != 2 {
             restaurantMenuView.addSubview(restaurantMenuCategoryView)
+            restaurantMenuView.addSubview(restaurantMenuCuisineView)
         }
         
         restaurantMenuView.addSubview(restaurantMenuGroupView)
         restaurantMenuView.addSubview(restaurantMenuTypeView)
         
         if menu?.type?.id != 2 {
-            restaurantMenuView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]-8-[v2]", views: restaurantMenuCategoryView, restaurantMenuGroupView, restaurantMenuTypeView)
+            restaurantMenuView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]-8-[v2]-8-[v3]", views: restaurantMenuCategoryView, restaurantMenuGroupView, restaurantMenuTypeView, restaurantMenuCuisineView)
         } else {
             restaurantMenuView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]", views: restaurantMenuGroupView, restaurantMenuTypeView)
         }
         
         if menu?.type?.id != 2 {
             restaurantMenuView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: restaurantMenuCategoryView)
+            restaurantMenuView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: restaurantMenuCuisineView)
         }
         
         restaurantMenuView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: restaurantMenuGroupView)
@@ -480,11 +505,17 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         restaurantMenuPriceView.addSubview(restaurantMenuPriceTextView)
         restaurantMenuPriceView.addConstraintsWithFormat(format: "H:|-8-[v0]", views: restaurantMenuPriceTextView)
 
-        restaurantLikeView.addSubview(restaurantLikeImage)
-        restaurantLikeView.addConstraintsWithFormat(format: "H:[v0(28)]", views: restaurantLikeImage)
-        restaurantLikeView.addConstraintsWithFormat(format: "V:[v0(28)]", views: restaurantLikeImage)
-        restaurantLikeView.addConstraint(NSLayoutConstraint(item: restaurantLikeView, attribute: .centerX, relatedBy: .equal, toItem: restaurantLikeImage, attribute: .centerX, multiplier: 1, constant: 0))
-        restaurantLikeView.addConstraint(NSLayoutConstraint(item: restaurantLikeView, attribute: .centerY, relatedBy: .equal, toItem: restaurantLikeImage, attribute: .centerY, multiplier: 1, constant: 0))
+        restaurantLikeView.addSubview(faveButtonLike)
+        restaurantLikeView.addConstraintsWithFormat(format: "H:[v0(28)]", views: faveButtonLike)
+        restaurantLikeView.addConstraintsWithFormat(format: "V:[v0(28)]", views: faveButtonLike)
+        restaurantLikeView.addConstraint(NSLayoutConstraint(item: restaurantLikeView, attribute: .centerX, relatedBy: .equal, toItem: faveButtonLike, attribute: .centerX, multiplier: 1, constant: 0))
+        restaurantLikeView.addConstraint(NSLayoutConstraint(item: restaurantLikeView, attribute: .centerY, relatedBy: .equal, toItem: faveButtonLike, attribute: .centerY, multiplier: 1, constant: 0))
+        
+        if let likes = self.menu?.menu?.likes?.likes {
+            if likes.contains(session.id) {
+                faveButtonLike.setSelected(selected: true, animated: true)
+            }
+        }
         
         restaurantMenuPriceView.addSubview(restaurantLikeView)
         restaurantMenuPriceView.addConstraintsWithFormat(format: "H:[v0(46)]|", views: restaurantLikeView)
@@ -722,6 +753,29 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
         }.resume()
     }
     
+    func faveButton(_ faveButton: FaveButton, didSelected selected: Bool) {
+        likeRestaurantMenuToggle()
+    }
+    
+    func color(_ rgbColor: Int) -> UIColor {
+        return UIColor(
+            red:   CGFloat((rgbColor & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbColor & 0x00FF00) >> 8 ) / 255.0,
+            blue:  CGFloat((rgbColor & 0x0000FF) >> 0 ) / 255.0,
+            alpha: CGFloat(1.0)
+        )
+    }
+    
+    func faveButtonDotColors(_ faveButton: FaveButton) -> [DotColors]? {
+        return [
+            DotColors(first: color(0x7DC2F4), second: color(0xE2264D)),
+            DotColors(first: color(0xF8CC61), second: color(0x9BDFBA)),
+            DotColors(first: color(0xAF90F4), second: color(0x90D1F9)),
+            DotColors(first: color(0xE9A966), second: color(0xF8C852)),
+            DotColors(first: color(0xF68FA7), second: color(0xF6A2B8))
+        ]
+    }
+    
     @objc func openRestaurantMap() {
         if let window = UIApplication.shared.keyWindow {
             if var branch = self.menu?.menu?.branch, let location = self.selectedLocation {
@@ -729,21 +783,18 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate {
                 branch.dist = Double(branchLocation.distance(from: location) / 1000).rounded(toPlaces: 2)
                 isMapOpened = true
                 window.windowLevel = UIWindow.Level.statusBar
-                mapView.frame = window.frame
-                mapView.center = window.center
+                
                 mapView.mapCenter = branchLocation
                 mapView.selectedLocation = location
                 mapView.restaurant = branch
-                window.addSubview(mapView)
+                controller?.present(mapView, animated: true, completion: nil)
             }
         }
     }
     
     @objc func closeRestaurantMap(){
         UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
-        mapView.closeImageView.removeFromSuperview()
-        mapView.closeButtonView.removeFromSuperview()
-        mapView.removeFromSuperview()
+        mapView.dismiss(animated: true, completion: nil)
         isMapOpened = false
         mapCenter = nil
     }

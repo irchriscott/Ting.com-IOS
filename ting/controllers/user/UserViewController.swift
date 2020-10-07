@@ -95,7 +95,15 @@ class UserViewController: UICollectionViewController, UICollectionViewDelegateFl
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! UserHeaderViewCell
         header.namesLabel.text = user!.name
         header.addressLabel.text = "\(user!.town), \(user!.country)"
-        header.profileImageView.load(url: URL(string: "\(URLs.uploadEndPoint)\(user!.image)")!)
+        header.profileImageView.kf.setImage(
+            with: URL(string: "\(URLs.uploadEndPoint)\(user!.image)")!,
+            placeholder: UIImage(named: "default_user"),
+            options: [
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(1)),
+                .cacheOriginalImage
+            ]
+        )
         return header
     }
     

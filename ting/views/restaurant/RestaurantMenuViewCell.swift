@@ -121,6 +121,13 @@ class RestaurantMenuViewCell: UITableViewCell {
         return view
     }()
     
+    let menuCuisineView: ImageTextView = {
+        let view = ImageTextView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.text = "Fast Food"
+        return view
+    }()
+    
     let separatorOne: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -206,7 +213,15 @@ class RestaurantMenuViewCell: UITableViewCell {
                 let imageIndex = Int.random(in: 0...images!.count - 1)
                 let image = images![imageIndex]
 
-                menuImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(image.image)")!)
+                menuImageView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(image.image)")!,
+                    placeholder: UIImage(named: "default_restaurant"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
                 
                 menuNameView.text = menu.menu?.name
                 menuDescriptionTextView.text = menu.menu?.description
@@ -231,6 +246,11 @@ class RestaurantMenuViewCell: UITableViewCell {
                 if let category = menu.menu?.category {
                     self.menuCategoryView.text = category.name!
                     self.menuCategoryView.imageURL = "\(URLs.hostEndPoint)\(category.image!)"
+                }
+                
+                if let cuisine = menu.menu?.cuisine {
+                    self.menuCuisineView.imageURL = "\(URLs.hostEndPoint)\(cuisine.image)"
+                    self.menuCuisineView.text = cuisine.name
                 }
                 
                 if menu.menu?.isCountable ?? false {
@@ -334,7 +354,9 @@ class RestaurantMenuViewCell: UITableViewCell {
         
         if self.restaurantMenu?.type?.id != 2 {
             menuClassView.addSubview(menuCategoryView)
-            menuClassView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]", views: menuCategoryView, menuTypeView)
+            menuClassView.addSubview(menuCuisineView)
+            menuClassView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]-8-[v2]", views: menuCategoryView, menuTypeView, menuCuisineView)
+            menuClassView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: menuCuisineView)
             menuClassView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: menuCategoryView)
         } else { menuClassView.addConstraintsWithFormat(format: "H:|[v0]", views: menuTypeView) }
         

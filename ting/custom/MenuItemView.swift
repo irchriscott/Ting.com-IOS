@@ -51,7 +51,7 @@ class MenuItemView: UIView {
         addConstraintsWithFormat(format: "V:|[v0(22)]|", views: iconView)
         addConstraintsWithFormat(format: "V:|[v0(22)]|", views: titleView)
         
-        addConstraintsWithFormat(format: "H:|[v0(22)]-16-[v1]", views: iconView, titleView)
+        addConstraintsWithFormat(format: "H:|[v0(22)]-12-[v1]", views: iconView, titleView)
     }
     
     required init?(coder: NSCoder) {

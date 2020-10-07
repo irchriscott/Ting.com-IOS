@@ -1,5 +1,5 @@
 //
-//  RestaurantMapView.swift
+//  RestaurantMapViewController.swift
 //  ting
 //
 //  Created by Christian Scott on 17/09/2019.
@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 import GoogleMaps
 
-class RestaurantMapView: UIView, GMSMapViewDelegate {
+class RestaurantMapViewController: UIViewController, GMSMapViewDelegate {
     
     var restaurantNameHeight: CGFloat = 25
     var restaurantAddressHeight: CGFloat = 16
@@ -240,7 +240,7 @@ class RestaurantMapView: UIView, GMSMapViewDelegate {
                     restaurantNameTextSize = 15
                 }
                 
-                let frameWidth = frame.width - (36 + restaurantImageConstant)
+                let frameWidth = self.view.frame.width - (36 + restaurantImageConstant)
                 
                 let branchNameRect = NSString(string: "\(branch.name), \(branch.restaurant!.name)").boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: restaurantNameTextSize)!], context: nil)
                 
@@ -253,12 +253,14 @@ class RestaurantMapView: UIView, GMSMapViewDelegate {
         }
     }
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.backgroundColor = Colors.colorWhite
+    override func viewDidLoad() {
+        super.viewDidLoad()
         self.setup()
-        self.drivingDirectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantMapView.onDrivingModeDirection)))
-        self.walkingDirectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantMapView.onWalkingModeDirection)))
+        
+        self.view.backgroundColor = .white
+        
+        self.drivingDirectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantMapViewController.onDrivingModeDirection)))
+        self.walkingDirectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantMapViewController.onWalkingModeDirection)))
     }
     
     private func setup() {
@@ -275,10 +277,10 @@ class RestaurantMapView: UIView, GMSMapViewDelegate {
             self.closeButtonView.layer.cornerRadius = self.closeButtonView.frame.width / 2
             self.closeButtonView.layer.masksToBounds = true
             
-            self.addSubview(closeButtonView)
+            self.view.addSubview(closeButtonView)
             
-            self.addConstraintsWithFormat(format: "V:|-40-[v0(30)]", views: closeButtonView)
-            self.addConstraintsWithFormat(format: "H:|-12-[v0(30)]", views: closeButtonView)
+            self.view.addConstraintsWithFormat(format: "V:|-40-[v0(30)]", views: closeButtonView)
+            self.view.addConstraintsWithFormat(format: "H:|-12-[v0(30)]", views: closeButtonView)
             
             self.closeImageView.image = UIImage(named: "icon_close_bold_25_white")
             self.closeButtonView.addSubview(closeImageView)
@@ -289,7 +291,8 @@ class RestaurantMapView: UIView, GMSMapViewDelegate {
             self.closeButtonView.addConstraint(NSLayoutConstraint(item: closeImageView, attribute: .centerX, relatedBy: .equal, toItem: closeButtonView, attribute: .centerX, multiplier: 1, constant: 0))
             self.closeButtonView.addConstraint(NSLayoutConstraint(item: closeImageView, attribute: .centerY, relatedBy: .equal, toItem: closeButtonView, attribute: .centerY, multiplier: 1, constant: 0))
             
-            self.insertSubview(googleMapsView, belowSubview: closeButtonView)
+            self.view.insertSubview(googleMapsView, belowSubview: closeButtonView)
+            self.closeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(closeMap)))
             
             if self.restaurants.count > 0 {
                 for branch in self.restaurants {
@@ -443,9 +446,9 @@ class RestaurantMapView: UIView, GMSMapViewDelegate {
             restaurantDataView.addConstraintsWithFormat(format: "V:|[v0]", views: restaurantProfileView)
             restaurantDataView.addConstraintsWithFormat(format: "H:|[v0(\(restaurantImageConstant))]-12-[v1]|", views: restaurantImageView, restaurantProfileView)
             
-            addSubview(restaurantView)
-            addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantView)
-            addConstraintsWithFormat(format: "V:[v0(\(viewHeight))]|", views: restaurantView)
+            self.view.addSubview(restaurantView)
+            self.view.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantView)
+            self.view.addConstraintsWithFormat(format: "V:[v0(\(viewHeight))]|", views: restaurantView)
             
             if branch.isAvailable { Timer.scheduledTimer(timeInterval: 60, target: self, selector: #selector(setTimeStatus), userInfo: nil, repeats: true) }
         }
@@ -573,7 +576,7 @@ class RestaurantMapView: UIView, GMSMapViewDelegate {
         }
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    @objc private func closeMap() {
+        self.dismiss(animated: true, completion: nil)
     }
 }
