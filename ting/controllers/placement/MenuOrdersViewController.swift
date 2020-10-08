@@ -28,6 +28,8 @@ class MenuOrdersViewController: UICollectionViewController, UICollectionViewDele
         didSet {}
     }
     
+    var controller: PlacementViewController!
+    
     var onClose: (() -> Void)!
     var onOrder: ((RestaurantMenu) -> Void)!
 
@@ -191,15 +193,21 @@ class MenuOrdersViewController: UICollectionViewController, UICollectionViewDele
                             let quantity = quantityText.text != "" && !quantityText.text!.isEmpty && !quantityText.text!.isNil ? quantityText.text! : "1"
                             let conditions = conditionsTextView.text != "Enter Conditions" ? conditionsTextView.text! : ""
                                 
-                            let params: Parameters = ["token": self.placement.token, "quantity": quantity, "conditions": conditions, "menu": "\(order.menu.id!)"]
+                            let params: Parameters = ["quantity": quantity, "conditions": conditions]
+                            
+                            let url = String(format: URLs.rePlaceOrderPlacement, arguments: [order.id])
                                 
-                            TingClient.postRequest(url: URLs.placeOrderMenu, params: params) { (data) in
+                            TingClient.postRequest(url: url, params: params) { (data) in
                                 DispatchQueue.main.async {
                                     if let data = data {
                                         do {
                                             let response = try JSONDecoder().decode(ServerResponse.self, from: data)
                                             let style: Toast.Style = response.type == "success" ? .success : .error
                                             Toast.makeToast(message: response.message, duration: Toast.MID_LENGTH_DURATION, style: style)
+                                            self.pageIndex = 1
+                                            self.loadedMenus = []
+                                            self.orders = []
+                                            self.getPlacementOrders(index: self.pageIndex, q: self.query)
                                         } catch {
                                             self.showErrorMessage(message: "An error has occurred. Sorry!")
                                         }
@@ -212,12 +220,92 @@ class MenuOrdersViewController: UICollectionViewController, UICollectionViewDele
                             alert.dismiss(animated: true, completion: nil)
                         }
                             
-                        alert.addAction(cancel)
                         alert.addAction(action)
+                        alert.addAction(cancel)
                             
                         self.present(alert, animated: true, completion: nil)
                     }
+                    
+                    cell.onCancel = {
+                        let alert = UIAlertController(title: "Cancel Order", message: "Do you want to cancel this order ?", preferredStyle: .alert)
+                        let cancel = UIAlertAction(title: "NO", style: .destructive) { (alertAction) in
+                            alert.dismiss(animated: true, completion: nil)
+                        }
+                        
+                        let action = UIAlertAction(title: "YES", style: .default) { _ in
+                            let url = String(format: URLs.cancelOrderPlacement, arguments: [order.id])
+                            let params: Parameters = ["order": "\(order.id)"]
+                            
+                            TingClient.postRequest(url: url, params: params) { (data) in
+                                DispatchQueue.main.async {
+                                    if let data = data {
+                                        do {
+                                            let response = try JSONDecoder().decode(ServerResponse.self, from: data)
+                                            let style: Toast.Style = response.type == "success" ? .success : .error
+                                            Toast.makeToast(message: response.message, duration: Toast.MID_LENGTH_DURATION, style: style)
+                                            self.pageIndex = 1
+                                            self.loadedMenus = []
+                                            self.orders = []
+                                            self.getPlacementOrders(index: self.pageIndex, q: self.query)
+                                        } catch {
+                                            self.showErrorMessage(message: "An error has occurred. Sorry!")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                            
+                        alert.addAction(action)
+                        alert.addAction(cancel)
+                        
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                    
+                    cell.onNotify = {
+                        
+                        let args:[String:String] = ["table": "\(self.placement.table.id)", "token": PlacementProvider().getTempToken()!]
+                        let data:[String:String] = ["table": self.placement.table.number]
+                        
+                        let receiverBranch = SocketUser(id: self.placement.table.branch?.id, type: 1, name: "\(self.placement.table.branch?.restaurant?.name ?? ""), \(self.placement.table.branch?.name ?? "")", email: self.placement.table.branch?.email, image: self.placement.table.branch?.restaurant?.logo, channel: (self.placement.table.branch?.channel)!)
+                        
+                        let messageBranch = SocketResponseMessage(uuid: UUID().uuidString, type: Socket.SOCKET_REQUEST_NOTIFY_ORDER, sender: UserAuthentication().socketUser(), receiver: receiverBranch, status: 200, message: "", args: args, data: data)
+                        
+                        let messageBranchJSON = try! JSONEncoder().encodeJSONObject(messageBranch)
+                        
+                        let jsonBranchData = try! JSONSerialization.data(withJSONObject: messageBranchJSON, options: [])
+                        let jsonBranchString = String(data: jsonBranchData, encoding: String.Encoding.utf8)!.replacingOccurrences(of: "\"", with: "'")
+                        
+                        self.controller.pubnub.publish(channel: self.placement.table.branch!.channel, message: jsonBranchString) { (result) in
+                            switch result {
+                            case .success(_):
+                                Toast.makeToast(message: "Order Notified", duration: Toast.MID_LENGTH_DURATION, style: .success)
+                            case let .failure(error):
+                                self.showErrorMessage(message: "An error has occured : \(error.localizedDescription). Try again", title: "Sorry")
+                            }
+                        }
+                        
+                        if let waiter = self.placement.waiter {
+                            let receiverWaiter = SocketUser(id: waiter.id, type: 1, name: waiter.name, email: waiter.email, image: waiter.image, channel: waiter.channel)
+                            
+                            let messageWaiter = SocketResponseMessage(uuid: UUID().uuidString, type: Socket.SOCKET_REQUEST_W_NOTIFY_ORDER, sender: UserAuthentication().socketUser(), receiver: receiverWaiter, status: 200, message: "", args: args, data: data)
+                            
+                            let messageWaiterJSON = try! JSONEncoder().encodeJSONObject(messageWaiter)
+                            
+                            let jsonWaiterData = try! JSONSerialization.data(withJSONObject: messageWaiterJSON, options: [])
+                            let jsonWaiterString = String(data: jsonWaiterData, encoding: String.Encoding.utf8)!.replacingOccurrences(of: "\"", with: "'")
+                            
+                            self.controller.pubnub.publish(channel: waiter.channel, message: jsonWaiterString) { (result) in
+                                switch result {
+                                case .success(_):
+                                    Toast.makeToast(message: "Order Notified", duration: Toast.MID_LENGTH_DURATION, style: .success)
+                                case let .failure(error):
+                                    self.showErrorMessage(message: "An error has occured : \(error.localizedDescription). Try again", title: "Sorry")
+                                }
+                            }
+                        }
+                    }
                 }
+                
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.emptyCellId, for: indexPath)
@@ -450,7 +538,19 @@ class MenuOrdersViewController: UICollectionViewController, UICollectionViewDele
         }
         
         if order.hasPromotion {
-            staticValue += promotionReductionHeight + promotionSupplementHeight + 50
+            if let promotion = order.promotion {
+                if promotion.reduction != nil && promotion.supplement != nil {
+                    staticValue += promotionReductionHeight + promotionSupplementHeight + 18 + 20 + 16
+                } else {
+                    if promotion.reduction != nil {
+                        staticValue += promotionReductionHeight + 18 + 16 + 16
+                    }
+                    
+                    if promotion.supplement != nil {
+                        staticValue += promotionSupplementHeight + 18 + 16 + 16
+                    }
+                }
+            }
         }
         
         return 24 + staticValue + menuNameHeight + 10

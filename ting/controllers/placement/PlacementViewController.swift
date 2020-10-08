@@ -243,6 +243,7 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
         case 3:
             let storyboard = UIStoryboard(name: "Home", bundle: nil)
             let ordersController = storyboard.instantiateViewController(withIdentifier: "MenuOrdersView") as! MenuOrdersViewController
+            ordersController.controller = self
             self.present(ordersController, animated: true, completion: nil)
         default:
             break

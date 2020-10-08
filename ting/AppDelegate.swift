@@ -139,7 +139,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
                     }) {
                         if let text = data["text"] as? String {
                             if text != "" && !text.isEmpty {
-                                content.body = text
+                                content.body = "\(body!). \(text)"
                             } else { content.body = body! }
                         } else { content.body = body! }
                     } else { content.body = body! }
@@ -152,8 +152,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
                     }) {
                         if let image = data["image"] as? String {
                             if image != "" && !image.isEmpty {
-                                guard let notificationImage = try? UNNotificationAttachment(identifier: "", url: URL(string: data["image"] as! String)!, options: nil) else { return }
-                                content.attachments = [notificationImage]
+                                let imageIdentifier = Functions.randomString(length: 18)
+                                if let notificationImage = UNNotificationAttachment.create(identifier: imageIdentifier, url: URL(string: data["image"] as! String)!, options: nil) {
+                                    content.attachments = [notificationImage]
+                                }
                             }
                         }
                     }

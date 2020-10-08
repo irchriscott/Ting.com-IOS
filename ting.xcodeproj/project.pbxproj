@@ -137,6 +137,7 @@
 		8FAA270822F8965300B0B05B /* InputTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FAA270722F8965300B0B05B /* InputTextField.swift */; };
 		8FB2AD8B252C649F00199A10 /* MenuOrdersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2AD8A252C649F00199A10 /* MenuOrdersViewController.swift */; };
 		8FB2AD8D252C69CF00199A10 /* OrderViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2AD8C252C69CF00199A10 /* OrderViewCell.swift */; };
+		8FB2ADC2252EFEFD00199A10 /* UNNotificaionAttachmentExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB2ADB5252EFEFC00199A10 /* UNNotificaionAttachmentExtension.swift */; };
 		8FB57B9D2378633D00732D5A /* MenuDetailsViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57B9C2378633D00732D5A /* MenuDetailsViewCell.swift */; };
 		8FB57B9F2378671C00732D5A /* MenuReviewViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57B9E2378671C00732D5A /* MenuReviewViewCell.swift */; };
 		8FB57BA12379351100732D5A /* MenuDishFoodViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB57BA02379351100732D5A /* MenuDishFoodViewCell.swift */; };
@@ -297,6 +298,7 @@
 		8FAA270722F8965300B0B05B /* InputTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextField.swift; sourceTree = "<group>"; };
 		8FB2AD8A252C649F00199A10 /* MenuOrdersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuOrdersViewController.swift; sourceTree = "<group>"; };
 		8FB2AD8C252C69CF00199A10 /* OrderViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderViewCell.swift; sourceTree = "<group>"; };
+		8FB2ADB5252EFEFC00199A10 /* UNNotificaionAttachmentExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UNNotificaionAttachmentExtension.swift; sourceTree = "<group>"; };
 		8FB57B9C2378633D00732D5A /* MenuDetailsViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuDetailsViewCell.swift; sourceTree = "<group>"; };
 		8FB57B9E2378671C00732D5A /* MenuReviewViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuReviewViewCell.swift; sourceTree = "<group>"; };
 		8FB57BA02379351100732D5A /* MenuDishFoodViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuDishFoodViewCell.swift; sourceTree = "<group>"; };
@@ -519,6 +521,7 @@
 		8F49C0FA22F3723A0084F3E7 /* extensions */ = {
 			isa = PBXGroup;
 			children = (
+				8FB2ADB5252EFEFC00199A10 /* UNNotificaionAttachmentExtension.swift */,
 				8FF757E525247F7D000C0445 /* CodableFormat.swift */,
 				8F88EE7922F2B737000C4ED2 /* UIViewExtension.swift */,
 				8F49C0F822F2F7F60084F3E7 /* UIViewControllerExtension.swift */,
@@ -936,6 +939,7 @@
 				8FB2AD8B252C649F00199A10 /* MenuOrdersViewController.swift in Sources */,
 				8F157C7F23B372D3008C88E2 /* RestaurantReviewsController.swift in Sources */,
 				8FDDF97C23741608000AA334 /* StringExtension.swift in Sources */,
+				8FB2ADC2252EFEFD00199A10 /* UNNotificaionAttachmentExtension.swift in Sources */,
 				8F49C10822F494C50084F3E7 /* MenuPromotion.swift in Sources */,
 				8F0D3577232A10A500B39825 /* CGRectExtension.swift in Sources */,
 				8F157C6323A8B146008C88E2 /* PromotionMenuDetailsViewCell.swift in Sources */,

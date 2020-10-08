@@ -21,6 +21,8 @@ class OrderViewCell: UICollectionViewCell {
     var promotionReductionHeight: CGFloat = 0
     var promotionSupplementHeight: CGFloat = 0
     
+    var frameWidth: CGFloat = (UIApplication.shared.keyWindow?.frame.width)! - 140
+    
     let viewCell: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -105,18 +107,15 @@ class OrderViewCell: UICollectionViewCell {
         return view
     }()
     
-    let restaurantMenuPromotionView: UIStackView = {
-        let view = UIStackView()
+    let restaurantMenuPromotionView: UIView = {
+        let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.axis = .vertical
-        view.alignment = .top
-        view.distribution = .equalSpacing
-        view.spacing = 5.0
         return view
     }()
     
     let promotionTitleTextView: UILabel = {
         let view = UILabel()
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.font = UIFont(name: "Poppins-Regular", size: 17)
         view.text = "Promotion".uppercased()
         view.textColor = Colors.colorGray
@@ -125,6 +124,7 @@ class OrderViewCell: UICollectionViewCell {
     
     let promotionReductionView: InlineIconTextView = {
         let view = InlineIconTextView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.icon = UIImage(named: "icon_promo_minus_gray")!
         view.size = .small
         view.text = "Reduction"
@@ -133,6 +133,7 @@ class OrderViewCell: UICollectionViewCell {
     
     let promotionSupplementView: InlineIconTextView = {
         let view = InlineIconTextView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.icon = UIImage(named: "icon_promo_plus_gray")!
         view.size = .small
         view.text = "Supplement"
@@ -265,7 +266,7 @@ class OrderViewCell: UICollectionViewCell {
                     menuNameTextSize = 15
                 }
                 
-                let frameWidth = frame.width - (60 + menuImageConstant)
+                frameWidth = (UIApplication.shared.keyWindow?.frame.width)! - (60 + menuImageConstant)
                 
                 let menuNameRect = NSString(string: (order.menu.menu?.name)!).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: menuNameTextSize)!], context: nil)
                 
@@ -293,9 +294,14 @@ class OrderViewCell: UICollectionViewCell {
     }
     
     var onReorder: (() -> ())!
+    var onCancel: (() -> ())!
+    var onNotify: (() -> ())!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        reorderButton.addTarget(self, action: #selector(reOrder(sender:)), for: .touchUpInside)
+        notifyOrderButton.addTarget(self, action: #selector(notifyOrder(sender:)), for: .touchUpInside)
+        cancelOrderButton.addTarget(self, action: #selector(cancelOrder(sender:)), for: .touchUpInside)
     }
     
     private func setup() {
@@ -331,14 +337,34 @@ class OrderViewCell: UICollectionViewCell {
         
         orderDataView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]", views: orderStatusView, orderPromotionView)
         
+        var promotionViewHeight: CGFloat = 0
+        
         if let promotion = self.order?.promotion {
             if self.order?.hasPromotion ?? false {
-                restaurantMenuPromotionView.addArrangedSubview(promotionTitleTextView)
+                restaurantMenuPromotionView.addSubview(promotionTitleTextView)
+                restaurantMenuPromotionView.addConstraintsWithFormat(format: "H:|[v0]|", views: promotionTitleTextView)
                 if promotion.reduction != nil {
-                    restaurantMenuPromotionView.addArrangedSubview(promotionReductionView)
+                    restaurantMenuPromotionView.addSubview(promotionReductionView)
+                    restaurantMenuPromotionView.addConstraintsWithFormat(format: "H:|[v0]|", views: promotionReductionView)
                 }
                 if promotion.supplement != nil {
-                    restaurantMenuPromotionView.addArrangedSubview(promotionSupplementView)
+                    restaurantMenuPromotionView.addSubview(promotionSupplementView)
+                    restaurantMenuPromotionView.addConstraintsWithFormat(format: "H:|[v0]|", views: promotionSupplementView)
+                }
+                
+                if promotion.reduction != nil && promotion.supplement != nil {
+                    restaurantMenuPromotionView.addConstraintsWithFormat(format: "V:|[v0(18)]-12-[v1(\(promotionReductionHeight))]-4-[v2(\(promotionSupplementHeight))]", views: promotionTitleTextView, promotionReductionView, promotionSupplementView)
+                    promotionViewHeight += promotionReductionHeight + promotionSupplementHeight + 18 + 12 + 12
+                } else {
+                    if promotion.reduction != nil {
+                        restaurantMenuPromotionView.addConstraintsWithFormat(format: "V:|[v0(18)]-12-[v1(\(promotionReductionHeight))]", views: promotionTitleTextView, promotionReductionView)
+                        promotionViewHeight += promotionReductionHeight + 18 + 8 + 12
+                    }
+                    
+                    if promotion.supplement != nil {
+                        restaurantMenuPromotionView.addConstraintsWithFormat(format: "V:|[v0(18)]-12-[v1(\(promotionSupplementHeight))]", views: promotionTitleTextView, promotionSupplementView)
+                        promotionViewHeight += promotionSupplementHeight + 18 + 8 + 12
+                    }
                 }
             }
         }
@@ -356,7 +382,7 @@ class OrderViewCell: UICollectionViewCell {
             menuAboutView.addSubview(separatorOne)
             menuAboutView.addSubview(restaurantMenuPromotionView)
             menuAboutView.addConstraintsWithFormat(format: "H:|[v0]|", views: separatorOne)
-            menuAboutView.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantMenuPromotionView)
+            menuAboutView.addConstraintsWithFormat(format: "H:|[v0(\(frameWidth))]|", views: restaurantMenuPromotionView)
         }
         
         menuAboutView.addSubview(separatorTwo)
@@ -374,14 +400,13 @@ class OrderViewCell: UICollectionViewCell {
         
         if let order = self.order {
             if order.hasPromotion {
-                let promotionViewHeight: CGFloat = promotionReductionHeight + promotionSupplementHeight + 8
                 if !order.isAccepted && !order.isDeclined {
-                    menuAboutView.addConstraintsWithFormat(format: "V:|[v0(\(menuNameHeight))]-4-[v1]-4-[v2(16)]-[v3(30)]-[v4(16)]-4-[v5(0.5)]-4-[v6(\(promotionViewHeight - 5))]-\(promotionViewHeight)-[v7(0.5)]-8-[v8(26)]", views: menuNameView, menuRating, orderQuantityTextView, orderTotalPriceTextView, orderSinglePriceTextView, separatorOne, restaurantMenuPromotionView, separatorTwo, orderDataView)
+                    menuAboutView.addConstraintsWithFormat(format: "V:|[v0(\(menuNameHeight))]-4-[v1]-4-[v2(16)]-[v3(30)]-[v4(16)]-4-[v5(0.5)]-8-[v6(\(promotionViewHeight))]-4-[v7(0.5)]-8-[v8(26)]|", views: menuNameView, menuRating, orderQuantityTextView, orderTotalPriceTextView, orderSinglePriceTextView, separatorOne, restaurantMenuPromotionView, separatorTwo, orderDataView)
                 } else {
                     if order.isDeclined {
-                        menuAboutView.addConstraintsWithFormat(format: "V:|[v0(\(menuNameHeight))]-4-[v1]-4-[v2(16)]-[v3(30)]-[v4(16)]-4-[v5(0.5)]-4-[v6(\(promotionViewHeight - 5))]-\(promotionViewHeight)-[v7(0.5)]-8-[v8(26)]", views: menuNameView, menuRating, orderQuantityTextView, orderTotalPriceTextView, orderSinglePriceTextView, separatorOne, restaurantMenuPromotionView, separatorTwo, orderDataView)
+                        menuAboutView.addConstraintsWithFormat(format: "V:|[v0(\(menuNameHeight))]-4-[v1]-4-[v2(16)]-[v3(30)]-[v4(16)]-4-[v5(0.5)]-8-[v6(\(promotionViewHeight))]-4-[v7(0.5)]-8-[v8(26)]|", views: menuNameView, menuRating, orderQuantityTextView, orderTotalPriceTextView, orderSinglePriceTextView, separatorOne, restaurantMenuPromotionView, separatorTwo, orderDataView)
                     } else {
-                        menuAboutView.addConstraintsWithFormat(format: "V:|[v0(\(menuNameHeight))]-4-[v1]-4-[v2(16)]-[v3(30)]-[v4(16)]-4-[v5(0.5)]-4-[v6(\(promotionViewHeight - 5))]-\(promotionViewHeight)-[v7(0.5)]-8-[v8(26)]", views: menuNameView, menuRating, orderQuantityTextView, orderTotalPriceTextView, orderSinglePriceTextView, separatorOne, restaurantMenuPromotionView, separatorTwo, orderDataView)
+                        menuAboutView.addConstraintsWithFormat(format: "V:|[v0(\(menuNameHeight))]-4-[v1]-4-[v2(16)]-[v3(30)]-[v4(16)]-4-[v5(0.5)]-8-[v6(\(promotionViewHeight))]-4-[v7(0.5)]-8-[v8(26)]|", views: menuNameView, menuRating, orderQuantityTextView, orderTotalPriceTextView, orderSinglePriceTextView, separatorOne, restaurantMenuPromotionView, separatorTwo, orderDataView)
                     }
                 }
                 
@@ -411,7 +436,7 @@ class OrderViewCell: UICollectionViewCell {
             }
         }
         
-        var staticValue: CGFloat = 2 + 4 + 15 + 8 + 16 + 30 + 16 + 4 + 1 + 26 + 24
+        var staticValue: CGFloat = 2 + 4 + 15 + 8 + 16 + 30 + 16 + 4 + 1 + 26 + 24 + promotionViewHeight
         
         if let order = self.order {
             if !order.isAccepted && !order.isDeclined {
@@ -423,8 +448,8 @@ class OrderViewCell: UICollectionViewCell {
             }
         }
         
-        if self.order?.hasPromotion ?? false {
-            staticValue += promotionReductionHeight + promotionSupplementHeight + 50
+        if promotionViewHeight > 0 {
+            staticValue += 8
         }
         
         viewCell.addConstraintsWithFormat(format: "H:|-12-[v0(\(menuImageConstant))]-12-[v1]", views: menuImageView, menuAboutView)
@@ -441,6 +466,18 @@ class OrderViewCell: UICollectionViewCell {
                 }
             }
         }
+    }
+    
+    @IBAction func reOrder(sender: UIButton) {
+        self.onReorder()
+    }
+    
+    @IBAction func cancelOrder(sender: UIButton) {
+        self.onCancel()
+    }
+    
+    @IBAction func notifyOrder(sender: UIButton) {
+        self.onNotify()
     }
     
     required init?(coder: NSCoder) {
