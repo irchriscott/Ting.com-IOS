@@ -18,10 +18,10 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
     
     var controller: PlacementViewController!
     
+    let numberFormatter = NumberFormatter()
+    
     var bill: Bill? {
         didSet {
-            let numberFormatter = NumberFormatter()
-            numberFormatter.numberStyle = .decimal
             if let bill = self.bill {
                 if let orders = bill.orders?.orders {
                     for (index, order) in orders.enumerated() {
@@ -110,6 +110,8 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
         self.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: self.emptyCellId)
         self.collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: self.headerId)
         self.collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: self.footerId)
+        
+        numberFormatter.numberStyle = .decimal
         
         self.getPlacementBill()
     }
@@ -264,6 +266,129 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
             return cell
         } else {
             let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.footerId, for: indexPath)
+            
+            let amountTitle: UILabel = {
+                let view = UILabel()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.textColor = Colors.colorGray
+                view.text = "Amount"
+                view.font = UIFont(name: "Poppins-Regular", size: 13)
+                return view
+            }()
+            
+            let amountText: UILabel = {
+                let view = UILabel()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.textColor = Colors.colorGray
+                view.font = UIFont(name: "Poppins-Medium", size: 24)
+                view.text = "0"
+                return view
+            }()
+            
+            let discountTitle: UILabel = {
+                let view = UILabel()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.textColor = Colors.colorGray
+                view.text = "Discount"
+                view.font = UIFont(name: "Poppins-Regular", size: 13)
+                return view
+            }()
+            
+            let discountText: UILabel = {
+                let view = UILabel()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.textColor = Colors.colorGray
+                view.font = UIFont(name: "Poppins-Medium", size: 24)
+                view.text = "0"
+                return view
+            }()
+            
+            let extraTotalTitle: UILabel = {
+                let view = UILabel()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.textColor = Colors.colorGray
+                view.text = "Extras Total"
+                view.font = UIFont(name: "Poppins-Regular", size: 13)
+                return view
+            }()
+            
+            let extraTotalText: UILabel = {
+                let view = UILabel()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.textColor = Colors.colorGray
+                view.font = UIFont(name: "Poppins-Medium", size: 24)
+                view.text = "0"
+                return view
+            }()
+            
+            let tipTitle: UILabel = {
+                let view = UILabel()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.textColor = Colors.colorGray
+                view.text = "Tip"
+                view.font = UIFont(name: "Poppins-Regular", size: 13)
+                return view
+            }()
+            
+            let tipText: UILabel = {
+                let view = UILabel()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.textColor = Colors.colorGray
+                view.font = UIFont(name: "Poppins-Medium", size: 24)
+                view.text = "0"
+                return view
+            }()
+            
+            let separator: UIView = {
+                let view = UIView()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.backgroundColor = Colors.colorVeryLightGray
+                return view
+            }()
+            
+            let totalTitle: UILabel = {
+                let view = UILabel()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.textColor = Colors.colorGray
+                view.text = "Total"
+                view.font = UIFont(name: "Poppins-Regular", size: 13)
+                return view
+            }()
+            
+            let totalText: UILabel = {
+                let view = UILabel()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.textColor = Colors.colorGray
+                view.font = UIFont(name: "Poppins-Medium", size: 34)
+                view.text = "0"
+                return view
+            }()
+            
+            if let bill = self.bill {
+                amountText.text = "\(bill.currency) \(numberFormatter.string(from: NSNumber(value: bill.amount))!)"
+                discountText.text = "\(bill.currency) \(numberFormatter.string(from: NSNumber(value: bill.discount))!)"
+                extraTotalText.text = "\(bill.currency) \(numberFormatter.string(from: NSNumber(value: bill.extrasTotal))!)"
+                tipText.text = "\(bill.currency) \(numberFormatter.string(from: NSNumber(value: bill.tips))!)"
+                totalText.text = "\(bill.currency) \(numberFormatter.string(from: NSNumber(value: bill.total))!)"
+            }
+            
+            cell.addSubview(amountTitle)
+            cell.addSubview(amountText)
+            
+            cell.addSubview(discountTitle)
+            cell.addSubview(discountText)
+            
+            cell.addSubview(extraTotalTitle)
+            cell.addSubview(extraTotalText)
+            
+            cell.addSubview(tipTitle)
+            cell.addSubview(tipText)
+            
+            cell.addSubview(separator)
+            
+            cell.addSubview(totalTitle)
+            cell.addSubview(totalText)
+            
             return cell
         }
     }

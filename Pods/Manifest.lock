@@ -5,6 +5,7 @@ PODS:
   - AppAuth/Core (1.3.0)
   - AppAuth/ExternalUserAgent (1.3.0)
   - BEMCheckBox (1.4.1)
+  - BulletinBoard (4.1.2)
   - Charts (3.4.0):
     - Charts/Core (= 3.4.0)
   - Charts/Core (3.4.0)
@@ -60,6 +61,7 @@ PODS:
 
 DEPENDENCIES:
   - BEMCheckBox
+  - BulletinBoard
   - Charts
   - CircularRevealKit
   - FaveButton
@@ -90,6 +92,7 @@ SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AppAuth
     - BEMCheckBox
+    - BulletinBoard
     - Charts
     - CircularRevealKit
     - CryptoSwift
@@ -132,6 +135,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AppAuth: 73574f3013a1e65b9601a3ddc8b3158cce68c09d
   BEMCheckBox: 5ba6e37ade3d3657b36caecc35c8b75c6c2b1a4e
+  BulletinBoard: 1c0cb191b6c6245d08f51bd2445f1e36414ec0ed
   Charts: 74c9f256eaf0460c0c416522d1cf8c634ea6b286
   CircularRevealKit: 680ac8c2b67e198f8fea0561abd2acf8ca7c932c
   CryptoSwift: 769f58a9e89f64e8796c2e59ce5f002dc81a2438
@@ -163,6 +167,6 @@ SPEC CHECKSUMS:
   Windless: c6b7d63ac3a0c7e6b241e316650d4605abf71894
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
 
-PODFILE CHECKSUM: b389745e73bcd228ec9b1689a5c19564db31f4ea
+PODFILE CHECKSUM: 9656b96e33a31cc77236cdb4544f2ca02a1c7233
 
 COCOAPODS: 1.9.3

@@ -27,4 +27,5 @@ target 'ting' do
     pod 'PushNotifications'
     pod 'PusherSwift', '= 7.2.0'
     pod 'SwiftDataTables'
+    pod 'BulletinBoard'
 end
