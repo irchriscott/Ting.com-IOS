@@ -52,6 +52,7 @@ PODS:
   - ShimmerSwift (2.1.1)
   - SimpleCheckbox (2.1.0)
   - Starscream (3.0.6)
+  - SwiftDataTables (0.8.1)
   - ToosieSlide (1.1.1)
   - ViewPager-Swift (2.0.1)
   - Windless (0.1.5)
@@ -79,6 +80,7 @@ DEPENDENCIES:
   - ScalingCarousel
   - ShimmerSwift
   - SimpleCheckbox
+  - SwiftDataTables
   - ToosieSlide (~> 1.1)
   - ViewPager-Swift
   - Windless
@@ -112,6 +114,7 @@ SPEC REPOS:
     - ShimmerSwift
     - SimpleCheckbox
     - Starscream
+    - SwiftDataTables
     - ToosieSlide
     - ViewPager-Swift
     - Windless
@@ -154,11 +157,12 @@ SPEC CHECKSUMS:
   ShimmerSwift: f7ed2daf9c246de8299dfd9e12c6ab465cba9842
   SimpleCheckbox: ddcd433ab8c3a8f57300bebda13151a8f302c7f9
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
+  SwiftDataTables: 9e5f2ad7e7430c8008a31e66a0237ed29bf6fca8
   ToosieSlide: b410e89e0e1c00aecddeecebd1b4a8ed66385cac
   ViewPager-Swift: 7d83f5d4888a0fa808c08c8405ba84e603a2eb58
   Windless: c6b7d63ac3a0c7e6b241e316650d4605abf71894
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
 
-PODFILE CHECKSUM: 31212dee9977f47575f790373874ed365126cf16
+PODFILE CHECKSUM: b389745e73bcd228ec9b1689a5c19564db31f4ea
 
 COCOAPODS: 1.9.3

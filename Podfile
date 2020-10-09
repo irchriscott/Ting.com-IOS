@@ -26,4 +26,5 @@ target 'ting' do
     pod 'PubNubSwift'
     pod 'PushNotifications'
     pod 'PusherSwift', '= 7.2.0'
+    pod 'SwiftDataTables'
 end

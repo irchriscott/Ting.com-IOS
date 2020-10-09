@@ -23,6 +23,7 @@ ${BUILT_PRODUCTS_DIR}/ScalingCarousel/ScalingCarousel.framework
 ${BUILT_PRODUCTS_DIR}/ShimmerSwift/ShimmerSwift.framework
 ${BUILT_PRODUCTS_DIR}/SimpleCheckbox/SimpleCheckbox.framework
 ${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework
+${BUILT_PRODUCTS_DIR}/SwiftDataTables/SwiftDataTables.framework
 ${BUILT_PRODUCTS_DIR}/ToosieSlide/ToosieSlide.framework
 ${BUILT_PRODUCTS_DIR}/ViewPager-Swift/ViewPager_Swift.framework
 ${BUILT_PRODUCTS_DIR}/Windless/Windless.framework
