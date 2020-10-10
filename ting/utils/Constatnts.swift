@@ -102,6 +102,11 @@ struct URLs {
     static let rePlaceOrderPlacement        = "\(endPoint)usr/po/placement/order/%d/re/place/"
     static let cancelOrderPlacement         = "\(endPoint)usr/po/placement/order/%d/cancel/"
     static let placementGetBill             = "\(endPoint)usr/po/placement/bill/"
+    static let placementUpdateBillTips      = "\(endPoint)usr/po/placement/bill/tips/update/"
+    static let placementBillComplete        = "\(endPoint)usr/po/placement/bill/complete/"
+    static let placementBillRequest         = "\(endPoint)usr/po/placement/bill/request/"
+    static let placementRequestWaiter       = "\(endPoint)usr/po/placement/request/send/"
+    static let placementTerminate           = "\(endPoint)usr/po/placement/terminate/"
     
 }
 

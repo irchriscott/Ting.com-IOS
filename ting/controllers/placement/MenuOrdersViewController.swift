@@ -128,6 +128,7 @@ class MenuOrdersViewController: UICollectionViewController, UICollectionViewDele
             if !self.orders.isEmpty {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellId, for: indexPath) as! OrderViewCell
                 if !self.loadedMenus.contains(indexPath.row) {
+                    cell.removeSubviews()
                     let order = self.orders[indexPath.row]
                     cell.order = order
                     self.loadedMenus.append(indexPath.row)

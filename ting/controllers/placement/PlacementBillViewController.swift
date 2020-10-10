@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftDataTables
+import BLTNBoard
 
 class PlacementBillViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, SwiftDataTableDataSource, SwiftDataTableDelegate {
     
@@ -20,6 +21,8 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
     
     let numberFormatter = NumberFormatter()
     var hasLoaded: Bool = false
+    
+    let spinner = Spinner()
     
     var bill: Bill? {
         didSet {
@@ -283,6 +286,8 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
         } else {
             let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.footerId, for: indexPath)
             
+            cell.removeSubviews()
+            
             let amountTitle: UILabel = {
                 let view = UILabel()
                 view.translatesAutoresizingMaskIntoConstraints = false
@@ -343,6 +348,7 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
                 view.textColor = Colors.colorGray
                 view.text = "Tip"
                 view.font = UIFont(name: "Poppins-Regular", size: 13)
+                view.isUserInteractionEnabled = true
                 return view
             }()
             
@@ -351,6 +357,7 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
                 view.translatesAutoresizingMaskIntoConstraints = false
                 view.textColor = Colors.colorGray
                 view.font = UIFont(name: "Poppins-Medium", size: 24)
+                view.isUserInteractionEnabled = true
                 view.text = "0"
                 return view
             }()
@@ -400,7 +407,7 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
             
             let requestBillButton: UIButton = {
                 let view = UIButton()
-                view.titleLabel?.text = "Request Bill".uppercased()
+                view.titleLabel?.text = "Request".uppercased()
                 view.titleLabel?.font = UIFont(name: "Poppins-SemiBold", size: 16)!
                 view.titleLabel?.textColor = Colors.colorWhite
                 view.titleLabel?.textAlignment = .center
@@ -420,7 +427,7 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
                 return view
             }()
             
-            requestBillButton.setTitle("Request Bill".uppercased(), for: .normal)
+            requestBillButton.setTitle("Request".uppercased(), for: .normal)
             requestBillButton.setTitleColor(Colors.colorWhite, for: .normal)
             requestBillButton.titleLabel?.font = UIFont(name: "Poppins-SemiBold", size: 16)!
             
@@ -434,8 +441,16 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
             requestBillButton.setLinearGradientBackgroundColorElse(colorOne: Colors.colorPrimary, colorTwo: Colors.colorPrimaryDark, frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 55))
             completeBillButton.setLinearGradientBackgroundColorElse(colorOne: Colors.colorGoogleRedTwo, colorTwo: Colors.colorGoogleRedOne, frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 55))
             
+            requestBillButton.addTarget(self, action: #selector(requestBill(sender:)), for: .touchUpInside)
+            completeBillButton.addTarget(self, action: #selector(completeBill(sender:)), for: .touchUpInside)
+            
             billButtons.addArrangedSubview(requestBillButton)
             billButtons.addArrangedSubview(completeBillButton)
+            
+            let tipGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(PlacementBillViewController.updateTips))
+            
+            tipTitle.addGestureRecognizer(tipGestureRecognizer)
+            tipText.addGestureRecognizer(tipGestureRecognizer)
             
             cell.addSubview(amountTitle)
             cell.addSubview(amountText)
@@ -576,6 +591,149 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
     
     func dataTable(_ dataTable: SwiftDataTable, unhighlightedColorForRowIndex at: Int) -> UIColor {
         return Colors.colorWhite
+    }
+    
+    @objc func updateTips() {
+        
+        let alert = UIAlertController(title: "Enter Tip Amount", message: nil, preferredStyle: .alert)
+
+        let action = UIAlertAction(title: "OK", style: .default) { _ in
+            let tipsText = alert.textFields![0]
+            if let tips = tipsText.text {
+                if !tips.isEmpty {
+                    self.spinner.show()
+                    let params: Parameters = ["token": self.placement.token, "tips": tips]
+                    TingClient.postRequest(url: URLs.placementUpdateBillTips, params: params) { (data) in
+                        DispatchQueue.main.async {
+                            if let data = data {
+                                self.spinner.hide()
+                                do {
+                                    let bill = try JSONDecoder().decode(Bill.self, from: data)
+                                    self.bill = bill
+                                    self.getPlacementBill()
+                                } catch {
+                                    self.showErrorMessage(message: error.localizedDescription)
+                                    do {
+                                        let response = try JSONDecoder().decode(ServerResponse.self, from: data)
+                                        self.showErrorMessage(message: response.message)
+                                    } catch {
+                                        self.showErrorMessage(message: error.localizedDescription)
+                                    }
+                                }
+                            } else {
+                                self.showErrorMessage(message: "Sorry, an error has occurred")
+                            }
+                        }
+                    }
+                } else {
+                    self.showErrorMessage(message: "Please, insert tip amount")
+                }
+            } else {
+                self.showErrorMessage(message: "Please, insert tip amount")
+            }
+        }
+        let cancel = UIAlertAction(title: "CANCEL", style: .destructive) { (alertAction) in
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
+        alert.addTextField { (textField) in
+            textField.placeholder = "Tip Amount"
+            textField.keyboardType = .numberPad
+            textField.textAlignment = .center
+            textField.font = UIFont(name: "Poppins-Medium", size: 40)
+            textField.returnKeyType = .done
+            textField.textColor = Colors.colorGray
+            
+            if let bill = self.bill {
+                textField.text = "\(bill.tips)"
+            }
+            
+            textField.attributedPlaceholder = NSAttributedString(string: "Tip Amount", attributes: [
+                NSAttributedString.Key.foregroundColor: Colors.colorGray,
+                NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 14)!
+            ])
+            textField.addTarget(self, action: #selector(self.doneEditing), for: UIControl.Event.primaryActionTriggered)
+        }
+        
+        alert.addAction(action)
+        alert.addAction(cancel)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    @IBAction func requestBill(sender: UIButton) {
+        let page = BLTNPageItem(title: "Request Bill")
+        page.image = UIImage(named: "icon_important_100_orange")
+
+        page.descriptionText = "Please, make sure the tip amount has been updated"
+        page.actionButtonTitle = "Yes"
+        page.alternativeButtonTitle = "Cancel"
+        
+        page.appearance.actionButtonColor = Colors.colorPrimary
+        page.appearance.alternativeButtonTitleColor = Colors.colorPrimary
+        page.appearance.actionButtonTitleColor = .white
+        page.appearance.actionButtonCornerRadius = 4
+        page.appearance.descriptionFontSize = 14
+        page.appearance.descriptionTextColor = Colors.colorGray
+        page.appearance.descriptionFontDescriptor = UIFontDescriptor(name: "Poppins-Regular", size: 14)
+        page.appearance.titleFontDescriptor = UIFontDescriptor(name: "Poppins-SemiBold", size: 20)
+        page.appearance.titleTextColor = Colors.colorGray
+        
+        page.isDismissable = false
+        page.requiresCloseButton = false
+        
+        page.actionButton?.titleLabel?.font = UIFont(name: "Poppins-Medium", size: 15)
+        page.alternativeButton?.titleLabel?.font = UIFont(name: "Poppins-Medium", size: 15)
+        
+        let manager = BLTNItemManager(rootItem: page)
+        manager.backgroundViewStyle = .dimmed
+        manager.showBulletin(in: UIApplication.shared)
+        manager.cardCornerRadius = 12
+        
+        page.actionHandler = { item in
+            manager.displayActivityIndicator()
+        }
+        
+        page.alternativeHandler = { item in
+            manager.dismissBulletin(animated: true)
+        }
+    }
+    
+    @IBAction func completeBill(sender: UIButton) {
+        let page = BLTNPageItem(title: "Complete Bill")
+        page.image = UIImage(named: "icon_important_100_orange")
+
+        page.descriptionText = "After completion, no more order can be made again"
+        page.actionButtonTitle = "Yes"
+        page.alternativeButtonTitle = "Cancel"
+        
+        page.appearance.actionButtonColor = Colors.colorPrimary
+        page.appearance.alternativeButtonTitleColor = Colors.colorPrimary
+        page.appearance.actionButtonTitleColor = .white
+        page.appearance.actionButtonCornerRadius = 4
+        page.appearance.descriptionFontSize = 14
+        page.appearance.descriptionTextColor = Colors.colorGray
+        page.appearance.descriptionFontDescriptor = UIFontDescriptor(name: "Poppins-Regular", size: 14)
+        page.appearance.titleFontDescriptor = UIFontDescriptor(name: "Poppins-SemiBold", size: 20)
+        page.appearance.titleTextColor = Colors.colorGray
+        
+        page.isDismissable = false
+        page.requiresCloseButton = false
+        
+        page.actionButton?.titleLabel?.font = UIFont(name: "Poppins-Medium", size: 15)
+        page.alternativeButton?.titleLabel?.font = UIFont(name: "Poppins-Medium", size: 15)
+        
+        let manager = BLTNItemManager(rootItem: page)
+        manager.backgroundViewStyle = .dimmed
+        manager.cardCornerRadius = 12
+        manager.showBulletin(in: UIApplication.shared)
+        
+        page.actionHandler = { item in
+            manager.displayActivityIndicator()
+        }
+        
+        page.alternativeHandler = { item in
+            manager.dismissBulletin(animated: true)
+        }
     }
     
     @IBAction func cancel(sender: UIButton) {
