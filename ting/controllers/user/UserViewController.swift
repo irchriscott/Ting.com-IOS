@@ -48,7 +48,7 @@ class UserViewController: UICollectionViewController, UICollectionViewDelegateFl
         
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         self.navigationItem.title = ""
-        self.navigationItem.largeTitleDisplayMode = .never
+        self.navigationItem.largeTitleDisplayMode = .always
         
         let barButtonAppearance = UIBarButtonItem.appearance()
         barButtonAppearance.setTitleTextAttributes([.foregroundColor : UIColor.white], for: .normal)

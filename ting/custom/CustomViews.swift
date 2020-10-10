@@ -15,6 +15,7 @@ class UICircularButtomImageView: UIView {
     let imageView: UIImageView = {
         let view = UIImageView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
         return view
     }()
 
@@ -27,6 +28,8 @@ class UICircularButtomImageView: UIView {
         
         imageView.image = self.image
         addSubview(imageView)
+        addConstraintsWithFormat(format: "V:[v0(20)]", views: imageView)
+        addConstraintsWithFormat(format: "H:[v0(20)]", views: imageView)
         addConstraint(NSLayoutConstraint(item: imageView, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
         addConstraint(NSLayoutConstraint(item: imageView, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
     }

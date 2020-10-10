@@ -61,7 +61,7 @@ class EditUserCollectionViewController: UICollectionViewController, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 104)
+        return CGSize(width: view.frame.width, height: 74)
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -98,7 +98,7 @@ class EditUserProfileImageViewCell : UICollectionViewCell, UIImagePickerControll
     
     let userImageView: UIImageView = {
         let view = UIImageView()
-        view.frame = CGRect(x: 0, y: 0, width: 70, height: 70)
+        view.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.image = UIImage(named: "default_user")
         view.layer.borderColor = Colors.colorVeryLightGray.cgColor
@@ -119,7 +119,7 @@ class EditUserProfileImageViewCell : UICollectionViewCell, UIImagePickerControll
         let view = UILabel()
         view.textColor = Colors.colorLightGray
         view.text = "Change Profile Image"
-        view.font = UIFont(name: "Poppins-Regular", size: 17)
+        view.font = UIFont(name: "Poppins-Regular", size: 15)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -127,7 +127,7 @@ class EditUserProfileImageViewCell : UICollectionViewCell, UIImagePickerControll
     let chooseImageView: UIView = {
         let view = UIView()
         view.backgroundColor = Colors.colorDarkTransparent
-        view.frame = CGRect(x: 0, y: 0, width: 45, height: 45)
+        view.frame = CGRect(x: 0, y: 0, width: 35, height: 35)
         view.layer.cornerRadius = view.frame.height / 2
         view.layer.masksToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -137,7 +137,7 @@ class EditUserProfileImageViewCell : UICollectionViewCell, UIImagePickerControll
     let addImage: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "icon_add_image")
-        view.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
+        view.frame = CGRect(x: 0, y: 0, width: 15, height: 15)
         view.alpha = 0.5
         return view
     }()
@@ -176,13 +176,13 @@ class EditUserProfileImageViewCell : UICollectionViewCell, UIImagePickerControll
         addImage.center = chooseImageView.center
         chooseImageView.addSubview(addImage)
         
-        addConstraintsWithFormat(format: "V:|-15-[v0(70)]", views: userImageView)
-        addConstraintsWithFormat(format: "H:|-15-[v0(70)]-15-[v1]-15-[v2(45)]-15-|", views: userImageView, updateImageLabel, chooseImageView)
+        addConstraintsWithFormat(format: "V:|-10-[v0(50)]", views: userImageView)
+        addConstraintsWithFormat(format: "H:|-15-[v0(50)]-15-[v1]-15-[v2(35)]-15-|", views: userImageView, updateImageLabel, chooseImageView)
         
         addConstraintsWithFormat(format: "V:[v0]", views: updateImageLabel)
         addConstraint(NSLayoutConstraint(item: updateImageLabel, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
         
-        addConstraintsWithFormat(format: "V:[v0(45)]", views: chooseImageView)
+        addConstraintsWithFormat(format: "V:[v0(35)]", views: chooseImageView)
         addConstraint(NSLayoutConstraint(item: chooseImageView, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
         
         addConstraintsWithFormat(format: "V:[v0(1)]|", views: delimiterView)

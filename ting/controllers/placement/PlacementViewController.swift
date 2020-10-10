@@ -541,12 +541,12 @@ class PlacementHeaderViewCell : UICollectionViewCell {
         if let place = self.placement {
             if let waiter = place.waiter {
                 let alert = UIAlertController(title: waiter.name, message: "This is the waiter who will be serving you today. Enjoy !", preferredStyle: .alert)
-
-                let action = UIAlertAction(title: "OK", style: .default, handler: nil)
-                let imageView = UIImageView(frame: CGRect(x: ((self.frame.width - 100) / 2) - 50, y: 90, width: 100, height: 100))
+                
+                let imageView = UIImageView()
                 imageView.layer.cornerRadius = 4
                 imageView.layer.masksToBounds = true
                 imageView.contentMode = .scaleAspectFill
+                imageView.translatesAutoresizingMaskIntoConstraints = false
                 
                 imageView.kf.setImage(
                     with: URL(string: "\(URLs.hostEndPoint)\(waiter.image)")!,
@@ -559,10 +559,14 @@ class PlacementHeaderViewCell : UICollectionViewCell {
                 )
 
                 alert.view.addSubview(imageView)
+                alert.view.addConstraintsWithFormat(format: "V:|-90-[v0(100)]", views: imageView)
+                alert.view.addConstraintsWithFormat(format: "H:[v0(100)]", views: imageView)
+                alert.view.addConstraint(NSLayoutConstraint(item: imageView, attribute: .centerX, relatedBy: .equal, toItem: alert.view, attribute: .centerX, multiplier: 1, constant: 0))
+                
                 let height = NSLayoutConstraint(item: alert.view, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 250)
                 alert.view.addConstraint(height)
                 
-                alert.addAction(action)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
 
                 self.controller?.present(alert, animated: true, completion: nil)
             } else {
