@@ -442,7 +442,14 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
             completeBillButton.setLinearGradientBackgroundColorElse(colorOne: Colors.colorGoogleRedTwo, colorTwo: Colors.colorGoogleRedOne, frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 55))
             
             requestBillButton.addTarget(self, action: #selector(requestBill(sender:)), for: .touchUpInside)
-            completeBillButton.addTarget(self, action: #selector(completeBill(sender:)), for: .touchUpInside)
+            
+            if let bill = self.bill {
+                if bill.isComplete {
+                    completeBillButton.alpha = 0.6
+                } else {
+                    completeBillButton.addTarget(self, action: #selector(completeBill(sender:)), for: .touchUpInside)
+                }
+            }
             
             billButtons.addArrangedSubview(requestBillButton)
             billButtons.addArrangedSubview(completeBillButton)
@@ -691,6 +698,29 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
         
         page.actionHandler = { item in
             manager.displayActivityIndicator()
+            TingClient.getRequest(url: "\(URLs.placementBillRequest)?token=\(self.placement.token)") { (data) in
+                DispatchQueue.main.async {
+                    if let data = data {
+                        manager.dismissBulletin(animated: true)
+                        do {
+                            let bill = try JSONDecoder().decode(Bill.self, from: data)
+                            self.bill = bill
+                            self.getPlacementBill()
+                            Toast.makeToast(message: "Bill Requested Successfully !!!", duration: Toast.MID_LENGTH_DURATION, style: .success)
+                        } catch {
+                            self.showErrorMessage(message: error.localizedDescription)
+                            do {
+                                let response = try JSONDecoder().decode(ServerResponse.self, from: data)
+                                self.showErrorMessage(message: response.message)
+                            } catch {
+                                self.showErrorMessage(message: error.localizedDescription)
+                            }
+                        }
+                    } else {
+                        self.showErrorMessage(message: "Sorry, an error has occurred")
+                    }
+                }
+            }
         }
         
         page.alternativeHandler = { item in
@@ -729,6 +759,29 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
         
         page.actionHandler = { item in
             manager.displayActivityIndicator()
+            TingClient.getRequest(url: "\(URLs.placementBillComplete)?token=\(self.placement.token)") { (data) in
+                DispatchQueue.main.async {
+                    if let data = data {
+                        manager.dismissBulletin(animated: true)
+                        do {
+                            let bill = try JSONDecoder().decode(Bill.self, from: data)
+                            self.bill = bill
+                            self.getPlacementBill()
+                            Toast.makeToast(message: "Bill Completed Successfully !!!", duration: Toast.MID_LENGTH_DURATION, style: .success)
+                        } catch {
+                            self.showErrorMessage(message: error.localizedDescription)
+                            do {
+                                let response = try JSONDecoder().decode(ServerResponse.self, from: data)
+                                self.showErrorMessage(message: response.message)
+                            } catch {
+                                self.showErrorMessage(message: error.localizedDescription)
+                            }
+                        }
+                    } else {
+                        self.showErrorMessage(message: "Sorry, an error has occurred")
+                    }
+                }
+            }
         }
         
         page.alternativeHandler = { item in
