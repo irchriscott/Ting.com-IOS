@@ -9,7 +9,7 @@
 import UIKit
 import PubNub
 
-class PlacementViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class PlacementViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UITextViewDelegate {
     
     let headerId = "headerId"
     let footerId = "footerId"
@@ -250,6 +250,8 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
             let billController = storyboard.instantiateViewController(withIdentifier: "PlacementBill") as! PlacementBillViewController
             billController.controller = self
             self.present(billController, animated: true, completion: nil)
+        case 5:
+            self.sendRequestWaiter()
         default:
             break
         }
@@ -379,6 +381,94 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
         alert.addAction(action)
         alert.addAction(cancel)
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func sendRequestWaiter() {
+        if let placement = self.placement {
+            let alert = UIAlertController(title: "Request Waiter", message: nil, preferredStyle: .alert)
+
+            let widthConstraints = alert.view.constraints.filter({ return $0.firstAttribute == .width })
+            alert.view.removeConstraints(widthConstraints)
+            let newWidth = UIScreen.main.bounds.width * 0.90
+            let widthConstraint = NSLayoutConstraint(item: alert.view, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: newWidth)
+            alert.view.addConstraint(widthConstraint)
+                
+            let firstContainer = alert.view.subviews[0]
+            let constraint = firstContainer.constraints.filter({ return $0.firstAttribute == .width && $0.secondItem == nil })
+                firstContainer.removeConstraints(constraint)
+                alert.view.addConstraint(NSLayoutConstraint(item: firstContainer, attribute: .width, relatedBy: .equal, toItem: alert.view, attribute: .width, multiplier: 1.0, constant: 0))
+                
+            let innerBackground = firstContainer.subviews[0]
+            let innerConstraints = innerBackground.constraints.filter({ return $0.firstAttribute == .width && $0.secondItem == nil })
+            innerBackground.removeConstraints(innerConstraints)
+            firstContainer.addConstraint(NSLayoutConstraint(item: innerBackground, attribute: .width, relatedBy: .equal, toItem: firstContainer, attribute: .width, multiplier: 1.0, constant: 0))
+            
+            let height = NSLayoutConstraint(item: alert.view, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 230)
+            alert.view.addConstraint(height)
+                
+            let messageTextView = UITextView()
+            messageTextView.isEditable = true
+            messageTextView.text = "Enter Message"
+            messageTextView.textColor = Colors.colorLightGray
+            messageTextView.font = UIFont(name: "Poppins-Regular", size: 12)!
+            messageTextView.backgroundColor = Colors.colorWhite
+            messageTextView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 6, right: 10)
+            messageTextView.frame = CGRect(x: 16, y: 55, width: newWidth - 30, height: 120)
+            messageTextView.layer.cornerRadius = 4
+            messageTextView.layer.masksToBounds = true
+            messageTextView.delegate = self
+            messageTextView.returnKeyType = .done
+                
+            alert.view.addSubview(messageTextView)
+                
+            let action = UIAlertAction(title: "OK", style: .default) { _ in
+                
+                let message = messageTextView.text != "Enter Message" ? messageTextView.text! : ""
+                if message != "" && !message.isEmpty {
+                    let params: Parameters = ["token": placement.token, "message": message]
+                    let url = URLs.placementRequestWaiter
+                    TingClient.postRequest(url: url, params: params) { (data) in
+                        DispatchQueue.main.async {
+                            if let data = data {
+                                do {
+                                    let response = try JSONDecoder().decode(ServerResponse.self, from: data)
+                                    let style: Toast.Style = response.type == "success" ? .success : .error
+                                    Toast.makeToast(message: response.message, duration: Toast.MID_LENGTH_DURATION, style: style)
+                                } catch {
+                                    self.showErrorMessage(message: "An error has occurred. Sorry!")
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Toast.makeToast(message: "Message cannot be empty", duration: Toast.MID_LENGTH_DURATION, style: .error)
+                }
+            }
+                
+            let cancel = UIAlertAction(title: "CANCEL", style: .destructive) { (alertAction) in
+                alert.dismiss(animated: true, completion: nil)
+            }
+                
+            alert.addAction(action)
+            alert.addAction(cancel)
+                
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == Colors.colorLightGray {
+            textView.text = ""
+            textView.textColor = Colors.colorGray
+        }
+    }
+        
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = "Enter Message"
+            textView.textColor = Colors.colorLightGray
+        }
+        textView.resignFirstResponder()
     }
     
     @objc func doneEditing(){
