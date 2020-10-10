@@ -110,6 +110,7 @@ class RestaurantAboutController: UITableViewController {
         
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         self.navigationItem.title = "Restaurant About"
+        self.navigationItem.largeTitleDisplayMode = .never
         
         self.navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor : UIColor.white]
         self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white]

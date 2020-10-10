@@ -37,6 +37,7 @@ class EditUserCollectionViewController: UICollectionViewController, UICollection
         self.navigationController?.navigationBar.shadowImage = nil
         self.navigationItem.title = session!.username
         self.navigationController?.navigationBar.barStyle = .black
+        self.navigationItem.largeTitleDisplayMode = .never
         
         self.navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor : UIColor.white]
         self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white]

@@ -59,6 +59,7 @@ class TodayPromotionsViewController: UITableViewController {
         
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         self.navigationItem.title = "Today's Promotions"
+        self.navigationItem.largeTitleDisplayMode = .never
         
         self.navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor : UIColor.white]
         self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor : UIColor.white]
