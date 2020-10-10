@@ -353,11 +353,18 @@ class RestaurantMenuViewCell: UITableViewCell {
         menuClassView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: menuTypeView)
         
         if self.restaurantMenu?.type?.id != 2 {
-            menuClassView.addSubview(menuCategoryView)
+            
             menuClassView.addSubview(menuCuisineView)
-            menuClassView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]-8-[v2]", views: menuCategoryView, menuTypeView, menuCuisineView)
             menuClassView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: menuCuisineView)
-            menuClassView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: menuCategoryView)
+            
+            if UIDevice.bigDevices.contains(device) || UIDevice.ipadsDevices.contains(device) {
+                menuClassView.addSubview(menuCategoryView)
+                menuClassView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: menuCategoryView)
+                menuClassView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]-8-[v2]", views: menuCategoryView, menuTypeView, menuCuisineView)
+            } else {
+                menuClassView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]", views: menuTypeView, menuCuisineView)
+            }
+            
         } else { menuClassView.addConstraintsWithFormat(format: "H:|[v0]", views: menuTypeView) }
         
         restaurantMenuDataView.addSubview(restaurantMenuLikesView)

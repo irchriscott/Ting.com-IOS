@@ -172,10 +172,16 @@ class RestaurantFiltersViewController: UITableViewController, BEMCheckBoxDelegat
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        
+        var footerHeight: CGFloat = 40
+        
+        if UIDevice.largeNavbarDevices.contains(UIDevice.type) {
+            footerHeight = 60
+        }
 
         let footerView: UIView = {
             let view = UIView()
-            view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 60)
+            view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: footerHeight)
             view.backgroundColor = .white
             return view
         }()

@@ -79,7 +79,7 @@ public extension UIDevice {
     }
     
     static var largeNavbarDevices: [DeviceModel] {
-        return [.iPhoneX, .iPhoneXR, .iPhoneXS, .iPhoneXSMax]
+        return [.iPhoneX, .iPhoneXR, .iPhoneXS, .iPhoneXSMax, .unrecognized]
     }
     
     static var smallDevices: [DeviceModel] {
@@ -87,7 +87,7 @@ public extension UIDevice {
     }
     
     static var mediumDevices: [DeviceModel] {
-        return [.iPhone6, .iPhone6S, .iPhone7, .iPhone8, .iPhoneXS, .iPhoneX]
+        return [.iPhone6, .iPhone6S, .iPhone7, .iPhone8, .iPhoneXS, .iPhoneX, .unrecognized]
     }
     
     static var bigDevices: [DeviceModel] {

@@ -203,14 +203,20 @@ class MenuDishFoodViewCell: UITableViewCell {
         menuDescriptionView.addConstraintsWithFormat(format: "V:|[v0(14)]", views: menuDescriptionIconView)
         menuDescriptionView.addConstraintsWithFormat(format: "V:|[v0]", views: menuDescriptionTextView)
         
-        menuClassView.addSubview(menuGroupView)
+        
         menuClassView.addSubview(menuTypeView)
         menuClassView.addSubview(menuAvailabilityView)
         
-        menuClassView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]-8-[v2]", views: menuGroupView, menuTypeView, menuAvailabilityView)
-        menuClassView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: menuGroupView)
         menuClassView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: menuTypeView)
         menuClassView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: menuAvailabilityView)
+        
+        if UIDevice.bigDevices.contains(device) || UIDevice.ipadsDevices.contains(device) {
+            menuClassView.addSubview(menuGroupView)
+            menuClassView.addConstraintsWithFormat(format: "V:|[v0(26)]|", views: menuGroupView)
+            menuClassView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]-8-[v2]", views: menuGroupView, menuTypeView, menuAvailabilityView)
+        } else {
+            menuClassView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]", views: menuTypeView, menuAvailabilityView)
+        }
         
         menuAboutView.addSubview(menuNameView)
         menuAboutView.addSubview(menuRating)

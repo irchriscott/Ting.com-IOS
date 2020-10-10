@@ -19,6 +19,7 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
     var controller: PlacementViewController!
     
     let numberFormatter = NumberFormatter()
+    var hasLoaded: Bool = false
     
     var bill: Bill? {
         didSet {
@@ -69,6 +70,7 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
         TingClient.getRequest(url: url) { (data) in
             DispatchQueue.main.async {
                 if let data = data {
+                    self.hasLoaded = true
                     do {
                         let bill = try JSONDecoder().decode(Bill.self, from: data)
                         self.bill = bill
@@ -175,51 +177,65 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
             }
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.emptyCellId, for: indexPath)
+            
+            if self.hasLoaded {
+                let cellView: UIView = {
+                    let view = UIView()
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    return view
+                }()
+                    
+                let emptyImageView: UIImageView = {
+                    let view = UIImageView()
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    view.image = UIImage(named: "icon_spoon_100_gray")!
+                    view.contentMode = .scaleAspectFill
+                    view.clipsToBounds = true
+                    view.alpha = 0.2
+                    return view
+                }()
+                    
+                let emptyTextView: UILabel = {
+                    let view = UILabel()
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    view.text = "No Bill To Show"
+                    view.font = UIFont(name: "Poppins-SemiBold", size: 23)
+                    view.textColor = Colors.colorVeryLightGray
+                    view.textAlignment = .center
+                    return view
+                }()
+                    
+                let emptyTextRect = NSString(string: "No Bill To Show").boundingRect(with: CGSize(width: cell.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
+                    
+                cellView.addSubview(emptyImageView)
+                cellView.addSubview(emptyTextView)
+                    
+                cellView.addConstraintsWithFormat(format: "H:[v0(90)]", views: emptyImageView)
+                cellView.addConstraintsWithFormat(format: "H:|[v0]|", views: emptyTextView)
+                cellView.addConstraintsWithFormat(format: "V:|[v0(90)]-6-[v1(\(emptyTextRect.height))]|", views: emptyImageView, emptyTextView)
+                    
+                cellView.addConstraint(NSLayoutConstraint(item: cellView, attribute: .centerX, relatedBy: .equal, toItem: emptyImageView, attribute: .centerX, multiplier: 1, constant: 0))
+                cellView.addConstraint(NSLayoutConstraint(item: cellView, attribute: .centerX, relatedBy: .equal, toItem: emptyTextView, attribute: .centerX, multiplier: 1, constant: 0))
+                    
+                cell.addSubview(cellView)
+                cell.addConstraintsWithFormat(format: "H:[v0]", views: cellView)
+                cell.addConstraintsWithFormat(format: "V:|-30-[v0(\(90 + 12 + emptyTextRect.height))]-30-|", views: cellView)
+                    
+                cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerX, relatedBy: .equal, toItem: cellView, attribute: .centerX, multiplier: 1, constant: 0))
+                cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerY, relatedBy: .equal, toItem: cellView, attribute: .centerY, multiplier: 1, constant: 0))
+            } else {
+                let indicatorView: UIActivityIndicatorView = {
+                    let view = UIActivityIndicatorView(style: .gray)
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    return view
+                }()
                 
-            let cellView: UIView = {
-                let view = UIView()
-                view.translatesAutoresizingMaskIntoConstraints = false
-                return view
-            }()
-                
-            let emptyImageView: UIImageView = {
-                let view = UIImageView()
-                view.translatesAutoresizingMaskIntoConstraints = false
-                view.image = UIImage(named: "icon_spoon_100_gray")!
-                view.contentMode = .scaleAspectFill
-                view.clipsToBounds = true
-                view.alpha = 0.2
-                return view
-            }()
-                
-            let emptyTextView: UILabel = {
-                let view = UILabel()
-                view.translatesAutoresizingMaskIntoConstraints = false
-                view.text = "No Bill To Show"
-                view.font = UIFont(name: "Poppins-SemiBold", size: 23)
-                view.textColor = Colors.colorVeryLightGray
-                view.textAlignment = .center
-                return view
-            }()
-                
-            let emptyTextRect = NSString(string: "No Bill To Show").boundingRect(with: CGSize(width: cell.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-SemiBold", size: 23)!], context: nil)
-                
-            cellView.addSubview(emptyImageView)
-            cellView.addSubview(emptyTextView)
-                
-            cellView.addConstraintsWithFormat(format: "H:[v0(90)]", views: emptyImageView)
-            cellView.addConstraintsWithFormat(format: "H:|[v0]|", views: emptyTextView)
-            cellView.addConstraintsWithFormat(format: "V:|[v0(90)]-6-[v1(\(emptyTextRect.height))]|", views: emptyImageView, emptyTextView)
-                
-            cellView.addConstraint(NSLayoutConstraint(item: cellView, attribute: .centerX, relatedBy: .equal, toItem: emptyImageView, attribute: .centerX, multiplier: 1, constant: 0))
-            cellView.addConstraint(NSLayoutConstraint(item: cellView, attribute: .centerX, relatedBy: .equal, toItem: emptyTextView, attribute: .centerX, multiplier: 1, constant: 0))
-                
-            cell.addSubview(cellView)
-            cell.addConstraintsWithFormat(format: "H:[v0]", views: cellView)
-            cell.addConstraintsWithFormat(format: "V:|-30-[v0(\(90 + 12 + emptyTextRect.height))]-30-|", views: cellView)
-                
-            cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerX, relatedBy: .equal, toItem: cellView, attribute: .centerX, multiplier: 1, constant: 0))
-            cell.addConstraint(NSLayoutConstraint(item: cell, attribute: .centerY, relatedBy: .equal, toItem: cellView, attribute: .centerY, multiplier: 1, constant: 0))
+                indicatorView.startAnimating()
+                cell.addSubview(indicatorView)
+                cell.addConstraintsWithFormat(format: "V:|[v0]|", views: indicatorView)
+                cell.addConstraintsWithFormat(format: "H:|[v0]|", views: indicatorView)
+                cell.addConstraint(NSLayoutConstraint(item: indicatorView, attribute: .centerY, relatedBy: .equal, toItem: cell, attribute: .centerY, multiplier: 1, constant: 0))
+            }
                 
             return cell
         }
@@ -372,6 +388,55 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
                 totalText.text = "\(bill.currency) \(numberFormatter.string(from: NSNumber(value: bill.total))!)"
             }
             
+            let billButtons: UIStackView = {
+                let view = UIStackView()
+                view.translatesAutoresizingMaskIntoConstraints = false
+                view.axis = .horizontal
+                view.alignment = .top
+                view.distribution = .fillEqually
+                view.spacing = 8.0
+                return view
+            }()
+            
+            let requestBillButton: UIButton = {
+                let view = UIButton()
+                view.titleLabel?.text = "Request Bill".uppercased()
+                view.titleLabel?.font = UIFont(name: "Poppins-SemiBold", size: 16)!
+                view.titleLabel?.textColor = Colors.colorWhite
+                view.titleLabel?.textAlignment = .center
+                view.layer.masksToBounds = true
+                view.layer.cornerRadius = 4
+                return view
+            }()
+            
+            let completeBillButton: UIButton = {
+                let view = UIButton()
+                view.titleLabel?.text = "Complete".uppercased()
+                view.titleLabel?.font = UIFont(name: "Poppins-SemiBold", size: 16)!
+                view.titleLabel?.textColor = Colors.colorWhite
+                view.titleLabel?.textAlignment = .center
+                view.layer.masksToBounds = true
+                view.layer.cornerRadius = 4
+                return view
+            }()
+            
+            requestBillButton.setTitle("Request Bill".uppercased(), for: .normal)
+            requestBillButton.setTitleColor(Colors.colorWhite, for: .normal)
+            requestBillButton.titleLabel?.font = UIFont(name: "Poppins-SemiBold", size: 16)!
+            
+            completeBillButton.setTitle("Complete".uppercased(), for: .normal)
+            completeBillButton.setTitleColor(Colors.colorWhite, for: .normal)
+            completeBillButton.titleLabel?.font = UIFont(name: "Poppins-SemiBold", size: 16)!
+            
+            requestBillButton.heightAnchor.constraint(equalToConstant: 55).isActive = true
+            completeBillButton.heightAnchor.constraint(equalToConstant: 55).isActive = true
+            
+            requestBillButton.setLinearGradientBackgroundColorElse(colorOne: Colors.colorPrimary, colorTwo: Colors.colorPrimaryDark, frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 55))
+            completeBillButton.setLinearGradientBackgroundColorElse(colorOne: Colors.colorGoogleRedTwo, colorTwo: Colors.colorGoogleRedOne, frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 55))
+            
+            billButtons.addArrangedSubview(requestBillButton)
+            billButtons.addArrangedSubview(completeBillButton)
+            
             cell.addSubview(amountTitle)
             cell.addSubview(amountText)
             
@@ -388,6 +453,23 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
             
             cell.addSubview(totalTitle)
             cell.addSubview(totalText)
+            
+            cell.addSubview(billButtons)
+            
+            cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: amountTitle)
+            cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: amountText)
+            cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: discountTitle)
+            cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: discountText)
+            cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: extraTotalTitle)
+            cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: extraTotalText)
+            cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: tipTitle)
+            cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: tipText)
+            cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: separator)
+            cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: totalTitle)
+            cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: totalText)
+            cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: billButtons)
+            
+            cell.addConstraintsWithFormat(format: "V:|[v0(15)]-[v1(30)]-6-[v2(15)]-[v3(30)]-6-[v4(15)]-[v5(30)]-6-[v6(15)]-[v7(30)]-16-[v8(0.5)]-16-[v9(15)]-[v10(50)]-8-[v11(55)]-12-|", views: amountTitle, amountText, discountTitle, discountText, extraTotalTitle, extraTotalText, tipTitle, tipText, separator, totalTitle, totalText, billButtons)
             
             return cell
         }
@@ -416,7 +498,7 @@ class PlacementBillViewController: UICollectionViewController, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        return self.bill != nil ? CGSize(width: self.view.frame.width, height: 300) : .zero
+        return self.bill != nil ? CGSize(width: self.view.frame.width, height: 406) : .zero
     }
     
     func numberOfColumns(in: SwiftDataTable) -> Int {

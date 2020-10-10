@@ -543,7 +543,7 @@ class PlacementHeaderViewCell : UICollectionViewCell {
                 let alert = UIAlertController(title: waiter.name, message: "This is the waiter who will be serving you today. Enjoy !", preferredStyle: .alert)
 
                 let action = UIAlertAction(title: "OK", style: .default, handler: nil)
-                let imageView = UIImageView(frame: CGRect(x: (alert.view.frame.width / 2) - 125, y: 90, width: 100, height: 100))
+                let imageView = UIImageView(frame: CGRect(x: ((self.frame.width - 100) / 2) - 50, y: 90, width: 100, height: 100))
                 imageView.layer.cornerRadius = 4
                 imageView.layer.masksToBounds = true
                 imageView.contentMode = .scaleAspectFill

@@ -683,7 +683,12 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                         }
                     }
                     
-                    let sheetController = SheetViewController(controller: filtersController, sizes: [.fixed(CGFloat((50 * selectedFilters.count) + 160))])
+                    var heightPlus: CGFloat = 140
+                    if UIDevice.largeNavbarDevices.contains(UIDevice.type) {
+                        heightPlus = 160
+                    }
+                    
+                    let sheetController = SheetViewController(controller: filtersController, sizes: [.fixed(CGFloat(CGFloat((50 * selectedFilters.count)) + heightPlus))])
                     sheetController.blurBottomSafeArea = false
                     sheetController.adjustForBottomSafeArea = true
                     sheetController.topCornersRadius = 8
