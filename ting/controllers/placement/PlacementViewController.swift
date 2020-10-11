@@ -8,6 +8,7 @@
 
 import UIKit
 import PubNub
+import BLTNBoard
 
 class PlacementViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UITextViewDelegate {
     
@@ -17,7 +18,13 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
     
     var placement: Placement? {
         didSet {
-            if let _ = self.placement {
+            if let placement = self.placement {
+                if placement.isDone {
+                    self.showAlertMessage(image: "icon_important_75_white", message: "Placement Terminated") {
+                        PlacementProvider().placeOut()
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }
+                }
                 self.collectionView.reloadSections(IndexSet(integer: 0))
             }
         }
@@ -74,15 +81,53 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
                 let response = try JSONDecoder().decode(SocketResponseMessage.self, from: message.payload.jsonStringify!.data(using: .utf8)!)
                 self.spinner.hide()
                 switch response.type {
-                
                 case Socket.SOCKET_RESPONSE_ERROR:
                     if let m = response.message {
                         self.showErrorMessage(message: m, title: "Sorry")
                     } else { self.showErrorMessage(message: "An error has occurred. Try again", title: "Sorry") }
+                case Socket.SOCKET_RESPONSE_TABLE_WAITER:
+                    break
                 case Socket.SOCKET_RESPONSE_PLACEMENT_DONE:
                     PlacementProvider().placeOut()
-                    self.showAlertMessage(image: "icon_important_75_white", message: "Placement is Done") {
+                    self.showAlertMessage(image: "icon_important_75_white", message: "Placement Terminated") {
+                        PlacementProvider().placeOut()
                         self.navigationController?.popToRootViewController(animated: true)
+                    }
+                case Socket.SOCKET_RESPONSE_RESTO_BILL_PAID:
+                    let page = BLTNPageItem(title: "Bill Marked As Paid")
+                    page.image = UIImage(named: "icon_info_75_primary")
+
+                    page.descriptionText = "You can now terminate your placement. Bill Paid"
+                    page.actionButtonTitle = "OK"
+                    page.alternativeButtonTitle = "Cancel"
+                    
+                    page.appearance.actionButtonColor = Colors.colorPrimary
+                    page.appearance.alternativeButtonTitleColor = Colors.colorPrimary
+                    page.appearance.actionButtonTitleColor = .white
+                    page.appearance.actionButtonCornerRadius = 4
+                    page.appearance.descriptionFontSize = 14
+                    page.appearance.descriptionTextColor = Colors.colorGray
+                    page.appearance.descriptionFontDescriptor = UIFontDescriptor(name: "Poppins-Regular", size: 14)
+                    page.appearance.titleFontDescriptor = UIFontDescriptor(name: "Poppins-SemiBold", size: 20)
+                    page.appearance.titleTextColor = Colors.colorGray
+                    
+                    page.isDismissable = true
+                    page.requiresCloseButton = false
+                    
+                    page.actionButton?.titleLabel?.font = UIFont(name: "Poppins-Medium", size: 15)
+                    page.alternativeButton?.titleLabel?.font = UIFont(name: "Poppins-Medium", size: 15)
+                    
+                    let manager = BLTNItemManager(rootItem: page)
+                    manager.backgroundViewStyle = .dimmed
+                    manager.showBulletin(in: UIApplication.shared)
+                    manager.cardCornerRadius = 12
+                    
+                    page.actionHandler = { item in
+                        manager.dismissBulletin(animated: true)
+                    }
+                    
+                    page.alternativeHandler = { item in
+                        manager.dismissBulletin(animated: true)
                     }
                 default:
                     self.showErrorMessage(message: "No Response. Try again", title: "Humm ?")
@@ -97,8 +142,8 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
             switch status {
             case .success(let connection):
                 if connection == .connected {}
-            case .failure(let error):
-                self.showErrorMessage(message: error.localizedDescription)
+            case .failure(let _):
+                break
             }
         }
         
@@ -227,12 +272,14 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         switch kind {
         case UICollectionView.elementKindSectionHeader:
-            let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.headerId, for: indexPath) as! PlacementHeaderViewCell
-            cell.placement = self.placement
-            cell.controller = self
-            return cell
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.headerId, for: indexPath) as! PlacementHeaderViewCell
+            header.placement = self.placement
+            header.controller = self
+            return header
         default:
-            return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.footerId, for: indexPath) as! PlacementFooterViewCell
+            let footer =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.footerId, for: indexPath) as! PlacementFooterViewCell
+            footer.endPlacementButton.addTarget(self, action: #selector(endPlacement(sender:)), for: .touchUpInside)
+            return footer
         }
     }
     
@@ -469,6 +516,66 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
             textView.textColor = Colors.colorLightGray
         }
         textView.resignFirstResponder()
+    }
+    
+    @IBAction func endPlacement(sender: UIButton) {
+        let page = BLTNPageItem(title: "End Placement")
+        page.image = UIImage(named: "icon_important_100_orange")
+
+        page.descriptionText = "Do you really want to end this placement ?"
+        page.actionButtonTitle = "Yes"
+        page.alternativeButtonTitle = "Cancel"
+        
+        page.appearance.actionButtonColor = Colors.colorPrimary
+        page.appearance.alternativeButtonTitleColor = Colors.colorPrimary
+        page.appearance.actionButtonTitleColor = .white
+        page.appearance.actionButtonCornerRadius = 4
+        page.appearance.descriptionFontSize = 14
+        page.appearance.descriptionTextColor = Colors.colorGray
+        page.appearance.descriptionFontDescriptor = UIFontDescriptor(name: "Poppins-Regular", size: 14)
+        page.appearance.titleFontDescriptor = UIFontDescriptor(name: "Poppins-SemiBold", size: 20)
+        page.appearance.titleTextColor = Colors.colorGray
+        
+        page.isDismissable = false
+        page.requiresCloseButton = false
+        
+        page.actionButton?.titleLabel?.font = UIFont(name: "Poppins-Medium", size: 15)
+        page.alternativeButton?.titleLabel?.font = UIFont(name: "Poppins-Medium", size: 15)
+        
+        let manager = BLTNItemManager(rootItem: page)
+        manager.backgroundViewStyle = .dimmed
+        manager.showBulletin(in: UIApplication.shared)
+        manager.cardCornerRadius = 12
+        
+        page.actionHandler = { item in
+            manager.displayActivityIndicator()
+            TingClient.getRequest(url: "\(URLs.placementTerminate)?token=\(self.placement!.token)") { (data) in
+                DispatchQueue.main.async {
+                    if let data = data {
+                        manager.dismissBulletin(animated: true)
+                        do {
+                            let response = try JSONDecoder().decode(ServerResponse.self, from: data)
+                            if response.type == "success" {
+                                self.showAlertMessage(image: "icon_important_75_white", message: "Placement Terminated") {
+                                    PlacementProvider().placeOut()
+                                    self.navigationController?.popToRootViewController(animated: true)
+                                }
+                            } else {
+                                self.showErrorMessage(message: response.message)
+                            }
+                        } catch {
+                            self.showErrorMessage(message: error.localizedDescription)
+                        }
+                    } else {
+                        self.showErrorMessage(message: "Sorry, an error has occurred")
+                    }
+                }
+            }
+        }
+        
+        page.alternativeHandler = { item in
+            manager.dismissBulletin(animated: true)
+        }
     }
     
     @objc func doneEditing(){

@@ -191,10 +191,10 @@ class EditUserProfileImageViewCell : UICollectionViewCell, UIImagePickerControll
     
     @objc func openImageGalery(getsureRecognizer: UITapGestureRecognizer){
         let barButtonAppearance = UIBarButtonItem.appearance()
-        barButtonAppearance.setTitleTextAttributes([.foregroundColor : Colors.colorPrimary], for: .normal)
+        barButtonAppearance.setTitleTextAttributes([.foregroundColor : UIColor.systemBlue], for: .normal)
         imagePicker.navigationBar.backIndicatorImage = UIImage(named: "icon_unwind_25_primary")
         imagePicker.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "icon_unwind_25_primary")
-        imagePicker.navigationBar.tintColor = Colors.colorPrimary
+        imagePicker.navigationBar.tintColor = .systemBlue
         editUserController?.present(imagePicker, animated: true, completion: nil)
     }
     

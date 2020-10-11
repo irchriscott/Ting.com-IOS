@@ -24,8 +24,8 @@ class ResetPasswordViewController: UIViewController {
         let view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.text = "Cancel".uppercased()
-        view.textColor = Colors.colorPrimary
-        view.font = UIFont(name: "Poppins-Regular", size: 16)!
+        view.textColor = .systemBlue
+        view.font = UIFont(name: "Poppins-Light", size: 16)!
         view.isUserInteractionEnabled = true
         return view
     }()
