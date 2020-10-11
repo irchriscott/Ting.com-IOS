@@ -142,7 +142,7 @@ class TableScannerViewController: UIViewController, QRScannerViewDelegate, CLLoc
             switch status {
             case .success(let connection):
                 if connection == .connected {}
-            case .failure(let _):
+            case .failure(_):
                 break
             }
         }

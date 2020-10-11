@@ -13,6 +13,7 @@ struct SocketResponseMessage : Codable {
     var type: String
     var sender: SocketUser?
     var receiver: SocketUser?
+    var waiter: SocketUser?
     var status: Int
     var message: String?
     let args: [String: String]?

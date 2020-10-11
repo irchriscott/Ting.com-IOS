@@ -86,7 +86,38 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
                         self.showErrorMessage(message: m, title: "Sorry")
                     } else { self.showErrorMessage(message: "An error has occurred. Try again", title: "Sorry") }
                 case Socket.SOCKET_RESPONSE_TABLE_WAITER:
-                    break
+                    self.getPlacement()
+                    if let waiter = response.waiter {
+                        let alert = UIAlertController(title: waiter.name, message: "This is the waiter who will be serving you today. Enjoy !", preferredStyle: .alert)
+                        
+                        let imageView = UIImageView()
+                        imageView.layer.cornerRadius = 4
+                        imageView.layer.masksToBounds = true
+                        imageView.contentMode = .scaleAspectFill
+                        imageView.translatesAutoresizingMaskIntoConstraints = false
+                        
+                        imageView.kf.setImage(
+                            with: URL(string: waiter.image!)!,
+                            placeholder: UIImage(named: "default_user"),
+                            options: [
+                                .scaleFactor(UIScreen.main.scale),
+                                .transition(.fade(1)),
+                                .cacheOriginalImage
+                            ]
+                        )
+
+                        alert.view.addSubview(imageView)
+                        alert.view.addConstraintsWithFormat(format: "V:|-90-[v0(100)]", views: imageView)
+                        alert.view.addConstraintsWithFormat(format: "H:[v0(100)]", views: imageView)
+                        alert.view.addConstraint(NSLayoutConstraint(item: imageView, attribute: .centerX, relatedBy: .equal, toItem: alert.view, attribute: .centerX, multiplier: 1, constant: 0))
+                        
+                        let height = NSLayoutConstraint(item: alert.view, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 250)
+                        alert.view.addConstraint(height)
+                        
+                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+
+                        self.present(alert, animated: true, completion: nil)
+                    }
                 case Socket.SOCKET_RESPONSE_PLACEMENT_DONE:
                     PlacementProvider().placeOut()
                     self.showAlertMessage(image: "icon_important_75_white", message: "Placement Terminated") {
@@ -142,7 +173,7 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
             switch status {
             case .success(let connection):
                 if connection == .connected {}
-            case .failure(let _):
+            case .failure(_):
                 break
             }
         }
@@ -737,6 +768,60 @@ class PlacementHeaderViewCell : UICollectionViewCell {
     @objc private func requestWaiter() {
         if let place = self.placement {
             if let waiter = place.waiter {
+                
+                let page = BLTNPageItem(title: waiter.name)
+                
+                if let data = try? Data(contentsOf: URL(string: "\(URLs.hostEndPoint)\(waiter.image)")!){
+                    if let image = UIImage(data: data){
+                        DispatchQueue.main.async {
+                            page.image = image
+                        }
+                    }
+                }
+                
+                page.imageView?.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(waiter.image)")!,
+                    placeholder: UIImage(named: "default_user"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
+
+                page.descriptionText = "This is the waiter who will be serving you today. Enjoy !"
+                page.actionButtonTitle = "OK"
+                page.alternativeButtonTitle = "Cancel"
+                
+                page.appearance.actionButtonColor = Colors.colorPrimary
+                page.appearance.alternativeButtonTitleColor = Colors.colorPrimary
+                page.appearance.actionButtonTitleColor = .white
+                page.appearance.actionButtonCornerRadius = 4
+                page.appearance.descriptionFontSize = 14
+                page.appearance.descriptionTextColor = Colors.colorGray
+                page.appearance.descriptionFontDescriptor = UIFontDescriptor(name: "Poppins-Regular", size: 14)
+                page.appearance.titleFontDescriptor = UIFontDescriptor(name: "Poppins-SemiBold", size: 20)
+                page.appearance.titleTextColor = Colors.colorGray
+                
+                page.isDismissable = true
+                page.requiresCloseButton = false
+                
+                page.actionButton?.titleLabel?.font = UIFont(name: "Poppins-Medium", size: 15)
+                page.alternativeButton?.titleLabel?.font = UIFont(name: "Poppins-Medium", size: 15)
+                
+                let manager = BLTNItemManager(rootItem: page)
+                manager.backgroundViewStyle = .dimmed
+                //manager.showBulletin(in: UIApplication.shared)
+                manager.cardCornerRadius = 12
+                
+                page.actionHandler = { item in
+                    manager.dismissBulletin(animated: true)
+                }
+                
+                page.alternativeHandler = { item in
+                    manager.dismissBulletin(animated: true)
+                }
+                
                 let alert = UIAlertController(title: waiter.name, message: "This is the waiter who will be serving you today. Enjoy !", preferredStyle: .alert)
                 
                 let imageView = UIImageView()
