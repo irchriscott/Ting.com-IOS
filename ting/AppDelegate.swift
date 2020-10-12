@@ -71,6 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        UIApplication.shared.applicationIconBadgeNumber += 1
         if let _ = response.notification.request.content.userInfo["data"] as? String {
             // Navigate to a controller wuth data
             //let homeVC = window?.rootViewController?.children[0]
@@ -148,6 +149,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
                     content.categoryIdentifier = "Ting.com"
                     content.threadIdentifier = data["identifier"] as? String ?? "Ting.com"
                     content.summaryArgument = data["sender"] as? String ?? "Ting.com"
+                    content.summaryArgumentCount = 1
+                    
+                    UIApplication.shared.applicationIconBadgeNumber += 1
                     
                     if data.contains(where: { (key, value) -> Bool in
                         return key == "image"
