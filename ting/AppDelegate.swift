@@ -145,7 +145,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
                     } else { content.body = body! }
                     content.sound = UNNotificationSound.default
                     content.badge = 1
-                    content.categoryIdentifier = data["navigate"] as? String ?? "Ting.com"
+                    content.categoryIdentifier = data["identifier"] as? String ?? "Ting.com"
                     
                     if data.contains(where: { (key, value) -> Bool in
                         return key == "image"
@@ -161,7 +161,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
                     }
                     
                     let trigger = UNTimeIntervalNotificationTrigger.init(timeInterval: 2, repeats: false)
-                    let request = UNNotificationRequest.init(identifier: data["navigate"] as? String ?? "Ting.com", content: content, trigger: trigger)
+                    let request = UNNotificationRequest.init(identifier: data["identifier"] as? String ?? "Ting.com", content: content, trigger: trigger)
 
                     let center = UNUserNotificationCenter.current()
                     center.delegate = self

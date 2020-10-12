@@ -278,7 +278,7 @@ class TableScannerViewController: UIViewController, QRScannerViewDelegate, CLLoc
     }
     
     func qrScannerView(_ qrScannerView: QRScannerView, didFailure error: QRScannerError) {
-        self.showErrorMessage(message: error.localizedDescription)
+        //self.showErrorMessage(message: error.localizedDescription)
     }
 
     func qrScannerView(_ qrScannerView: QRScannerView, didSuccess code: String) {
