@@ -78,5 +78,7 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This will allow you to record a video</string>
 </dict>
 </plist>

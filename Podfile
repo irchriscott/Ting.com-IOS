@@ -28,4 +28,6 @@ target 'ting' do
     pod 'PusherSwift', '= 7.2.0'
     pod 'SwiftDataTables'
     pod 'BulletinBoard'
+    pod 'CameraKit-iOS'
+    pod 'YPImagePicker'
 end

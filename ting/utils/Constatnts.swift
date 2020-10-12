@@ -108,6 +108,14 @@ struct URLs {
     static let placementRequestWaiter       = "\(endPoint)usr/po/placement/request/send/"
     static let placementTerminate           = "\(endPoint)usr/po/placement/terminate/"
     
+    //MOMENT
+    static let momentsSave                  = "\(endPoint)usr/m/moments/save/"
+
+    //SEARCH
+    static let liveSearchResults            = "\(endPoint)usr/g/search/live/"
+    static let menusSearchResults           = "\(endPoint)usr/g/search/menus/"
+    static let restaurantSearchResults      = "\(endPoint)usr/g/search/restaurants/"
+    
 }
 
 struct StaticData {

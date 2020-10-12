@@ -2,6 +2,7 @@ ${PODS_ROOT}/Target Support Files/Pods-ting/Pods-ting-frameworks.sh
 ${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework
 ${BUILT_PRODUCTS_DIR}/BEMCheckBox/BEMCheckBox.framework
 ${BUILT_PRODUCTS_DIR}/BulletinBoard/BLTNBoard.framework
+${BUILT_PRODUCTS_DIR}/CameraKit-iOS/CameraKit_iOS.framework
 ${BUILT_PRODUCTS_DIR}/Charts/Charts.framework
 ${BUILT_PRODUCTS_DIR}/CircularRevealKit/CircularRevealKit.framework
 ${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework
@@ -16,6 +17,7 @@ ${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework
 ${BUILT_PRODUCTS_DIR}/LightweightObservable/LightweightObservable.framework
 ${BUILT_PRODUCTS_DIR}/LoadingShimmer/LoadingShimmer.framework
 ${BUILT_PRODUCTS_DIR}/MercariQRScanner/MercariQRScanner.framework
+${BUILT_PRODUCTS_DIR}/PryntTrimmerView/PryntTrimmerView.framework
 ${BUILT_PRODUCTS_DIR}/PubNubSwift/PubNub.framework
 ${BUILT_PRODUCTS_DIR}/PushNotifications/PushNotifications.framework
 ${BUILT_PRODUCTS_DIR}/PusherSwift/PusherSwift.framework
@@ -24,8 +26,10 @@ ${BUILT_PRODUCTS_DIR}/ScalingCarousel/ScalingCarousel.framework
 ${BUILT_PRODUCTS_DIR}/ShimmerSwift/ShimmerSwift.framework
 ${BUILT_PRODUCTS_DIR}/SimpleCheckbox/SimpleCheckbox.framework
 ${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework
+${BUILT_PRODUCTS_DIR}/SteviaLayout/Stevia.framework
 ${BUILT_PRODUCTS_DIR}/SwiftDataTables/SwiftDataTables.framework
 ${BUILT_PRODUCTS_DIR}/ToosieSlide/ToosieSlide.framework
 ${BUILT_PRODUCTS_DIR}/ViewPager-Swift/ViewPager_Swift.framework
 ${BUILT_PRODUCTS_DIR}/Windless/Windless.framework
 ${BUILT_PRODUCTS_DIR}/XLPagerTabStrip/XLPagerTabStrip.framework
+${BUILT_PRODUCTS_DIR}/YPImagePicker/YPImagePicker.framework

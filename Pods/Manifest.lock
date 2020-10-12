@@ -6,6 +6,7 @@ PODS:
   - AppAuth/ExternalUserAgent (1.3.0)
   - BEMCheckBox (1.4.1)
   - BulletinBoard (4.1.2)
+  - CameraKit-iOS (1.2.1)
   - Charts (3.4.0):
     - Charts/Core (= 3.4.0)
   - Charts/Core (3.4.0)
@@ -42,6 +43,7 @@ PODS:
   - LightweightObservable (1.0.3)
   - LoadingShimmer (1.0.3)
   - MercariQRScanner (1.6)
+  - PryntTrimmerView (4.0.0)
   - PubNubSwift (3.0.1)
   - PusherSwift (7.2.0):
     - CryptoSwift (~> 0.9)
@@ -53,15 +55,20 @@ PODS:
   - ShimmerSwift (2.1.1)
   - SimpleCheckbox (2.1.0)
   - Starscream (3.0.6)
+  - SteviaLayout (4.7.3)
   - SwiftDataTables (0.8.1)
   - ToosieSlide (1.1.1)
   - ViewPager-Swift (2.0.1)
   - Windless (0.1.5)
   - XLPagerTabStrip (9.0.0)
+  - YPImagePicker (4.3.1):
+    - PryntTrimmerView (~> 4.0.0)
+    - SteviaLayout (~> 4.7.3)
 
 DEPENDENCIES:
   - BEMCheckBox
   - BulletinBoard
+  - CameraKit-iOS
   - Charts
   - CircularRevealKit
   - FaveButton
@@ -87,12 +94,14 @@ DEPENDENCIES:
   - ViewPager-Swift
   - Windless
   - XLPagerTabStrip
+  - YPImagePicker
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AppAuth
     - BEMCheckBox
     - BulletinBoard
+    - CameraKit-iOS
     - Charts
     - CircularRevealKit
     - CryptoSwift
@@ -109,6 +118,7 @@ SPEC REPOS:
     - LightweightObservable
     - LoadingShimmer
     - MercariQRScanner
+    - PryntTrimmerView
     - PubNubSwift
     - PusherSwift
     - PushNotifications
@@ -117,11 +127,13 @@ SPEC REPOS:
     - ShimmerSwift
     - SimpleCheckbox
     - Starscream
+    - SteviaLayout
     - SwiftDataTables
     - ToosieSlide
     - ViewPager-Swift
     - Windless
     - XLPagerTabStrip
+    - YPImagePicker
 
 EXTERNAL SOURCES:
   ImageViewer:
@@ -136,6 +148,7 @@ SPEC CHECKSUMS:
   AppAuth: 73574f3013a1e65b9601a3ddc8b3158cce68c09d
   BEMCheckBox: 5ba6e37ade3d3657b36caecc35c8b75c6c2b1a4e
   BulletinBoard: 1c0cb191b6c6245d08f51bd2445f1e36414ec0ed
+  CameraKit-iOS: 7a8aeb4b6ac93c59088ada934efb6010ed2394c1
   Charts: 74c9f256eaf0460c0c416522d1cf8c634ea6b286
   CircularRevealKit: 680ac8c2b67e198f8fea0561abd2acf8ca7c932c
   CryptoSwift: 769f58a9e89f64e8796c2e59ce5f002dc81a2438
@@ -153,6 +166,7 @@ SPEC CHECKSUMS:
   LightweightObservable: 8687e8e1e2940ae2f64d7f71fe78c036d89c966f
   LoadingShimmer: dd681218498ec9648f572b845a7299b9c62e8e30
   MercariQRScanner: e1ee83878c2b4606661afa72d54af82bb6e355aa
+  PryntTrimmerView: 67e67573ffd4c073f1308effa66aefd0cfa667a0
   PubNubSwift: db8d3a556ecd546d7cbf9cb0df2b79dafb67603c
   PusherSwift: a5369a01e8a9106b4897e9186265af1426726062
   PushNotifications: 6e3d148e5e129af9d4a9279b288c934f9a7f9066
@@ -161,12 +175,14 @@ SPEC CHECKSUMS:
   ShimmerSwift: f7ed2daf9c246de8299dfd9e12c6ab465cba9842
   SimpleCheckbox: ddcd433ab8c3a8f57300bebda13151a8f302c7f9
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
+  SteviaLayout: c2ecdcff57d44e38fd2f65e54ad52aeae28ca0c4
   SwiftDataTables: 9e5f2ad7e7430c8008a31e66a0237ed29bf6fca8
   ToosieSlide: b410e89e0e1c00aecddeecebd1b4a8ed66385cac
   ViewPager-Swift: 7d83f5d4888a0fa808c08c8405ba84e603a2eb58
   Windless: c6b7d63ac3a0c7e6b241e316650d4605abf71894
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
+  YPImagePicker: 08bbb809ed62bf4149fc015c97249eb4b9463ff9
 
-PODFILE CHECKSUM: 9656b96e33a31cc77236cdb4544f2ca02a1c7233
+PODFILE CHECKSUM: 08db08d387fb1b259235df3405d2d3c93773d60a
 
 COCOAPODS: 1.9.3
