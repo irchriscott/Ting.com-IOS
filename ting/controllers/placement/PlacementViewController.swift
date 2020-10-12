@@ -9,6 +9,8 @@
 import UIKit
 import PubNub
 import BLTNBoard
+import YPImagePicker
+import AVKit
 
 class PlacementViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UITextViewDelegate {
     
@@ -310,6 +312,7 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
         default:
             let footer =  collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.footerId, for: indexPath) as! PlacementFooterViewCell
             footer.endPlacementButton.addTarget(self, action: #selector(endPlacement(sender:)), for: .touchUpInside)
+            footer.captureMomentButton.addTarget(self, action: #selector(captureMoment(sender:)), for: .touchUpInside)
             return footer
         }
     }
@@ -607,6 +610,100 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
         page.alternativeHandler = { item in
             manager.dismissBulletin(animated: true)
         }
+    }
+    
+    @IBAction func captureMoment(sender: UIButton) {
+        var config = YPImagePickerConfiguration()
+        config.isScrollToChangeModesEnabled = true
+        config.onlySquareImagesFromCamera = true
+        config.usesFrontCamera = false
+        config.showsPhotoFilters = true
+        config.showsVideoTrimmer = true
+        config.shouldSaveNewPicturesToAlbum = true
+        config.albumName = "Ting.com"
+        config.startOnScreen = YPPickerScreen.photo
+        config.screens = [.library, .photo, .video]
+        config.showsCrop = .none
+        config.targetImageSize = YPImageSize.original
+        config.overlayView = UIView()
+        config.hidesStatusBar = true
+        config.hidesBottomBar = false
+        config.hidesCancelButton = false
+        config.preferredStatusBarStyle = UIStatusBarStyle.default
+        
+        config.maxCameraZoomFactor = 1.0
+        
+        config.fonts.pickerTitleFont = UIFont(name: "Poppins-SemiBold", size: 17)!
+        config.fonts.libaryWarningFont = UIFont(name: "Poppins-Regular", size: 14)!
+        config.fonts.durationFont = UIFont(name: "Poppins-Light", size: 12)!
+        config.fonts.multipleSelectionIndicatorFont = UIFont(name: "Poppins-Regular", size: 12)!
+        config.fonts.albumCellTitleFont = UIFont(name: "Poppins-Regular", size: 16)!
+        config.fonts.albumCellNumberOfItemsFont = UIFont(name: "Poppins-Regular", size: 12)!
+        config.fonts.menuItemFont = UIFont(name: "Poppins-SemiBold", size: 17)!
+        config.fonts.filterNameFont = UIFont(name: "Poppins-Light", size: 11)!
+        config.fonts.filterSelectionSelectedFont = UIFont(name: "Poppins-SemiBold", size: 11)!
+        
+        config.fonts.filterSelectionUnSelectedFont = UIFont(name: "Poppins-Light", size: 11)!
+        config.fonts.cameraTimeElapsedFont = UIFont(name: "Poppins-Medium", size: 13)!
+        config.fonts.navigationBarTitleFont = UIFont(name: "Poppins-SemiBold", size: 16)!
+        config.fonts.rightBarButtonFont = UIFont(name: "Poppins-Light", size: 16)!
+        config.fonts.leftBarButtonFont = UIFont(name: "Poppins-Light", size: 16)!
+        
+        config.library.options = nil
+        config.library.onlySquare = false
+        config.library.isSquareByDefault = true
+        config.library.minWidthForItem = nil
+        config.library.mediaType = YPlibraryMediaType.photoAndVideo
+        config.library.defaultMultipleSelection = false
+        config.library.maxNumberOfItems = 1
+        config.library.minNumberOfItems = 1
+        config.library.numberOfItemsInRow = 4
+        config.library.spacingBetweenItems = 1.0
+        config.library.skipSelectionsGallery = false
+        config.library.preselectedItems = nil
+        
+        config.video.compression = AVAssetExportPresetHighestQuality
+        config.video.fileType = .mov
+        config.video.recordingTimeLimit = 60.0
+        config.video.libraryTimeLimit = 60.0
+        config.video.minimumTimeLimit = 3.0
+        config.video.trimmerMaxDuration = 60.0
+        config.video.trimmerMinDuration = 3.0
+        
+        config.wordings.libraryTitle = "Gallery"
+        config.wordings.cameraTitle = "Camera"
+        config.wordings.next = "OK"
+        config.wordings.cancel = "CANCEL"
+        
+        config.icons.flashOnIcon = UIImage(named: "icon_flash_on_25_white")!
+        config.icons.flashOffIcon = UIImage(named: "icon_flash_off_25_white")!
+        config.icons.flashAutoIcon = UIImage(named: "icon_flash_auto_25_white")!
+        config.icons.loopIcon = UIImage(named: "icon_loop_25_white")!
+        
+        config.gallery.hidesRemoveButton = false
+        config.colors.tintColor = Colors.colorPrimary
+        
+        YPImagePickerConfiguration.shared = config
+        let preferredContentSize = CGSize(width: 500, height: 600);
+        YPImagePickerConfiguration.widthOniPad = preferredContentSize.width
+        
+        let picker = YPImagePicker(configuration: config)
+        picker.didFinishPicking { [unowned picker] items, _ in
+            if let photo = items.singlePhoto {
+                print(photo.fromCamera)
+                print(photo.image)
+                print(photo.originalImage)
+            }
+            if let video = items.singleVideo {
+                print(video.fromCamera)
+                print(video.thumbnail)
+                print(video.url)
+            }
+            picker.dismiss(animated: true, completion: nil)
+        }
+        UIBarButtonItem.appearance().setTitleTextAttributes([.foregroundColor : UIColor.systemBlue], for: .normal)
+        picker.modalPresentationStyle = .fullScreen
+        self.present(picker, animated: true, completion: nil)
     }
     
     @objc func doneEditing(){

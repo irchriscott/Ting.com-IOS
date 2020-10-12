@@ -20,8 +20,8 @@ class EditUserCollectionViewController: UICollectionViewController, UICollection
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setupNavigationBar()
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "SAVE", style: .plain, target: self, action: #selector(save(sender:)))
+        self.setupNavigationBar()
         self.collectionView.register(EditUserProfileImageViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
         self.collectionView.register(EditUserCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
     }
