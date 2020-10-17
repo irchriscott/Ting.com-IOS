@@ -14,6 +14,7 @@ struct SearchResult : Codable {
     let image: String
     let name: String
     let description: String
+    let tags: [String]?
     let text: String
     let reviews: Int
     let reviewAverage: Int

@@ -27,6 +27,7 @@ struct Branch: Codable {
     let tables: BranchTables
     let specials: [BranchSpecials]
     let services: [BranchSpecials]
+    let tags: [String]
     let menus: BranchMenus
     let promotions: BranchPromotions?
     let reviews: BranchReviews?

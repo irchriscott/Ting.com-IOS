@@ -61,6 +61,7 @@ PODS:
   - ViewPager-Swift (2.0.1)
   - Windless (0.1.5)
   - XLPagerTabStrip (9.0.0)
+  - YNSearch (2.4.0)
   - YPImagePicker (4.3.1):
     - PryntTrimmerView (~> 4.0.0)
     - SteviaLayout (~> 4.7.3)
@@ -94,6 +95,7 @@ DEPENDENCIES:
   - ViewPager-Swift
   - Windless
   - XLPagerTabStrip
+  - YNSearch
   - YPImagePicker
 
 SPEC REPOS:
@@ -133,6 +135,7 @@ SPEC REPOS:
     - ViewPager-Swift
     - Windless
     - XLPagerTabStrip
+    - YNSearch
     - YPImagePicker
 
 EXTERNAL SOURCES:
@@ -181,8 +184,9 @@ SPEC CHECKSUMS:
   ViewPager-Swift: 7d83f5d4888a0fa808c08c8405ba84e603a2eb58
   Windless: c6b7d63ac3a0c7e6b241e316650d4605abf71894
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
+  YNSearch: 56d4aad4547fd1efce355cccc220a94735b1ea14
   YPImagePicker: 08bbb809ed62bf4149fc015c97249eb4b9463ff9
 
-PODFILE CHECKSUM: 08db08d387fb1b259235df3405d2d3c93773d60a
+PODFILE CHECKSUM: b83c4269b5d8de066ea26c7ee210d3fe50acfb05
 
 COCOAPODS: 1.9.3
