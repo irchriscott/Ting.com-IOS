@@ -194,8 +194,8 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdPromotionDetails, for: indexPath) as! PromotionMenuDetailsViewCell
-        cell.promotion = self.promotion
         cell.parentController = self
+        cell.promotion = self.promotion
         return cell
     }
     

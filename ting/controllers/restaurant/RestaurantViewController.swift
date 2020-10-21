@@ -112,6 +112,8 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
         
         collectionView.register(RestaurantHeaderViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
+        
+        self.collectionView.scrollsToTop = true
     }
     
     func setupNavigationBar() {
@@ -238,7 +240,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
 
             switch index {
             case 0:
-                self.collectionView.contentOffset.y = 0
+                self.collectionView.contentOffset.y = -116
                 if self.canGoToZero {
                     if self.promotionViewHeight > 0 { self.currentHeight = self.promotionViewHeight }
                     else {
@@ -263,7 +265,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
                 }
             case 1:
                 self.canGoToZero = true
-                self.collectionView.contentOffset.y = 0
+                self.collectionView.contentOffset.y = -116
                 if self.foodsViewHeight > 0 { self.currentHeight = self.foodsViewHeight }
                 else {
                     APIDataProvider.instance.getRestaurantMenus(url: "\(URLs.hostEndPoint)\(branch.urls.apiFoods)") { (menus) in
@@ -281,7 +283,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
                 }
             case 2:
                 self.canGoToZero = true
-                self.collectionView.contentOffset.y = 0
+                self.collectionView.contentOffset.y = -116
                 if self.drinksViewHeight > 0 { self.currentHeight = self.drinksViewHeight }
                 else {
                     APIDataProvider.instance.getRestaurantMenus(url: "\(URLs.hostEndPoint)\(branch.urls.apiDrinks)") { (menus) in
@@ -299,7 +301,7 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
                 }
             case 3:
                 self.canGoToZero = true
-                self.collectionView.contentOffset.y = 0
+                self.collectionView.contentOffset.y = -116
                 if self.dishesViewHeight > 0 { self.currentHeight = self.dishesViewHeight }
                 else {
                     APIDataProvider.instance.getRestaurantMenus(url: "\(URLs.hostEndPoint)\(branch.urls.apiDishes)") { (menus) in

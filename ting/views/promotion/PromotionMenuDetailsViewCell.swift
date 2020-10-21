@@ -667,7 +667,7 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
                 mapView.selectedLocation = location
                 mapView.restaurant = branch
                 
-                controller?.present(mapView, animated: true, completion: nil)
+                parentController?.present(mapView, animated: true, completion: nil)
             }
         }
     }
@@ -707,10 +707,6 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
             restaurantViewController.restaurant = branch
             self.parentController?.navigationController?.pushViewController(restaurantViewController, animated: true)
         }
-    }
-    
-    deinit {
-        self.locationManager.stopUpdatingLocation()
     }
     
     required init?(coder: NSCoder) {
