@@ -33,7 +33,15 @@ class CustomMapMarker: UIView {
         image.layer.masksToBounds = true
         image.translatesAutoresizingMaskIntoConstraints = false
         
-        image.load(url: url)
+        image.kf.setImage(
+            with: url,
+            placeholder: UIImage(named: "default_restaurant"),
+            options: [
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(1)),
+                .cacheOriginalImage
+            ]
+        )
         imageView.addSubview(image)
         imageView.addConstraintsWithFormat(format: "H:[v0(40)]", views: image)
         imageView.addConstraintsWithFormat(format: "V:[v0(40)]", views: image)

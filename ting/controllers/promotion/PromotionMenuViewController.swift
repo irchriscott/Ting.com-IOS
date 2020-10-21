@@ -121,7 +121,15 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
         
         if let promotion = self.promotion {
             let imageView = UIImageView()
-            imageView.load(url: URL(string: "\(URLs.hostEndPoint)\(promotion.posterImage)")!)
+            imageView.kf.setImage(
+                with: URL(string: "\(URLs.hostEndPoint)\(promotion.posterImage)")!,
+                placeholder: UIImage(named: "default_restaurant"),
+                options: [
+                    .scaleFactor(UIScreen.main.scale),
+                    .transition(.fade(1)),
+                    .cacheOriginalImage
+                ]
+            )
             
             let galleryItem = GalleryItem.image { $0(imageView.image ?? UIImage(named: "default_meal")!) }
             imageItems.append(DataImageItem(imageView: imageView, galleryItem: galleryItem))
@@ -149,7 +157,7 @@ class PromotionMenuViewController: UITableViewController, UICollectionViewDelega
         self.navigationController?.navigationBar.barTintColor = Colors.colorPrimaryDark
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.backgroundColor = Colors.colorPrimaryDark
-        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barStyle = .black
         
         self.navigationController?.navigationBar.backIndicatorImage = UIImage(named: "icon_unwind_25_white")

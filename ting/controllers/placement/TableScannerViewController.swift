@@ -49,6 +49,8 @@ class TableScannerViewController: UIViewController, QRScannerViewDelegate, CLLoc
         view.image = UIImage(named: "icon_close_bold_25_white")
         return view
     }()
+    
+    private var didGetLocation: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,13 +58,14 @@ class TableScannerViewController: UIViewController, QRScannerViewDelegate, CLLoc
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
+        self.didGetLocation = false
         
         self.closeButtonView.layer.cornerRadius = self.closeButtonView.frame.width / 2
         self.closeButtonView.layer.masksToBounds = true
         
         self.view.addSubview(closeButtonView)
         
-        self.view.addConstraintsWithFormat(format: "V:|-40-[v0(30)]", views: closeButtonView)
+        self.view.addConstraintsWithFormat(format: "V:|-12-[v0(30)]", views: closeButtonView)
         self.view.addConstraintsWithFormat(format: "H:|-12-[v0(30)]", views: closeButtonView)
         
         self.closeImageView.image = UIImage(named: "icon_close_bold_25_white")
@@ -84,7 +87,7 @@ class TableScannerViewController: UIViewController, QRScannerViewDelegate, CLLoc
         
         self.view.addSubview(flashButton)
         
-        self.view.addConstraintsWithFormat(format: "V:|-40-[v0(30)]", views: flashButton)
+        self.view.addConstraintsWithFormat(format: "V:|-12-[v0(30)]", views: flashButton)
         self.view.addConstraintsWithFormat(format: "H:[v0(30)]-12-|", views: flashButton)
         
         flashButton.addTarget(self, action: #selector(tapFlashButton(_:)), for: .touchUpInside)
@@ -112,6 +115,7 @@ class TableScannerViewController: UIViewController, QRScannerViewDelegate, CLLoc
                         let storyboard = UIStoryboard(name: "Home", bundle: nil)
                         let placementViewController = storyboard.instantiateViewController(withIdentifier: "PlacementView") as! PlacementViewController
                         self.dismiss(animated: true) {
+                            UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
                             self.controller?.pushViewController(placementViewController, animated: true)
                         }
                     } else {
@@ -149,8 +153,14 @@ class TableScannerViewController: UIViewController, QRScannerViewDelegate, CLLoc
         
         pubnub.add(listener)
         pubnub.subscribe(to: channels, withPresence: true)
-        
-        requestTable(table: defaultTable)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.didGetLocation = false
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.locationManager.stopUpdatingLocation()
     }
     
     private func checkLocationAuthorization(status: CLAuthorizationStatus){
@@ -266,7 +276,11 @@ class TableScannerViewController: UIViewController, QRScannerViewDelegate, CLLoc
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        self.userLocation = location
+        if !self.didGetLocation {
+            self.didGetLocation = true
+            self.userLocation = location
+            self.locationManager.stopUpdatingLocation()
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -295,6 +309,7 @@ class TableScannerViewController: UIViewController, QRScannerViewDelegate, CLLoc
     
     @objc private func closeScanner() {
         qrScannerView.stopRunning()
+        UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
         self.dismiss(animated: true, completion: nil)
     }
 }

@@ -299,13 +299,11 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, Fave
         return view
     }()
     
-    var parentController: RestaurantMenuViewController? {
-        didSet { self.setup() }
-    }
+    var parentController: RestaurantMenuViewController?
     
-    var controller: UIViewController? {
-        didSet { self.setup() }
-    }
+    var controller: UIViewController?
+    
+    private var didLoadLocation: Bool = false
     
     var menu: RestaurantMenu? {
         didSet {
@@ -452,6 +450,8 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, Fave
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
+        
+        self.didLoadLocation = false
     }
     
     private func setup() {
@@ -644,8 +644,12 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, Fave
             self.setRestaurantDistance()
             return
         }
-        self.selectedLocation = location
-        self.setRestaurantDistance()
+        if !self.didLoadLocation {
+            self.didLoadLocation = false
+            self.selectedLocation = location
+            self.setRestaurantDistance()
+            self.locationManager.stopUpdatingLocation()
+        }
     }
     
     private func setRestaurantDistance() {
@@ -807,7 +811,7 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, Fave
             self.parentController?.navigationController?.pushViewController(restaurantViewController, animated: true)
         }
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

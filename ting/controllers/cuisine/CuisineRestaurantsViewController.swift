@@ -39,6 +39,8 @@ class CuisineRestaurantsViewController: UITableViewController, CLLocationManager
     var shouldLoad = true
     var hasLoaded = false
     
+    private var didLoadWithLocation: Bool = false
+    
     private func getRestaurants(location: CLLocation?, index: Int){
         APIDataProvider.instance.getCuisineRestaurants(cuisine: self.cuisine!.id, page: index) { (branches) in
             DispatchQueue.main.async {
@@ -95,6 +97,16 @@ class CuisineRestaurantsViewController: UITableViewController, CLLocationManager
         mapView.controller = self
         mapView.restaurant = self.selectedBranch
         mapView.modalPresentationStyle = .overFullScreen
+        
+        self.didLoadWithLocation = false
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.didLoadWithLocation = false
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.locationManager.stopUpdatingLocation()
     }
     
     private func checkLocationAuthorization(status: CLAuthorizationStatus){
@@ -139,8 +151,12 @@ class CuisineRestaurantsViewController: UITableViewController, CLLocationManager
             self.getRestaurants(location: self.selectedLocation, index: pageIndex)
             return
         }
-        self.selectedLocation = location
-        self.getRestaurants(location: location, index: pageIndex)
+        if !self.didLoadWithLocation {
+            self.didLoadWithLocation = true
+            self.selectedLocation = location
+            self.getRestaurants(location: location, index: pageIndex)
+            self.locationManager.stopUpdatingLocation()
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {

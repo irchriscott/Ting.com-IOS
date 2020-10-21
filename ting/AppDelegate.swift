@@ -27,6 +27,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
     var pusherBeam = PushNotifications.shared
     var pusher: Pusher!
     
+    private var didLoadLocation: Bool = false
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         GMSServices.provideAPIKey("AIzaSyD2mLGusTJZqu7zesBgobnoVIzN6hIayvk")
@@ -199,6 +201,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
         }
         
         self.signedInUser = user
+        self.didLoadLocation = false
         
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways:
@@ -226,12 +229,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
     }
     
     func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+        self.didLoadLocation = false
         Toast.makeToast(message: error.localizedDescription, duration: Toast.MID_LENGTH_DURATION, style: .error)
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        self.googleSignIn(location: location.coordinate)
+        if !self.didLoadLocation {
+            self.didLoadLocation = true
+            self.googleSignIn(location: location.coordinate)
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {}
@@ -283,6 +290,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLoca
                                                 let user = try JSONEncoder().encode(serverResponse.user!)
                                                 UserAuthentication().saveUserData(data: user)
                                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0, execute: {
+                                                    self.locationManager.stopUpdatingLocation()
                                                     let storyBoard: UIStoryboard = UIStoryboard(name: "Home", bundle: nil)
                                                     let appDelegate = UIApplication.shared.delegate! as! AppDelegate
                                                     let homeDiscoverViewController = storyBoard.instantiateViewController(withIdentifier: "HomeTabBar")

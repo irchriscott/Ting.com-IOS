@@ -136,6 +136,8 @@ class RestaurantHeaderViewCell: UICollectionViewCell, CLLocationManagerDelegate 
     
     var mapView: RestaurantMapViewController!
     
+    private var didLoadLocation: Bool = false
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.restaurantDistanceView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(showUserAddresses)))
@@ -145,12 +147,14 @@ class RestaurantHeaderViewCell: UICollectionViewCell, CLLocationManagerDelegate 
         doubleTap.numberOfTapsRequired = 2
         self.profileImageView.addGestureRecognizer(doubleTap)
         
-        self.locationManager.delegate = self
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
+        self.didLoadLocation = false
     }
     
     private func setup(){
+        
+        self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
         
         let storyboard = UIStoryboard(name: "Home", bundle: nil)
         mapView = storyboard.instantiateViewController(withIdentifier: "RestaurantMapView") as? RestaurantMapViewController
@@ -199,12 +203,12 @@ class RestaurantHeaderViewCell: UICollectionViewCell, CLLocationManagerDelegate 
         addConstraintsWithFormat(format: "H:[v0]", views: restaurantStatusView)
         addConstraintsWithFormat(format: "V:[v0(26)]", views: restaurantStatusView)
         
-        if branch?.isAvailable ?? true { Timer.scheduledTimer(timeInterval: 60, target: self, selector: #selector(setTimeStatus), userInfo: nil, repeats: true)
+        if branch?.isAvailable ?? true {
+            Timer.scheduledTimer(timeInterval: 60, target: self, selector: #selector(setTimeStatus), userInfo: nil, repeats: true)
         }
     }
     
     private func checkLocationAuthorization(status: CLAuthorizationStatus){
-        self.locationManager.delegate = self
         switch status {
         case .authorizedAlways:
             self.locationManager.requestAlwaysAuthorization()
@@ -245,8 +249,12 @@ class RestaurantHeaderViewCell: UICollectionViewCell, CLLocationManagerDelegate 
             self.setRestaurantDistance()
             return
         }
-        self.selectedLocation = location
-        self.setRestaurantDistance()
+        if !self.didLoadLocation {
+            self.didLoadLocation = false
+            self.selectedLocation = location
+            self.setRestaurantDistance()
+            self.locationManager.stopUpdatingLocation()
+        }
     }
     
     private func setRestaurantDistance() {
@@ -401,7 +409,6 @@ class RestaurantHeaderViewCell: UICollectionViewCell, CLLocationManagerDelegate 
                     }
                 }
             }.resume()
-            
         }
     }
     

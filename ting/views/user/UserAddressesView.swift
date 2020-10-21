@@ -97,10 +97,14 @@ class UserAddressesView: UIView, UITableViewDelegate, UITableViewDataSource, CLL
     var mapTag: Int = 0
     let spinner = Spinner()
     
+    private var didLoadLocation: Bool = false
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         translatesAutoresizingMaskIntoConstraints = false
         self.setup()
+        
+        self.didLoadLocation = false
     }
     
     private func setup(){
@@ -370,6 +374,7 @@ class UserAddressesView: UIView, UITableViewDelegate, UITableViewDataSource, CLL
     
     @objc func addLocationMap(){
         self.mapTag = 1
+        self.didLoadLocation = false
         self.inputAddressType.text = StaticData.addressTypes[0]
         self.inputId.text = String(session!.id)
         self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
@@ -377,22 +382,26 @@ class UserAddressesView: UIView, UITableViewDelegate, UITableViewDataSource, CLL
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { spinner.hide(); return }
-        let geocoder = GMSGeocoder()
-        geocoder.reverseGeocodeCoordinate(location.coordinate) { (response, error) in
-            if let address = response?.firstResult(){
-                DispatchQueue.main.async {
-                    self.input.text = address.lines?[0]
-                    self.inputAddress.text = address.lines?[0]
-                    self.inputLatitude.text = String(address.coordinate.latitude)
-                    self.inputLongitude.text = String(address.coordinate.longitude)
-                    self.spinner.hide()
-                    let text = self.mapTag == 0 ? "UPDATE" : "ADD"
-                    self.showMap(coords: address.coordinate, text: text)
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.spinner.hide()
-                    Toast.makeToast(message: "Couldnt Fetch Location", duration: Toast.MID_LENGTH_DURATION, style: .error)
+        if !self.didLoadLocation {
+            self.didLoadLocation = true
+            self.locationManager.stopUpdatingLocation()
+            let geocoder = GMSGeocoder()
+            geocoder.reverseGeocodeCoordinate(location.coordinate) { (response, error) in
+                if let address = response?.firstResult(){
+                    DispatchQueue.main.async {
+                        self.input.text = address.lines?[0]
+                        self.inputAddress.text = address.lines?[0]
+                        self.inputLatitude.text = String(address.coordinate.latitude)
+                        self.inputLongitude.text = String(address.coordinate.longitude)
+                        self.spinner.hide()
+                        let text = self.mapTag == 0 ? "UPDATE" : "ADD"
+                        self.showMap(coords: address.coordinate, text: text)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.spinner.hide()
+                        Toast.makeToast(message: "Couldnt Fetch Location", duration: Toast.MID_LENGTH_DURATION, style: .error)
+                    }
                 }
             }
         }
@@ -526,6 +535,10 @@ class UserAddressesView: UIView, UITableViewDelegate, UITableViewDataSource, CLL
                 }
             }.resume()
         } else { Toast.makeToast(message: "No Location Provided", duration: Toast.MID_LENGTH_DURATION, style: .error) }
+    }
+    
+    deinit {
+        self.locationManager.stopUpdatingLocation()
     }
     
     required init?(coder aDecoder: NSCoder) {

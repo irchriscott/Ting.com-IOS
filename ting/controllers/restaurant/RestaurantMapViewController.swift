@@ -222,7 +222,15 @@ class RestaurantMapViewController: UIViewController, GMSMapViewDelegate {
         didSet {
             numberFormatter.numberStyle = .decimal
             if let branch = self.restaurant {
-                self.restaurantImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(branch.restaurant!.logo)")!)
+                self.restaurantImageView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(branch.restaurant!.logo)")!,
+                    placeholder: UIImage(named: "default_restaurant"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
                 self.restaurantImageView.alpha = 1.0
                 self.restaurantName.text = "\(branch.restaurant!.name), \(branch.name)"
                 self.restaurantRating.rating = Double(branch.reviews?.average ?? 0)
@@ -255,8 +263,6 @@ class RestaurantMapViewController: UIViewController, GMSMapViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setup()
-        
         self.view.backgroundColor = .white
         
         self.drivingDirectionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(RestaurantMapViewController.onDrivingModeDirection)))
@@ -279,7 +285,7 @@ class RestaurantMapViewController: UIViewController, GMSMapViewDelegate {
             
             self.view.addSubview(closeButtonView)
             
-            self.view.addConstraintsWithFormat(format: "V:|-40-[v0(30)]", views: closeButtonView)
+            self.view.addConstraintsWithFormat(format: "V:|-12-[v0(30)]", views: closeButtonView)
             self.view.addConstraintsWithFormat(format: "H:|-12-[v0(30)]", views: closeButtonView)
             
             self.closeImageView.image = UIImage(named: "icon_close_bold_25_white")
@@ -381,7 +387,7 @@ class RestaurantMapViewController: UIViewController, GMSMapViewDelegate {
             marker.map = self.googleMapsView
             
             let restaurantDataViewHeight: CGFloat = restaurantNameHeight + 2 + 17 + 4 + restaurantAddressHeight + 4 + 26 + 8
-            let viewHeight: CGFloat = 24 + restaurantDataViewHeight + 12 + 1 + 12 + 18 + 12 + 26 + 12 + 27 + 20
+            let viewHeight: CGFloat = 24 + restaurantDataViewHeight + 12 + 1 + 12 + 18 + 12 + 26 + 12 + 27
             
             directionsView.addSubview(drivingDirectionView)
             directionsView.addSubview(walkingDirectionView)
@@ -577,6 +583,7 @@ class RestaurantMapViewController: UIViewController, GMSMapViewDelegate {
     }
     
     @objc private func closeMap() {
+        UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
         self.dismiss(animated: true, completion: nil)
     }
 }

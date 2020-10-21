@@ -37,4 +37,16 @@ extension String {
 
         return self.replacingOccurrences(of: "<[^>]+>", with: ", ", options: .regularExpression, range: nil).replacingOccurrences(of: ",,", with: ",")
     }
+    
+    func size(font: UIFont, width: CGFloat) -> CGSize {
+        let attrString: NSAttributedString = NSAttributedString(string: self, attributes: [NSAttributedString.Key.font: font])
+        let bounds: CGRect = attrString.boundingRect(with: CGSize(width: width, height: 0.0), options: .usesLineFragmentOrigin, context: nil)
+        let size: CGSize = CGSize(width: bounds.width + 1, height: bounds.height + 2 * (font.lineHeight - font.pointSize))
+        return size
+    }
+    
+    func getSize(font: UIFont, width: CGFloat) -> CGSize {
+        let string = NSString(string: self).boundingRect(with: CGSize(width: width, height: 0.0), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : font], context: nil)
+        return CGSize(width: string.width, height: string.height)
+    }
 }

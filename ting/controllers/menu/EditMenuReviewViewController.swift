@@ -71,7 +71,7 @@ class EditMenuReviewViewController: UIViewController, UITextViewDelegate {
         let view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.text = "Cancel".uppercased()
-        view.textColor = Colors.colorPrimary
+        view.textColor = .systemBlue
         view.font = UIFont(name: "Poppins-Regular", size: 16)!
         view.isUserInteractionEnabled = true
         return view
@@ -150,8 +150,8 @@ class EditMenuReviewViewController: UIViewController, UITextViewDelegate {
         submitButton.setLinearGradientBackgroundColorElse(colorOne: Colors.colorPrimary, colorTwo: Colors.colorPrimaryDark, frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 55))
         
         self.view.addSubview(cancelText)
-        self.view.addConstraintsWithFormat(format: "V:|-16-[v0]", views: cancelText)
-        self.view.addConstraintsWithFormat(format: "H:[v0]-20-|", views: cancelText)
+        self.view.addConstraintsWithFormat(format: "V:|-24-[v0]", views: cancelText)
+        self.view.addConstraintsWithFormat(format: "H:[v0]-12-|", views: cancelText)
         
         self.view.addSubview(reviewText)
         self.view.addSubview(reviewDescriptionText)

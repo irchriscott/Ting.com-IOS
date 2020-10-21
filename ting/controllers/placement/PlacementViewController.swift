@@ -205,7 +205,7 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
         self.navigationController?.navigationBar.barTintColor = Colors.colorPrimaryDark
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.backgroundColor = Colors.colorPrimaryDark
-        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barStyle = .black
         
         self.navigationController?.navigationBar.backIndicatorImage = UIImage(named: "icon_unwind_25_white")
@@ -233,6 +233,7 @@ class PlacementViewController: UICollectionViewController, UICollectionViewDeleg
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
         self.setupNavigationBar()
     }
 

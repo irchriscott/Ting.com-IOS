@@ -14,14 +14,20 @@ class EditUserCollectionViewController: UICollectionViewController, UICollection
     private let headerId = "Header"
     private let session = UserAuthentication().get()
     
-    override var preferredStatusBarStyle: UIStatusBarStyle{
+    override var preferredStatusBarStyle: UIStatusBarStyle {
         return .default
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "SAVE", style: .plain, target: self, action: #selector(save(sender:)))
+        
         self.setupNavigationBar()
+        
+        let saveButton = UIBarButtonItem(title: "SAVE", style: .plain, target: self, action: #selector(save(sender:)))
+        saveButton.tintColor = .white
+        saveButton.setTitleTextAttributes([.foregroundColor : Colors.colorWhite], for: .normal)
+        self.navigationItem.rightBarButtonItem = saveButton
+        
         self.collectionView.register(EditUserProfileImageViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
         self.collectionView.register(EditUserCollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
     }
@@ -32,11 +38,10 @@ class EditUserCollectionViewController: UICollectionViewController, UICollection
     }
     
     func setupNavigationBar(){
-        self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.navigationBar.barStyle = .default
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.navigationBar.barStyle = .black
         self.navigationController?.navigationBar.shadowImage = nil
         self.navigationItem.title = session!.username
-        self.navigationController?.navigationBar.barStyle = .black
         self.navigationItem.largeTitleDisplayMode = .never
         
         self.navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor : UIColor.white]
@@ -240,13 +245,29 @@ class EditUserProfileImageViewCell : UICollectionViewCell, UIImagePickerControll
                             }
                         } else {
                             DispatchQueue.main.async {
-                                self.userImageView.load(url: URL(string: "\(URLs.uploadEndPoint)\(self.session!.image)")!)
+                                self.userImageView.kf.setImage(
+                                    with: URL(string: "\(URLs.uploadEndPoint)\(self.session!.image)")!,
+                                    placeholder: UIImage(named: "default_user"),
+                                    options: [
+                                        .scaleFactor(UIScreen.main.scale),
+                                        .transition(.fade(1)),
+                                        .cacheOriginalImage
+                                    ]
+                                )
                                 self.editUserController!.showErrorMessage(message: serverResponse.message)
                             }
                         }
                     } catch {
                         DispatchQueue.main.async {
-                            self.userImageView.load(url: URL(string: "\(URLs.uploadEndPoint)\(self.session!.image)")!)
+                            self.userImageView.kf.setImage(
+                                with: URL(string: "\(URLs.uploadEndPoint)\(self.session!.image)")!,
+                                placeholder: UIImage(named: "default_user"),
+                                options: [
+                                    .scaleFactor(UIScreen.main.scale),
+                                    .transition(.fade(1)),
+                                    .cacheOriginalImage
+                                ]
+                            )
                             self.editUserController!.showErrorMessage(message: error.localizedDescription)
                         }
                     }

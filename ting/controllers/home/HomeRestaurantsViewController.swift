@@ -72,6 +72,8 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         return view
     }()
     
+    var didLoadWithLocation: Bool = false
+    
     private lazy var cuisinesCollectionView: UICollectionView = {
         let layout =  UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -153,10 +155,13 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         self.navigationController?.navigationBar.barTintColor = Colors.colorWhite
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         
+        self.didLoadWithLocation = false
+        
         self.gradientLoadingBar = GradientLoadingBar(height: 4.0, isRelativeToSafeArea: false)
         
-        let barButtonAppearance = UIBarButtonItem.appearance()
-        barButtonAppearance.setTitleTextAttributes([.foregroundColor : UIColor.clear], for: .normal)
+       let searchButton = UIBarButtonItem(image: UIImage(named: "icon_searchbar_25_gray"), style: .plain, target: self, action: #selector(openSearch(_:)))
+        searchButton.tintColor = Colors.colorGray
+        self.navigationItem.rightBarButtonItem = searchButton
         
         country = session.country
         town = session.town
@@ -211,7 +216,13 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        self.didLoadWithLocation = false
+        self.locationManager.startUpdatingLocation()
         self.setupNavigationBar()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.locationManager.stopUpdatingLocation()
     }
     
     private func getCuisines() {
@@ -240,6 +251,8 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         self.gradientLoadingBar.fadeIn()
         APIDataProvider.instance.getRestaurants(url: "\(URLs.restaurantsGlobal)?page=\(index)") { (branches) in
             DispatchQueue.main.async {
+                self.refresherLoadingView.endRefreshing()
+                self.gradientLoadingBar.fadeOut()
                 if !branches.isEmpty {
                     var newBranches: [Branch] = []
                     if let userLocation = location {
@@ -257,8 +270,6 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                     self.collectionView.reloadData()
                     self.restaurantsCollectionView.reloadData()
                     self.restaurantsShimmerCollectionView.reloadData()
-                    self.refresherLoadingView.endRefreshing()
-                    self.gradientLoadingBar.fadeOut()
                     
                 } else { self.shouldLoad = false }
             }
@@ -324,6 +335,10 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             addresses.addAction(UIAlertAction(title: address.address, style: .default, handler: { (action) in
                 DispatchQueue.main.async {
                     let location = CLLocation(latitude: CLLocationDegrees(Double(address.latitude)!), longitude: CLLocationDegrees(Double(address.longitude)!))
+                    self.pageIndex = 1
+                    self.loadedRestaurants = []
+                    self.restaurants = []
+                    self.spinnerViewHeight = 0
                     self.selectedLocation = location
                     self.getRestaurants(location: location, index: self.pageIndex)
                 }
@@ -339,7 +354,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         
         self.navigationController?.navigationBar.backgroundColor = Colors.colorWhite
         self.navigationController?.navigationBar.barTintColor = Colors.colorWhite
-        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barStyle = .default
         self.navigationController?.navigationBar.shadowImage = nil
         self.navigationItem.title = "Restaurants"
@@ -401,8 +416,12 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             self.getRestaurants(location: self.selectedLocation, index: pageIndex)
             return
         }
-        self.selectedLocation = location
-        self.getRestaurants(location: location, index: pageIndex)
+        if !self.didLoadWithLocation {
+            self.didLoadWithLocation = true
+            self.selectedLocation = location
+            self.getRestaurants(location: location, index: pageIndex)
+            self.locationManager.stopUpdatingLocation()
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -611,9 +630,9 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdRestaurant, for: indexPath) as! RestaurantViewCell
             let restaurant = self.restaurants[indexPath.row]
             if !self.loadedRestaurants.contains(indexPath.row) {
+                cell.controller = self
                 cell.branch = restaurant
                 cell.backgroundColor = .white
-                cell.controller = self
                 self.loadedRestaurants.append(indexPath.row)
             }
             return cell
@@ -864,6 +883,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         self.appWindow?.rootViewController?.showSpinner(onView: self.appWindow?.rootViewController?.view ?? self.view)
         
         self.pageIndex = 1
+        self.loadedRestaurants.removeAll(keepingCapacity: false)
         self.loadedRestaurants = []
         self.restaurants = []
         self.spinnerViewHeight = 0
@@ -960,6 +980,10 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     @objc private func hideKeyboard(_ sender: Any) {
         self.view.endEditing(true)
         self.view.removeGestureRecognizer(hideKeyboardGesture)
+    }
+    
+    @objc private func openSearch(_ sender: Any?) {
+        
     }
 }
 

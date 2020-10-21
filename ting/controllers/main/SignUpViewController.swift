@@ -59,6 +59,8 @@ class SignUpViewController: UIViewController, UIPickerViewDataSource, UIPickerVi
         return view
     }()
     
+    private var didLoadLocation: Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.scrollView.contentSize = CGSize(width: self.view.frame.size.width, height: self.view.frame.size.height)
@@ -72,6 +74,8 @@ class SignUpViewController: UIViewController, UIPickerViewDataSource, UIPickerVi
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShowNotification(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handlekeyboardWillHideNotification(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        self.didLoadLocation = false
         
         self.signUpGenderInput.text = StaticData.genders[0]
         let genderPickerView = UIPickerView()
@@ -165,6 +169,14 @@ class SignUpViewController: UIViewController, UIPickerViewDataSource, UIPickerVi
             self.signUpAddressTypeInput.text = type
             self.otherAddressType = other_type
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.didLoadLocation = false
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.locationManager.stopUpdatingLocation()
     }
     
     private func checkLocationAuthorizationStatus(status: CLAuthorizationStatus){
@@ -391,7 +403,11 @@ class SignUpViewController: UIViewController, UIPickerViewDataSource, UIPickerVi
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        self.loadUserLocationOnMap(coordinates: location.coordinate)
+        if !self.didLoadLocation {
+            self.didLoadLocation = true
+            self.loadUserLocationOnMap(coordinates: location.coordinate)
+            self.locationManager.stopUpdatingLocation()
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {}

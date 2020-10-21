@@ -70,6 +70,8 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
     private var hasLoadedPromotions: Bool = false
     private var loadedRows:[Int] = []
     
+    private var didLoadWithLocation: Bool = false
+    
     private lazy var recommandedRestaurantsView: UICollectionView = {
         let carouselFlow = UICollectionViewCarouselLayout()
         carouselFlow.itemSize = CGSize(width: 200, height: 328)
@@ -149,12 +151,18 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
 
         self.setupNavigationBar()
         
+        let searchButton = UIBarButtonItem(image: UIImage(named: "icon_searchbar_25_gray"), style: .plain, target: self, action: #selector(openSearch(_:)))
+        searchButton.tintColor = Colors.colorGray
+        self.navigationItem.rightBarButtonItem = searchButton
+                
         country = session.country
         town = session.town
         
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
+        
+        self.didLoadWithLocation = false
         
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: self.cellId)
         
@@ -217,14 +225,21 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        self.didLoadWithLocation = false
+        self.locationManager.startUpdatingLocation()
         self.setupNavigationBar()
+        UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.locationManager.stopUpdatingLocation()
     }
 
     func setupNavigationBar(){
         
         self.navigationController?.navigationBar.backgroundColor = Colors.colorWhite
         self.navigationController?.navigationBar.barTintColor = Colors.colorWhite
-        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barStyle = .default
         self.navigationController?.navigationBar.shadowImage = nil
         self.navigationItem.title = "Discovery"
@@ -235,7 +250,7 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         
         let barButtonAppearance = UIBarButtonItem.appearance()
-        barButtonAppearance.setTitleTextAttributes([.foregroundColor : UIColor.clear], for: .normal)
+        barButtonAppearance.setTitleTextAttributes([.foregroundColor : UIColor.black], for: .normal)
         
         if #available(iOS 13.0, *) {
             let statusBar = UIView(frame: UIApplication.shared.keyWindow?.windowScene?.statusBarManager?.statusBarFrame ?? CGRect.zero)
@@ -379,8 +394,12 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
             self.getTopRestaurants(location: self.selectedLocation)
             return
         }
-        self.selectedLocation = location
-        self.getTopRestaurants(location: location)
+        if !self.didLoadWithLocation {
+            self.didLoadWithLocation = true
+            self.selectedLocation = location
+            self.getTopRestaurants(location: location)
+            self.locationManager.stopUpdatingLocation()
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -1094,10 +1113,15 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
             let placementViewController = storyboard.instantiateViewController(withIdentifier: "PlacementView") as! PlacementViewController
             self.navigationController?.pushViewController(placementViewController, animated: true)
         } else {
+            UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.statusBar
             let tableScannerViewController = storyboard.instantiateViewController(withIdentifier: "TableScannerView") as! TableScannerViewController
             tableScannerViewController.controller = self.navigationController
             tableScannerViewController.modalPresentationStyle = .overFullScreen
             self.present(tableScannerViewController, animated: true, completion: nil)
         }
+    }
+    
+    @objc private func openSearch(_ sender: Any?) {
+        
     }
 }

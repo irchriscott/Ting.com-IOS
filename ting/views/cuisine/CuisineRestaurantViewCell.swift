@@ -157,7 +157,15 @@ class CuisineRestaurantViewCell: UITableViewCell {
         didSet {
             numberFormatter.numberStyle = .decimal
             if let branch = self.branch {
-                self.restaurantImageView.load(url: URL(string: "\(URLs.hostEndPoint)\(branch.restaurant!.logo)")!)
+                self.restaurantImageView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(branch.restaurant!.logo)")!,
+                    placeholder: UIImage(named: "default_restaurant"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
                 self.restaurantImageView.alpha = 1.0
                 self.restaurantName.text = "\(branch.restaurant!.name), \(branch.name)"
                 self.restaurantRating.rating = Double(branch.reviews?.average ?? 0)

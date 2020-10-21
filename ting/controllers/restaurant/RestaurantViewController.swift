@@ -115,18 +115,19 @@ class RestaurantViewController: UICollectionViewController, UICollectionViewDele
     }
     
     func setupNavigationBar() {
+        
         self.navigationController?.navigationBar.barTintColor = Colors.colorPrimaryDark
-        self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.backgroundColor = Colors.colorPrimaryDark
-        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.shadowImage = nil
+        self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barStyle = .black
         
         self.navigationController?.navigationBar.backIndicatorImage = UIImage(named: "icon_unwind_25_white")
         self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "icon_unwind_25_white")
         
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        self.navigationItem.title = ""
         self.navigationItem.largeTitleDisplayMode = .always
+        self.navigationItem.title = ""
         
         let barButtonAppearance = UIBarButtonItem.appearance()
         barButtonAppearance.setTitleTextAttributes([.foregroundColor : UIColor.white], for: .normal)

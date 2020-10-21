@@ -133,7 +133,15 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             
             for image in images! {
                 let imageView = UIImageView()
-                imageView.load(url: URL(string: "\(URLs.hostEndPoint)\(image.image)")!)
+                imageView.kf.setImage(
+                    with: URL(string: "\(URLs.hostEndPoint)\(image.image)")!,
+                    placeholder: UIImage(named: "default_meal"),
+                    options: [
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(1)),
+                        .cacheOriginalImage
+                    ]
+                )
                 
                 let galleryItem = GalleryItem.image { $0(imageView.image ?? UIImage(named: "default_meal")!) }
                 imageItems.append(DataImageItem(imageView: imageView, galleryItem: galleryItem))
@@ -166,7 +174,7 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         self.navigationController?.navigationBar.barTintColor = Colors.colorPrimaryDark
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.backgroundColor = Colors.colorPrimaryDark
-        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barStyle = .black
         
         self.navigationController?.navigationBar.backIndicatorImage = UIImage(named: "icon_unwind_25_white")
@@ -221,9 +229,9 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
         switch collectionView {
         case self.restaurantDetailsView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdMenuDetails, for: indexPath) as! MenuDetailsViewCell
-            cell.menu = self.restaurantMenu
             cell.parentController = self
             cell.controller = self.controller
+            cell.menu = self.restaurantMenu
             return cell
         default:
             return collectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdDefault, for: indexPath)
@@ -948,6 +956,9 @@ class RestaurantMenuViewController: UITableViewController, UICollectionViewDeleg
             } else {
                 Toast.makeToast(message: "Review Cannot Be Empty", duration: Toast.MID_LENGTH_DURATION, style: .error)
             }
+        }
+        if #available(iOS 13.0, *) {
+            editReviewController.modalPresentationStyle = .automatic
         }
         self.present(editReviewController, animated: true, completion: nil)
     }

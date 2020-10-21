@@ -34,7 +34,15 @@ class HomeMenuViewController: UIViewController {
         
         userProfileNameLabel.text = user!.name
         userProfileEmailLabel.text = user!.email
-        userProfileImageView.load(url: URL(string: "\(URLs.uploadEndPoint)\(user!.image)")!)
+        userProfileImageView.kf.setImage(
+            with: URL(string: "\(URLs.uploadEndPoint)\(self.user!.image)")!,
+            placeholder: UIImage(named: "default_user"),
+            options: [
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(1)),
+                .cacheOriginalImage
+            ]
+        )
         
         settingsIconView.backgroundColor = Colors.colorDarkTransparent
         settingsIconView.layer.cornerRadius = settingsIconView.frame.size.height / 2
@@ -67,7 +75,7 @@ class HomeMenuViewController: UIViewController {
     func setupNavigationBar(){
         self.navigationController?.navigationBar.backgroundColor = Colors.colorWhite
         self.navigationController?.navigationBar.barTintColor = Colors.colorWhite
-        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barStyle = .default
         self.navigationController?.navigationBar.shadowImage = nil
         self.navigationItem.title = user!.username

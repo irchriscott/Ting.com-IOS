@@ -247,6 +247,8 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
         didSet {}
     }
     
+    private var didLoadLocation: Bool = false
+    
     var promotion: MenuPromotion? {
         didSet {
             numberFormatter.numberStyle = .decimal
@@ -357,6 +359,8 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
+        
+        self.didLoadLocation = false
     }
     
     private func setup() {
@@ -515,8 +519,12 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
             self.setRestaurantDistance()
             return
         }
-        self.selectedLocation = location
-        self.setRestaurantDistance()
+        if !self.didLoadLocation {
+            self.didLoadLocation = true
+            self.selectedLocation = location
+            self.setRestaurantDistance()
+            self.locationManager.stopUpdatingLocation()
+        }
     }
     
     private func setRestaurantDistance() {
@@ -699,6 +707,10 @@ class PromotionMenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDeleg
             restaurantViewController.restaurant = branch
             self.parentController?.navigationController?.pushViewController(restaurantViewController, animated: true)
         }
+    }
+    
+    deinit {
+        self.locationManager.stopUpdatingLocation()
     }
     
     required init?(coder: NSCoder) {

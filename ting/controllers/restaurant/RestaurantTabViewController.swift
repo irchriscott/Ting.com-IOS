@@ -53,6 +53,9 @@ class RestaurantTabViewController: ButtonBarPagerTabStripViewController {
         self.buttonBarView.layer.shadowOffset = CGSize(width: 0, height: 3)
         self.buttonBarView.layer.shadowRadius = 3
         self.buttonBarView.layer.masksToBounds = false
+        
+        self.edgesForExtendedLayout = .top
+        self.extendedLayoutIncludesOpaqueBars = true
     }
     
     override public func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {

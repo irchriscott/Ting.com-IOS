@@ -62,7 +62,7 @@ class RestaurantReviewsController: UITableViewController {
         self.navigationController?.navigationBar.barTintColor = Colors.colorPrimaryDark
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.backgroundColor = Colors.colorPrimaryDark
-        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barStyle = .black
         
         self.navigationController?.navigationBar.backIndicatorImage = UIImage(named: "icon_unwind_25_white")
@@ -331,6 +331,9 @@ class RestaurantReviewsController: UITableViewController {
             } else {
                 Toast.makeToast(message: "Review Cannot Be Empty", duration: Toast.MID_LENGTH_DURATION, style: .error)
             }
+        }
+        if #available(iOS 13.0, *) {
+            editReviewController.modalPresentationStyle = .automatic
         }
         self.present(editReviewController, animated: true, completion: nil)
     }

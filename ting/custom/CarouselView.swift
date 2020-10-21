@@ -263,7 +263,16 @@ fileprivate class CarouselCollectionViewCell: UICollectionViewCell {
     
     private func parseData(forSlide slide: CarouselSlide) {
         if let promotion = slide.slidePromotion {
-            imageView.load(url: URL(string: "\(URLs.hostEndPoint)\(promotion.posterImage)")!)
+            imageView.kf.setImage(
+                with: URL(string: "\(URLs.hostEndPoint)\(promotion.posterImage)")!,
+                placeholder: UIImage(named: "default_restaurant"),
+                options: [
+                    .scaleFactor(UIScreen.main.scale),
+                    .transition(.fade(1)),
+                    .cacheOriginalImage
+                ]
+            )
+            
             promotionTitleView.text = promotion.occasionEvent
             promotionTypeView.text = promotion.promotionItem.type.name
         

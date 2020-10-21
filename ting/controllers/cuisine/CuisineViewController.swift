@@ -42,13 +42,19 @@ class CuisineViewController: ButtonBarPagerTabStripViewController {
         
         self.setupNavigationBar()
         
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(openSearch(_:)))
+        
         self.buttonBarView.layer.shadowColor = Colors.colorLightGray.cgColor
         self.buttonBarView.layer.shadowOpacity = 0.3
         self.buttonBarView.layer.shadowOffset = CGSize(width: 0, height: 3)
         self.buttonBarView.layer.shadowRadius = 3
         self.buttonBarView.layer.masksToBounds = false
         
-        self.containerView.frame = self.containerView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0))
+        if UIDevice.largeNavbarDevices.contains(UIDevice.type) {
+            self.containerView.frame = self.containerView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 100, right: 0))
+        } else {
+            self.containerView.frame = self.containerView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 60, right: 0))
+        }
     }
     
     override public func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
@@ -71,7 +77,7 @@ class CuisineViewController: ButtonBarPagerTabStripViewController {
         self.navigationController?.navigationBar.barTintColor = Colors.colorPrimaryDark
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.backgroundColor = Colors.colorPrimaryDark
-        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barStyle = .black
         
         self.navigationController?.navigationBar.backIndicatorImage = UIImage(named: "icon_unwind_25_white")
@@ -92,5 +98,9 @@ class CuisineViewController: ButtonBarPagerTabStripViewController {
             statusBar.backgroundColor = Colors.colorPrimaryDark
             UIApplication.shared.keyWindow?.addSubview(statusBar)
         }
+    }
+    
+    @objc private func openSearch(_ sender: Any?) {
+        
     }
 }
