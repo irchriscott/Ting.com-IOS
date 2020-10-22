@@ -92,7 +92,14 @@ class HomeMenuViewController: UIViewController {
             let statusBar = UIView(frame: UIApplication.shared.keyWindow?.windowScene?.statusBarManager?.statusBarFrame ?? CGRect.zero)
             statusBar.backgroundColor = Colors.colorWhite
             UIApplication.shared.keyWindow?.addSubview(statusBar)
+            
+            let navigationBar = navigationController?.navigationBar
+            let navigationBarAppearence = UINavigationBarAppearance()
+            navigationBarAppearence.shadowColor = .clear
+            navigationBar?.scrollEdgeAppearance = navigationBarAppearence
         }
+        
+        self.navigationController?.navigationBar.setValue(true, forKey: "hidesShadow")
     }
     
     override func viewDidAppear(_ animated: Bool) {

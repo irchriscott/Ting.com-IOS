@@ -15,7 +15,7 @@ extension UITabBarController {
         if let items = self.tabBar.items {
             for item in items {
                 item.title = ""
-                var value: CGFloat = 0
+                var value: CGFloat = 6
                 if UIDevice.largeNavbarDevices.contains(UIDevice.type) {
                     value = 6
                 }

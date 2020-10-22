@@ -371,7 +371,14 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             let statusBar = UIView(frame: UIApplication.shared.keyWindow?.windowScene?.statusBarManager?.statusBarFrame ?? CGRect.zero)
             statusBar.backgroundColor = Colors.colorWhite
             UIApplication.shared.keyWindow?.addSubview(statusBar)
+            
+            let navigationBar = navigationController?.navigationBar
+            let navigationBarAppearence = UINavigationBarAppearance()
+            navigationBarAppearence.shadowColor = .clear
+            navigationBar?.scrollEdgeAppearance = navigationBarAppearence
         }
+        
+        self.navigationController?.navigationBar.setValue(true, forKey: "hidesShadow")
     }
     
     private func checkLocationAuthorization(status: CLAuthorizationStatus){

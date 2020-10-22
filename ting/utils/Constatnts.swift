@@ -44,9 +44,9 @@ struct Sizes {
 }
 
 struct URLs {
-    static let hostEndPoint                 = "http://192.168.1.4:8000" //ITSAppUsesNonExemptEncryption 192.168.91.1
-    static let uploadEndPoint               = "http://192.168.1.4:8000/tinguploads/"
-    static let endPoint                     = "http://192.168.1.4:8000/api/v1/"
+    static let hostEndPoint                 = "http://192.168.1.5:8000" //ITSAppUsesNonExemptEncryption 192.168.91.1
+    static let uploadEndPoint               = "http://192.168.1.5:8000/tinguploads/"
+    static let endPoint                     = "http://192.168.1.5:8000/api/v1/"
     
     //SIGNUP & AUTH ROUTES
     
