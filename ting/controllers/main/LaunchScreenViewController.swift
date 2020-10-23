@@ -9,8 +9,13 @@
 import UIKit
 
 class LaunchScreenViewController: UIViewController {
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
 
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         if UserAuthentication().isUserLoggedIn() {
@@ -25,5 +30,4 @@ class LaunchScreenViewController: UIViewController {
             self.present(loginViewController, animated: true, completion: nil)
         }
     }
-
 }

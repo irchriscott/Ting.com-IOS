@@ -44,6 +44,8 @@
 	<string></string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This will allow you to record a video</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This will allow you to post image</string>
 	<key>UIAppFonts</key>
@@ -69,6 +71,8 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIStatusBarHidden</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -78,7 +82,5 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>This will allow you to record a video</string>
 </dict>
 </plist>
