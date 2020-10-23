@@ -241,7 +241,7 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
         self.navigationController?.navigationBar.barTintColor = Colors.colorWhite
         self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barStyle = .default
-        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.shadowImage = nil
         self.navigationItem.title = "Discovery"
         
         self.navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor : UIColor.black]
@@ -256,11 +256,6 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
             let statusBar = UIView(frame: UIApplication.shared.keyWindow?.windowScene?.statusBarManager?.statusBarFrame ?? CGRect.zero)
             statusBar.backgroundColor = Colors.colorWhite
             UIApplication.shared.keyWindow?.addSubview(statusBar)
-            
-            let navigationBar = navigationController?.navigationBar
-            let navigationBarAppearence = UINavigationBarAppearance()
-            navigationBarAppearence.shadowColor = .clear
-            navigationBar?.scrollEdgeAppearance = navigationBarAppearence
         }
         
         self.navigationController?.navigationBar.setValue(true, forKey: "hidesShadow")

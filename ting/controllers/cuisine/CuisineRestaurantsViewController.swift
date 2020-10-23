@@ -87,7 +87,7 @@ class CuisineRestaurantsViewController: UITableViewController, CLLocationManager
         tableView.addSubview(refresherLoadingView)
         
         tableView.separatorStyle = .none
-        tableView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
+        tableView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 65, right: 0)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.shimmerCellId)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.emptyCellId)
         tableView.register(CuisineRestaurantViewCell.self, forCellReuseIdentifier: self.cellId)
@@ -97,7 +97,7 @@ class CuisineRestaurantsViewController: UITableViewController, CLLocationManager
         mapView.controller = self
         mapView.restaurant = self.selectedBranch
         mapView.modalPresentationStyle = .overFullScreen
-        
+
         self.didLoadWithLocation = false
     }
     

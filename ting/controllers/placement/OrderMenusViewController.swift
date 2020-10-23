@@ -82,7 +82,7 @@ class OrderMenusViewController: UICollectionViewController, UICollectionViewDele
         view.searchTextPositionAdjustment = UIOffset(horizontal: 8, vertical: 0)
         view.setPositionAdjustment(UIOffset(horizontal: 8, vertical: 0), for: .search)
         view.barStyle = .blackTranslucent
-        view.isTranslucent = true
+        view.isTranslucent = false
         view.searchBarStyle = .minimal
         view.layer.cornerRadius = 4
         if #available(iOS 13.0, *) {

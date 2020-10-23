@@ -38,7 +38,7 @@ class EditUserCollectionViewController: UICollectionViewController, UICollection
     }
     
     func setupNavigationBar(){
-        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.navigationBar.barStyle = .black
         self.navigationController?.navigationBar.shadowImage = nil
         self.navigationItem.title = session!.username
