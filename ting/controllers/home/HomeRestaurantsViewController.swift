@@ -55,8 +55,6 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     
     var gradientLoadingBar: GradientLoadingBar!
     
-    let appWindow = UIApplication.shared.keyWindow
-    
     let mapFloatingButton: FloatingButton = {
         let view = FloatingButton()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -73,6 +71,8 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     }()
     
     var didLoadWithLocation: Bool = false
+    
+    let spinner = Spinner()
     
     private lazy var cuisinesCollectionView: UICollectionView = {
         let layout =  UICollectionViewFlowLayout()
@@ -253,6 +253,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             DispatchQueue.main.async {
                 self.refresherLoadingView.endRefreshing()
                 self.gradientLoadingBar.fadeOut()
+                self.spinner.hide()
                 if !branches.isEmpty {
                     var newBranches: [Branch] = []
                     if let userLocation = location {
@@ -267,9 +268,9 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                     
                     self.restaurants.append(contentsOf: newBranches.sorted(by: { $0.dist! < $1.dist! }))
                     self.spinnerViewHeight = 0
-                    self.collectionView.reloadData()
                     self.restaurantsCollectionView.reloadData()
                     self.restaurantsShimmerCollectionView.reloadData()
+                    self.collectionView.reloadData()
                     
                 } else { self.shouldLoad = false }
             }
@@ -279,12 +280,15 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     private func searchFilteredRestaurants(location: CLLocation?, index: Int){
         
         let filterParams = LocalData.instance.getFiltersParams()
+        pageIndex = 1
+        self.loadedRestaurants = []
+        self.restaurants = []
         
         do {
             let data = try JSONEncoder().encode(filterParams)
             APIDataProvider.instance.searchFilterRestaurants(country: country, town: town, query: searchView.text ?? "", filters: String(data: data, encoding: .utf8)!, page: "\(index)") { (branches) in
                 DispatchQueue.main.async {
-                    self.appWindow?.rootViewController?.removeSpinner()
+                    self.spinner.hide()
                     if !branches.isEmpty {
                         var newBranches: [Branch] = []
                         if let userLocation = location {
@@ -299,8 +303,8 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                         
                         self.restaurants.append(contentsOf: newBranches.sorted(by: { $0.dist! < $1.dist! }))
                         self.spinnerViewHeight = 0
-                        self.collectionView.reloadData()
                         self.restaurantsCollectionView.reloadData()
+                        self.collectionView.reloadData()
                         
                     } else {
                         self.shouldLoad = false
@@ -313,7 +317,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                 }
             }
         } catch {
-            self.appWindow?.rootViewController?.removeSpinner()
+            self.spinner.hide()
             self.showErrorMessage(message: error.localizedDescription, title: "Error")
         }
     }
@@ -340,6 +344,9 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                     self.restaurants = []
                     self.spinnerViewHeight = 0
                     self.selectedLocation = location
+                    self.spinner.show()
+                    self.restaurantsCollectionView.reloadData()
+                    self.collectionView.reloadData()
                     self.getRestaurants(location: location, index: self.pageIndex)
                 }
             }))
@@ -694,12 +701,13 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                     
                     filtersController.onFilterRestaurants = { filter in
                         if filter {
-                            self.appWindow?.rootViewController?.showSpinner(onView: self.appWindow?.rootViewController?.view ?? self.view)
-                            
                             self.pageIndex = 1
                             self.loadedRestaurants = []
                             self.restaurants = []
                             self.spinnerViewHeight = 0
+                            self.spinner.show()
+                            self.restaurantsCollectionView.reloadData()
+                            self.collectionView.reloadData()
                             self.searchFilteredRestaurants(location: self.selectedLocation, index: self.pageIndex)
                         }
                     }
@@ -721,7 +729,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                     }
                     self.present(sheetController, animated: false, completion: nil)
                     
-                    break;
+                    break
                 }
             }
             
@@ -882,13 +890,14 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     }
     
     @objc private func filterRestaurants(_ sender: Any) {
-        self.appWindow?.rootViewController?.showSpinner(onView: self.appWindow?.rootViewController?.view ?? self.view)
-        
         self.pageIndex = 1
         self.loadedRestaurants.removeAll(keepingCapacity: false)
         self.loadedRestaurants = []
         self.restaurants = []
         self.spinnerViewHeight = 0
+        self.spinner.show()
+        self.restaurantsCollectionView.reloadData()
+        self.collectionView.reloadData()
         self.searchFilteredRestaurants(location: self.selectedLocation, index: self.pageIndex)
     }
     
@@ -901,6 +910,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             self.loadedRestaurants = []
             self.restaurants = []
             self.isFiltering = false
+            self.spinner.show()
             self.getRestaurants(location: self.selectedLocation, index: self.pageIndex)
         }))
         alertDialog.addAction(UIAlertAction(title: "CANCEL", style: UIAlertAction.Style.default, handler: nil))
