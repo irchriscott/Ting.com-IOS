@@ -130,7 +130,7 @@ class RestaurantLikeViewCell: UITableViewCell {
                 } else {
                     if let user = like.user {
                         userImageView.kf.setImage(
-                            with: URL(string: "\(URLs.hostEndPoint)\(user.image)")!,
+                            with: URL(string: "\(URLs.uploadEndPoint)\(user.image)")!,
                             placeholder: UIImage(named: "default_user"),
                             options: [
                                 .scaleFactor(UIScreen.main.scale),
