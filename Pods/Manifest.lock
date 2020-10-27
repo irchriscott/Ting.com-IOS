@@ -57,6 +57,7 @@ PODS:
   - Starscream (3.0.6)
   - SteviaLayout (4.7.3)
   - SwiftDataTables (0.8.1)
+  - SwiftToast (1.1.3)
   - ToosieSlide (1.1.1)
   - ViewPager-Swift (2.0.1)
   - Windless (0.1.5)
@@ -91,6 +92,7 @@ DEPENDENCIES:
   - ShimmerSwift
   - SimpleCheckbox
   - SwiftDataTables
+  - SwiftToast
   - ToosieSlide (~> 1.1)
   - ViewPager-Swift
   - Windless
@@ -131,6 +133,7 @@ SPEC REPOS:
     - Starscream
     - SteviaLayout
     - SwiftDataTables
+    - SwiftToast
     - ToosieSlide
     - ViewPager-Swift
     - Windless
@@ -180,6 +183,7 @@ SPEC CHECKSUMS:
   Starscream: ef3ece99d765eeccb67de105bfa143f929026cf5
   SteviaLayout: c2ecdcff57d44e38fd2f65e54ad52aeae28ca0c4
   SwiftDataTables: 9e5f2ad7e7430c8008a31e66a0237ed29bf6fca8
+  SwiftToast: 029cbeda85c04fb3fa5df774ba461b19971bc6c5
   ToosieSlide: b410e89e0e1c00aecddeecebd1b4a8ed66385cac
   ViewPager-Swift: 7d83f5d4888a0fa808c08c8405ba84e603a2eb58
   Windless: c6b7d63ac3a0c7e6b241e316650d4605abf71894
@@ -187,6 +191,6 @@ SPEC CHECKSUMS:
   YNSearch: 56d4aad4547fd1efce355cccc220a94735b1ea14
   YPImagePicker: 08bbb809ed62bf4149fc015c97249eb4b9463ff9
 
-PODFILE CHECKSUM: b83c4269b5d8de066ea26c7ee210d3fe50acfb05
+PODFILE CHECKSUM: fa4a4d6dc46cdf08cc8874c58d232724f3826271
 
 COCOAPODS: 1.9.3

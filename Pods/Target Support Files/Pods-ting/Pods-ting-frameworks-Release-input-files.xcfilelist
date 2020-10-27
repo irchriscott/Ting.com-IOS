@@ -28,6 +28,7 @@ ${BUILT_PRODUCTS_DIR}/SimpleCheckbox/SimpleCheckbox.framework
 ${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework
 ${BUILT_PRODUCTS_DIR}/SteviaLayout/Stevia.framework
 ${BUILT_PRODUCTS_DIR}/SwiftDataTables/SwiftDataTables.framework
+${BUILT_PRODUCTS_DIR}/SwiftToast/SwiftToast.framework
 ${BUILT_PRODUCTS_DIR}/ToosieSlide/ToosieSlide.framework
 ${BUILT_PRODUCTS_DIR}/ViewPager-Swift/ViewPager_Swift.framework
 ${BUILT_PRODUCTS_DIR}/Windless/Windless.framework

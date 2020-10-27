@@ -10,6 +10,7 @@ import UIKit
 import MapKit
 import ToosieSlide
 import ShimmerSwift
+import Reachability
 import CircularRevealKit
 
 class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource {
@@ -71,6 +72,8 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
     private var loadedRows:[Int] = []
     
     private var didLoadWithLocation: Bool = false
+    
+    let reachability = Reachability()
     
     private lazy var recommandedRestaurantsView: UICollectionView = {
         let carouselFlow = UICollectionViewCarouselLayout()
@@ -195,17 +198,8 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
         topMenusTableView.register(RestaurantMenuViewCell.self, forCellReuseIdentifier: self.topMenuCellId)
         topMenusTableView.register(UITableViewCell.self, forCellReuseIdentifier: self.topMenuShimmerCellId)
         
-        self.getRecommandedRestaurants()
-        
         self.cuisines = LocalData.instance.getCuisines()
         self.cuisinesCollectionView.reloadData()
-        self.getCuisines()
-        
-        self.getTodayPromotions()
-        
-        self.getRecommandedMenus()
-        
-        self.getTopMenus()
         
         refresherLoadingView.addTarget(self, action: #selector(refreshDiscovery), for: UIControl.Event.valueChanged)
         collectionView.addSubview(refresherLoadingView)
@@ -225,6 +219,19 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(note:)), name: .reachabilityChanged, object: reachability)
+        do {
+            try reachability?.startNotifier()
+        } catch {
+            self.getRecommandedRestaurants()
+            self.getCuisines()
+            self.getTodayPromotions()
+            self.getRecommandedMenus()
+            self.getTopMenus()
+            self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
+        }
+        
         self.didLoadWithLocation = false
         self.locationManager.startUpdatingLocation()
         self.setupNavigationBar()
@@ -1120,6 +1127,30 @@ class HomeDiscoverViewController: UICollectionViewController, UICollectionViewDe
             tableScannerViewController.controller = self.navigationController
             tableScannerViewController.modalPresentationStyle = .overFullScreen
             self.present(tableScannerViewController, animated: true, completion: nil)
+        }
+    }
+    
+    @objc func reachabilityChanged(note: Notification) {
+
+        let reachability = note.object as! Reachability
+
+        switch reachability.connection {
+        case .wifi:
+            self.getRecommandedRestaurants()
+            self.getCuisines()
+            self.getTodayPromotions()
+            self.getRecommandedMenus()
+            self.getTopMenus()
+            self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
+        case .cellular:
+            self.getRecommandedRestaurants()
+            self.getCuisines()
+            self.getTodayPromotions()
+            self.getRecommandedMenus()
+            self.getTopMenus()
+            self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
+        case .none:
+            break
         }
     }
     

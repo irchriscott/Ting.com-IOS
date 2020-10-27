@@ -31,4 +31,5 @@ target 'ting' do
     pod 'CameraKit-iOS'
     pod 'YPImagePicker'
     pod 'YNSearch'
+    pod 'SwiftToast'
 end

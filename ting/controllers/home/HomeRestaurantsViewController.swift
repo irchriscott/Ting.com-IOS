@@ -11,6 +11,7 @@ import MapKit
 import GradientLoadingBar
 import ShimmerSwift
 import FittedSheets
+import Reachability
 
 class HomeRestaurantsViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, CLLocationManagerDelegate, UITextFieldDelegate {
     
@@ -74,6 +75,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     var didLoadWithLocation: Bool = false
     
     let spinner = Spinner()
+    let reachability = Reachability()
     
     private lazy var cuisinesCollectionView: UICollectionView = {
         let layout =  UICollectionViewFlowLayout()
@@ -152,7 +154,6 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         
         self.locationManager.delegate = self
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
         
         self.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
         self.collectionView.register(RestaurantViewCell.self, forCellWithReuseIdentifier: cellIdRestaurant)
@@ -168,11 +169,9 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         
         self.cuisines = LocalData.instance.getCuisines()
         self.cuisinesCollectionView.reloadData()
-        self.getCuisines()
         
         self.filterValues = LocalData.instance.getFilters()
         self.filtersCollectionView.reloadData()
-        self.getFilters()
         
         hideKeyboardGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard(_:)))
         
@@ -194,10 +193,18 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     override func viewDidAppear(_ animated: Bool) {
         self.setupNavigationBar()
         self.didLoadWithLocation = false
-        //if isMapOpened == true, self.restaurants.count > 0 { self.openRestaurantMap() }
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(reachabilityChanged(note:)), name: .reachabilityChanged, object: reachability)
+        do {
+            try reachability?.startNotifier()
+        } catch {
+            self.getCuisines()
+            self.getFilters()
+            self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
+        }
+        
         self.didLoadWithLocation = false
         self.locationManager.startUpdatingLocation()
         self.setupNavigationBar()
@@ -931,6 +938,24 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     @objc private func hideKeyboard(_ sender: Any) {
         self.view.endEditing(true)
         self.view.removeGestureRecognizer(hideKeyboardGesture)
+    }
+    
+    @objc func reachabilityChanged(note: Notification) {
+
+        let reachability = note.object as! Reachability
+
+        switch reachability.connection {
+        case .wifi:
+            self.getCuisines()
+            self.getFilters()
+            self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
+        case .cellular:
+            self.getCuisines()
+            self.getFilters()
+            self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
+        case .none:
+            break
+        }
     }
     
     @objc private func openSearch(_ sender: Any?) {
