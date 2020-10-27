@@ -88,8 +88,9 @@ extension UIViewController {
                         image.transform = CGAffineTransform(translationX: 0, y: 0)
                         image.transform = CGAffineTransform(rotationAngle: 0)
                     }, completion: {(success) in
-                        sleep(3)
-                        successOverlayView.removeFromSuperview()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            successOverlayView.removeFromSuperview()
+                        }
                     })
                 })
             })

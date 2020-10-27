@@ -80,20 +80,6 @@ class RowShimmerView: UIView {
         addConstraintsWithFormat(format: "V:|-12-[v0(45)]", views: imageView)
         addConstraintsWithFormat(format: "V:|-12-[v0]", views: contentView)
         addConstraintsWithFormat(format: "H:|-12-[v0(\(imageConstant))]-12-[v1]-12-|", views: imageView, contentView)
-        
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [UIColor.clear.cgColor, UIColor(white: 1, alpha: 0.5).cgColor, UIColor.clear.cgColor]
-        gradientLayer.locations = [0, 0.5, 1]
-        gradientLayer.frame = CGRect(x: 0, y: 0, width: 400, height: 90)
-        gradientLayer.transform = CATransform3DMakeRotation(180 + 45, 0, 0, 1)
-        //layer.mask = gradientLayer
-        
-        let animation = CABasicAnimation(keyPath: "transform.translation.x")
-        animation.fromValue = -400
-        animation.toValue = 400
-        animation.duration = 1.5
-        animation.repeatCount = .infinity
-        gradientLayer.add(animation, forKey: "shimmerAnimation")
     }
     
     required init?(coder: NSCoder) {

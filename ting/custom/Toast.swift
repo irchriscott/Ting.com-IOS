@@ -30,10 +30,15 @@ class Toast : NSObject {
         
         if let window =  UIApplication.shared.keyWindow {
             let toastView = UIView()
-            let height: CGFloat = 45.0
+            let height: CGFloat = 40.0
             let y = window.frame.height - (height + 25)
             
-            toastView.frame = CGRect(x: 20, y: window.frame.height, width: window.frame.width - 40, height: height)
+            let textFrameMaxWidth = window.frame.width - (59 + 30)
+            let frameWidth = message.size(font: UIFont(name: "Poppins-Regular", size: 13.0)!, width: textFrameMaxWidth)
+            
+            let x = (window.frame.width - (frameWidth.width + 59)) / 2
+            
+            toastView.frame = CGRect(x: x, y: window.frame.height, width: frameWidth.width + 59, height: height)
             var toastIcon: UIImage?
             
             switch style {
@@ -55,16 +60,16 @@ class Toast : NSObject {
                 break
             }
             
-            toastView.layer.cornerRadius = 6.0
+            toastView.layer.cornerRadius = 4.0
             
             let messageLabel = UILabel()
-            messageLabel.frame = CGRect(x: 45, y: 0, width: toastView.frame.width - 59, height: 45)
+            messageLabel.frame = CGRect(x: 45, y: 0, width: toastView.frame.width - 59, height: 40)
             messageLabel.textColor = Colors.colorGray
             messageLabel.text = message
-            messageLabel.font = UIFont(name: "Poppins-Regular", size: 14.0)
+            messageLabel.font = UIFont(name: "Poppins-Regular", size: 13.0)
             
             let toastIconView = UIImageView()
-            toastIconView.frame = CGRect(x: 15, y: 13, width: 20, height: 20)
+            toastIconView.frame = CGRect(x: 15, y: 10, width: 20, height: 20)
             toastIconView.image = toastIcon
             toastIconView.alpha = 0.5
             
@@ -73,13 +78,14 @@ class Toast : NSObject {
             window.addSubview(toastView)
             
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-                toastView.frame = CGRect(x: 20, y: y, width: toastView.frame.width, height: toastView.frame.height)
+                toastView.center = window.center
+                toastView.frame = CGRect(x: x, y: y, width: toastView.frame.width, height: toastView.frame.height)
             }, completion: {(success) in
                 
-                sleep(UInt32(duration))
-                
-                UIView.animate(withDuration: 0.3) {
-                    toastView.frame = CGRect(x: 20, y: window.frame.height, width: toastView.frame.width, height: toastView.frame.height)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                   UIView.animate(withDuration: 0.3) {
+                        toastView.frame = CGRect(x: x, y: window.frame.height, width: toastView.frame.width, height: toastView.frame.height)
+                   }
                 }
             })
         }

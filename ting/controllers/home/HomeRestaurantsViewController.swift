@@ -23,6 +23,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     let cellIdShimmer = "cellIdShimmer"
     let cellIdRestaurant = "cellIdRestaurant"
     
+    let headerIdRestaurant = "headerIdRestaurant"
     let footerIdRestaurant = "footerIdRestaurant"
     
     var cuisines: [RestaurantCategory] = []
@@ -104,29 +105,6 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         return view
     }()
     
-    private lazy var restaurantsShimmerCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.delegate = self
-        view.dataSource = self
-        view.isScrollEnabled = false
-        view.backgroundColor = .white
-        return view
-    }()
-    
-    private lazy var restaurantsCollectionView: UICollectionView = {
-        let layout =  UICollectionViewFlowLayout()
-        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.delegate = self
-        view.dataSource = self
-        view.isScrollEnabled = false
-        view.backgroundColor = .white
-        view.isUserInteractionEnabled = true
-        return view
-    }()
-    
     private lazy var searchView: UITextField = {
         let view = UITextField()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -147,6 +125,8 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     var isFiltering = false
     
     var loadedRestaurants:[Int] = []
+    var hasLoadedHeader: Bool = false
+    var hasLoadedFooter: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -154,8 +134,6 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         self.navigationController?.navigationBar.backgroundColor = Colors.colorWhite
         self.navigationController?.navigationBar.barTintColor = Colors.colorWhite
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        
-        self.didLoadWithLocation = false
         
         self.gradientLoadingBar = GradientLoadingBar(height: 4.0, isRelativeToSafeArea: false)
         
@@ -177,11 +155,14 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         self.checkLocationAuthorization(status: CLLocationManager.authorizationStatus())
         
         self.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
+        self.collectionView.register(RestaurantViewCell.self, forCellWithReuseIdentifier: cellIdRestaurant)
+        self.collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellIdShimmer)
+        
+        self.collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerIdRestaurant)
+        self.collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: self.footerIdRestaurant)
+        
         self.cuisinesCollectionView.register(CuisineViewCell.self, forCellWithReuseIdentifier: cellIdCuisine)
         self.filtersCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellIdFilter)
-        self.restaurantsShimmerCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellIdShimmer)
-        self.restaurantsCollectionView.register(RestaurantViewCell.self, forCellWithReuseIdentifier: cellIdRestaurant)
-        self.restaurantsCollectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: self.footerIdRestaurant)
         
         self.searchView.addTarget(self, action: #selector(search(_:)), for: .editingDidEnd)
         
@@ -212,7 +193,8 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     
     override func viewDidAppear(_ animated: Bool) {
         self.setupNavigationBar()
-        if isMapOpened == true, self.restaurants.count > 0 { self.openRestaurantMap() }
+        self.didLoadWithLocation = false
+        //if isMapOpened == true, self.restaurants.count > 0 { self.openRestaurantMap() }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -268,8 +250,6 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                     
                     self.restaurants.append(contentsOf: newBranches.sorted(by: { $0.dist! < $1.dist! }))
                     self.spinnerViewHeight = 0
-                    self.restaurantsCollectionView.reloadData()
-                    self.restaurantsShimmerCollectionView.reloadData()
                     self.collectionView.reloadData()
                     
                 } else { self.shouldLoad = false }
@@ -280,9 +260,6 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     private func searchFilteredRestaurants(location: CLLocation?, index: Int){
         
         let filterParams = LocalData.instance.getFiltersParams()
-        pageIndex = 1
-        self.loadedRestaurants = []
-        self.restaurants = []
         
         do {
             let data = try JSONEncoder().encode(filterParams)
@@ -303,7 +280,6 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                         
                         self.restaurants.append(contentsOf: newBranches.sorted(by: { $0.dist! < $1.dist! }))
                         self.spinnerViewHeight = 0
-                        self.restaurantsCollectionView.reloadData()
                         self.collectionView.reloadData()
                         
                     } else {
@@ -311,6 +287,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                         if self.pageIndex == 1 {
                             self.showErrorMessage(message: "No Result Found", title: "Result")
                             self.isFiltering = false
+                            self.collectionView.reloadData()
                             self.getRestaurants(location: self.selectedLocation, index: self.pageIndex)
                         }
                     }
@@ -327,6 +304,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         self.loadedRestaurants = []
         self.restaurants = []
         self.spinnerViewHeight = 0
+        self.collectionView.reloadData()
         self.getRestaurants(location: self.selectedLocation, index: pageIndex)
     }
     
@@ -345,7 +323,6 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                     self.spinnerViewHeight = 0
                     self.selectedLocation = location
                     self.spinner.show()
-                    self.restaurantsCollectionView.reloadData()
                     self.collectionView.reloadData()
                     self.getRestaurants(location: location, index: self.pageIndex)
                 }
@@ -447,15 +424,11 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case self.collectionView:
-            return 4
+            return self.restaurants.isEmpty ? 3 : self.restaurants.count
         case self.cuisinesCollectionView:
             return self.cuisines.isEmpty ? 4 : self.cuisines.count
         case self.filtersCollectionView:
             return self.filters.count
-        case self.restaurantsShimmerCollectionView:
-            return restaurants.isEmpty ? 3 : 0
-        case self.restaurantsCollectionView:
-            return restaurants.count
         default:
             return 0
         }
@@ -464,103 +437,37 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch collectionView {
         case self.collectionView:
-            switch indexPath.row {
-            case 0:
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
-                cell.backgroundColor = Colors.colorWhite
-                
-                cell.addSubview(cuisinesCollectionView)
-                cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: cuisinesCollectionView)
-                cell.addConstraintsWithFormat(format: "V:|[v0]|", views: cuisinesCollectionView)
-                
+            if !self.restaurants.isEmpty {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdRestaurant, for: indexPath) as! RestaurantViewCell
+                let restaurant = self.restaurants[indexPath.row]
+                if !self.loadedRestaurants.contains(indexPath.row) {
+                    cell.controller = self
+                    cell.branch = restaurant
+                    cell.backgroundColor = .white
+                    self.loadedRestaurants.append(indexPath.row)
+                }
                 return cell
-            case 1:
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
-                cell.backgroundColor = Colors.colorWhite
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: self.cellIdShimmer, for: indexPath)
                 
-                cell.addSubview(filtersCollectionView)
-                cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: filtersCollectionView)
-                cell.addConstraintsWithFormat(format: "V:|[v0]|", views: filtersCollectionView)
-                
-                return cell
-            case 2:
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
-                cell.backgroundColor = Colors.colorWhite
-                
-                let contentView : UIView = {
-                    let view = UIView()
+                let view: RowShimmerView = {
+                    let view = RowShimmerView()
                     view.translatesAutoresizingMaskIntoConstraints = false
-                    view.layer.borderColor = Colors.colorVeryLightGray.cgColor
-                    view.layer.borderWidth = 2.0
-                    view.layer.cornerRadius = 5.0
-                    view.clipsToBounds = true
                     return view
                 }()
                 
-                let iconView: UIImageView = {
-                    let view = UIImageView()
-                    view.translatesAutoresizingMaskIntoConstraints = false
-                    view.image = UIImage(named: "icon_search_25_gray")
-                    view.alpha = 0.4
-                    return view
-                }()
+                cell.addSubview(view)
+                cell.addConstraintsWithFormat(format: "V:|[v0]-12-|", views: view)
+                cell.addConstraintsWithFormat(format: "H:|[v0]|", views: view)
                 
-                let filterView: UIView = {
-                    let view = UIView()
-                    view.translatesAutoresizingMaskIntoConstraints = false
-                    view.backgroundColor = Colors.colorDarkTransparent.withAlphaComponent(0.2)
-                    view.frame = CGRect(x: 0, y: 0, width: 36, height: 36)
-                    view.layer.cornerRadius = 35 / 2
-                    view.clipsToBounds = true
-                    return view
-                }()
+                let shimmerView = ShimmeringView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 94))
+                cell.addSubview(shimmerView)
                 
-                let filterIconView: UIImageView = {
-                    let view = UIImageView()
-                    view.translatesAutoresizingMaskIntoConstraints = false
-                    view.image = UIImage(named: "icon_filter_25_gray")
-                    view.frame = CGRect(x: 0, y: 0, width: 22, height: 22)
-                    view.alpha = 0.7
-                    return view
-                }()
+                shimmerView.contentView = view
+                shimmerView.shimmerAnimationOpacity = 0.4
+                shimmerView.shimmerSpeed = 250
+                shimmerView.isShimmering = true
                 
-                filterView.addSubview(filterIconView)
-                filterView.addConstraintsWithFormat(format: "V:|-7-[v0(22)]-7-|", views: filterIconView)
-                filterView.addConstraintsWithFormat(format: "H:|-7-[v0(22)]-7-|", views: filterIconView)
-                
-                filterView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(filterRestaurants(_:))))
-                filterView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(clearFilters(_:))))
-                
-                contentView.addSubview(iconView)
-                contentView.addSubview(searchView)
-                
-                contentView.addConstraintsWithFormat(format: "V:|-12-[v0(26)]-12-|", views: iconView)
-                contentView.addConstraintsWithFormat(format: "V:|-6-[v0(38)]-6-|", views: searchView)
-                contentView.addConstraintsWithFormat(format: "H:|-16-[v0(26)]-12-[v1]-|", views: iconView, searchView)
-                
-                cell.addSubview(contentView)
-                cell.addConstraintsWithFormat(format: "V:|[v0]|", views: contentView)
-                cell.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: contentView)
-                
-                cell.addSubview(filterView)
-                cell.addConstraintsWithFormat(format: "H:[v0]-26-|", views: filterView)
-                cell.addConstraintsWithFormat(format: "V:|-9-[v0]-9-|", views: filterView)
-                
-                return cell
-            case 3:
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
-                cell.backgroundColor = Colors.colorWhite
-                
-                cell.addSubview(restaurantsCollectionView)
-                cell.addSubview(restaurantsShimmerCollectionView)
-                cell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantsCollectionView)
-                cell.addConstraintsWithFormat(format: "H:|[v0]|", views: restaurantsShimmerCollectionView)
-                cell.addConstraintsWithFormat(format: "V:|[v0]-[v1]|", views: restaurantsShimmerCollectionView, restaurantsCollectionView)
-                
-                return cell
-            default:
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
-                cell.backgroundColor = Colors.colorWhite
                 return cell
             }
         case self.cuisinesCollectionView:
@@ -613,40 +520,10 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             cell.addConstraintsWithFormat(format: "H:|[v0(\(filterRect.width + 40))]|", views: filterView)
             
             return cell
-        case self.restaurantsShimmerCollectionView:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdShimmer, for: indexPath)
-            
-            let view: RowShimmerView = {
-                let view = RowShimmerView()
-                view.translatesAutoresizingMaskIntoConstraints = false
-                return view
-            }()
-            
-            cell.addSubview(view)
-            cell.addConstraintsWithFormat(format: "V:|[v0]|", views: view)
-            cell.addConstraintsWithFormat(format: "H:|[v0]|", views: view)
-            
-            let shimmerView = ShimmeringView(frame: CGRect(x: 0, y: 0, width: self.view.frame.width, height: 94))
-            cell.addSubview(shimmerView)
-            
-            shimmerView.contentView = view
-            shimmerView.shimmerAnimationOpacity = 0.4
-            shimmerView.shimmerSpeed = 250
-            shimmerView.isShimmering = true
-            
-            return cell
-        case self.restaurantsCollectionView:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdRestaurant, for: indexPath) as! RestaurantViewCell
-            let restaurant = self.restaurants[indexPath.row]
-            if !self.loadedRestaurants.contains(indexPath.row) {
-                cell.controller = self
-                cell.branch = restaurant
-                cell.backgroundColor = .white
-                self.loadedRestaurants.append(indexPath.row)
-            }
-            return cell
         default:
-            return collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
+            cell.removeSubviews()
+            return cell
         }
     }
     
@@ -706,7 +583,6 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
                             self.restaurants = []
                             self.spinnerViewHeight = 0
                             self.spinner.show()
-                            self.restaurantsCollectionView.reloadData()
                             self.collectionView.reloadData()
                             self.searchFilteredRestaurants(location: self.selectedLocation, index: self.pageIndex)
                         }
@@ -734,7 +610,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             }
             
             break
-        case self.restaurantsCollectionView:
+        case self.collectionView:
             let branch = self.restaurants[indexPath.row]
             let storyboard = UIStoryboard(name: "Home", bundle: nil)
             let restaurantViewController = storyboard.instantiateViewController(withIdentifier: "RestaurantView") as! RestaurantViewController
@@ -749,40 +625,16 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         switch collectionView {
         case self.collectionView:
-            switch indexPath.row {
-            case 0:
-                return CGSize(width: view.frame.width, height: 168)
-            case 1:
-                return CGSize(width: view.frame.width, height: 42)
-            case 2:
-                return CGSize(width: view.frame.width, height: 54)
-            case 3:
-                var height = self.spinnerViewHeight
-                if self.restaurants.count > 0 {
-                    height += 12
-                    for (index, _) in self.restaurants.enumerated() {
-                        height += self.restaurantCellViewHeight(index: index) + 5
-                    }
-                } else {
-                    height += (94 * 3)
-                }
-                return CGSize(width: view.frame.width, height: height)
-            default:
-                return CGSize(width: view.frame.width, height: 0)
+            if !self.restaurants.isEmpty {
+                return CGSize(width: view.frame.width, height: self.restaurantCellViewHeight(index: indexPath.row))
             }
+            return CGSize(width: view.frame.width, height: 94)
         case self.cuisinesCollectionView:
             return CGSize(width: 125, height: 160)
         case self.filtersCollectionView:
             let data = self.filters[indexPath.row]
             let filterRect = NSString(string: data[2] as! String).boundingRect(with: CGSize(width: view.frame.width, height: 26), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Medium", size: 12)!], context: nil)
             return CGSize(width: filterRect.width + 40, height: 42)
-        case self.restaurantsShimmerCollectionView:
-            return CGSize(width: view.frame.width, height: 94)
-        case self.restaurantsCollectionView:
-            if !self.restaurants.isEmpty {
-                return CGSize(width: view.frame.width, height: self.restaurantCellViewHeight(index: indexPath.row))
-            }
-            return CGSize(width: view.frame.width, height: 210)
         default:
             return CGSize(width: view.frame.width, height: 0)
         }
@@ -794,8 +646,6 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             return UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 12)
         case self.filtersCollectionView:
             return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
-        case self.restaurantsShimmerCollectionView:
-            return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         default:
             return UIEdgeInsets(top: 0, left: 0, bottom: 12, right: 0)
         }
@@ -803,14 +653,14 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         switch collectionView {
-        case self.restaurantsCollectionView:
+        case self.collectionView:
             if indexPath.row == self.restaurants.count - 1 {
+                self.spinnerViewHeight = 36
                 if self.shouldLoad {
-                    pageIndex += 1
-                    self.spinnerViewHeight = 36
-                    if isFiltering {
-                        self.searchFilteredRestaurants(location: self.selectedLocation, index: pageIndex)
-                    } else { getRestaurants(location: self.selectedLocation, index: pageIndex) }
+                    self.pageIndex += 1
+                    if self.isFiltering {
+                        self.searchFilteredRestaurants(location: self.selectedLocation, index: self.pageIndex)
+                    } else { self.getRestaurants(location: self.selectedLocation, index: self.pageIndex) }
                 }
             }
             break
@@ -821,31 +671,121 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         switch collectionView {
-        case self.restaurantsCollectionView:
-            let footer = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: footerIdRestaurant, for: indexPath)
+        case self.collectionView:
+            if kind == UICollectionView.elementKindSectionHeader {
+                let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerIdRestaurant, for: indexPath)
+                if !self.hasLoadedHeader {
+                    
+                    header.addSubview(cuisinesCollectionView)
+                    header.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: cuisinesCollectionView)
+                        
+                    header.addSubview(filtersCollectionView)
+                    header.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: filtersCollectionView)
+                        
+                    let contentView : UIView = {
+                        let view = UIView()
+                        view.translatesAutoresizingMaskIntoConstraints = false
+                        view.layer.borderColor = Colors.colorVeryLightGray.cgColor
+                        view.layer.borderWidth = 2.0
+                        view.layer.cornerRadius = 5.0
+                        view.clipsToBounds = true
+                        return view
+                    }()
+                        
+                    let iconView: UIImageView = {
+                        let view = UIImageView()
+                        view.translatesAutoresizingMaskIntoConstraints = false
+                        view.image = UIImage(named: "icon_search_25_gray")
+                        view.alpha = 0.4
+                        return view
+                    }()
+                        
+                    let filterView: UIView = {
+                        let view = UIView()
+                        view.translatesAutoresizingMaskIntoConstraints = false
+                        view.backgroundColor = Colors.colorDarkTransparent.withAlphaComponent(0.2)
+                        view.frame = CGRect(x: 0, y: 0, width: 36, height: 36)
+                        view.layer.cornerRadius = 35 / 2
+                        view.clipsToBounds = true
+                        return view
+                    }()
+                        
+                    let filterIconView: UIImageView = {
+                        let view = UIImageView()
+                        view.translatesAutoresizingMaskIntoConstraints = false
+                        view.image = UIImage(named: "icon_filter_25_gray")
+                        view.frame = CGRect(x: 0, y: 0, width: 22, height: 22)
+                        view.alpha = 0.7
+                        return view
+                    }()
+                        
+                    filterView.addSubview(filterIconView)
+                    filterView.addConstraintsWithFormat(format: "V:|-7-[v0(22)]-7-|", views: filterIconView)
+                    filterView.addConstraintsWithFormat(format: "H:|-7-[v0(22)]-7-|", views: filterIconView)
+                        
+                    filterView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(filterRestaurants(_:))))
+                    filterView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action:#selector(clearFilters(_:))))
+                            
+                    contentView.addSubview(iconView)
+                    contentView.addSubview(searchView)
+                        
+                    contentView.addConstraintsWithFormat(format: "V:|-12-[v0(26)]-12-|", views: iconView)
+                    contentView.addConstraintsWithFormat(format: "V:|-6-[v0(38)]-6-|", views: searchView)
+                    contentView.addConstraintsWithFormat(format: "H:|-16-[v0(26)]-12-[v1]-|", views: iconView, searchView)
+                            
+                    header.addSubview(contentView)
+                    header.addConstraintsWithFormat(format: "H:|-12-[v0]-12-|", views: contentView)
+                            
+                    contentView.addSubview(filterView)
+                    contentView.addConstraintsWithFormat(format: "H:[v0]-12-|", views: filterView)
+                    contentView.addConstraintsWithFormat(format: "V:|-9-[v0]-9-|", views: filterView)
+                    
+                    header.addConstraintsWithFormat(format: "V:|[v0(168)]-[v1(42)]-12-[v2(54)]-12-|", views: cuisinesCollectionView, filtersCollectionView, contentView)
+                    
+                    self.hasLoadedHeader = true
+                }
+                
+                return header
+            } else {
+                let footer = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: footerIdRestaurant, for: indexPath)
+                
+                if !self.hasLoadedFooter {
+                    let indicatorView: UIActivityIndicatorView = {
+                        let view = UIActivityIndicatorView(style: .gray)
+                        view.translatesAutoresizingMaskIntoConstraints = false
+                        return view
+                    }()
+                    
+                    indicatorView.startAnimating()
+                    footer.addSubview(indicatorView)
+                    footer.addConstraintsWithFormat(format: "V:|[v0]|", views: indicatorView)
+                    footer.addConstraintsWithFormat(format: "H:|[v0]|", views: indicatorView)
+                    footer.addConstraint(NSLayoutConstraint(item: indicatorView, attribute: .centerY, relatedBy: .equal, toItem: footer, attribute: .centerY, multiplier: 1, constant: 0))
+                    
+                    self.hasLoadedFooter = true
+                }
+                
+                return footer
+            }
             
-            let indicatorView: UIActivityIndicatorView = {
-                let view = UIActivityIndicatorView(style: .gray)
-                view.translatesAutoresizingMaskIntoConstraints = false
-                return view
-            }()
-            
-            indicatorView.startAnimating()
-            footer.addSubview(indicatorView)
-            footer.addConstraintsWithFormat(format: "V:|[v0]|", views: indicatorView)
-            footer.addConstraintsWithFormat(format: "H:|[v0]|", views: indicatorView)
-            footer.addConstraint(NSLayoutConstraint(item: indicatorView, attribute: .centerY, relatedBy: .equal, toItem: footer, attribute: .centerY, multiplier: 1, constant: 0))
-            
-            return footer
         default:
             break
         }
         return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: footerIdRestaurant, for: indexPath)
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        switch collectionView {
+        case self.collectionView:
+            return CGSize(width: self.view.frame.width, height: 288)
+        default:
+            return CGSize(width: 0, height: 0)
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         switch collectionView {
-        case self.restaurantsCollectionView:
+        case self.collectionView:
             return CGSize(width: self.view.frame.width, height: self.spinnerViewHeight)
         default:
             return CGSize(width: 0, height: 0)
@@ -874,12 +814,10 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
     
     @objc func closeRestaurantMap(){
         UIApplication.shared.keyWindow?.windowLevel = UIWindow.Level.normal
-        
+        self.isMapOpened = false
+        self.mapCenter = nil
+        self.selectedBranch = nil
         self.mapView.dismiss(animated: true, completion: nil)
-        
-        isMapOpened = false
-        mapCenter = nil
-        selectedBranch = nil
     }
     
     public func navigateToRestaurant(restaurant: Branch){
@@ -895,8 +833,8 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
         self.loadedRestaurants = []
         self.restaurants = []
         self.spinnerViewHeight = 0
+        self.isFiltering = true
         self.spinner.show()
-        self.restaurantsCollectionView.reloadData()
         self.collectionView.reloadData()
         self.searchFilteredRestaurants(location: self.selectedLocation, index: self.pageIndex)
     }
@@ -911,6 +849,7 @@ class HomeRestaurantsViewController: UICollectionViewController, UICollectionVie
             self.restaurants = []
             self.isFiltering = false
             self.spinner.show()
+            self.collectionView.reloadData()
             self.getRestaurants(location: self.selectedLocation, index: self.pageIndex)
         }))
         alertDialog.addAction(UIAlertAction(title: "CANCEL", style: UIAlertAction.Style.default, handler: nil))
