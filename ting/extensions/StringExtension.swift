@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Atributika
 
 extension String {
     func convertHtml() -> NSAttributedString {
@@ -48,5 +49,30 @@ extension String {
     func getSize(font: UIFont, width: CGFloat) -> CGSize {
         let string = NSString(string: self).boundingRect(with: CGSize(width: width, height: 0.0), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : font], context: nil)
         return CGSize(width: string.width, height: string.height)
+    }
+    
+    func stringWithIndentedList() -> NSAttributedString {
+        let bullet = "• "
+        let transformers: [TagTransformer] = [
+            TagTransformer.brTransformer,
+            TagTransformer(tagName: "li", tagType: .start, replaceValue: bullet),
+            TagTransformer(tagName: "li", tagType: .end, replaceValue: "\n")
+        ]
+
+        let listItemFont = UIFont(name: "Poppins-Regular", size: 13.0)!
+        let indentation: CGFloat = (bullet as NSString).size(withAttributes: [NSAttributedString.Key.font: listItemFont]).width
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.tabStops = [NSTextTab(textAlignment: .left, location: indentation, options: [NSTextTab.OptionKey: Any]())]
+        paragraphStyle.defaultTabInterval = indentation
+        paragraphStyle.headIndent = indentation
+
+        let li = Style("li")
+            .font(listItemFont)
+            .paragraphStyle(paragraphStyle)
+
+        return self.style(tags: li, transformers: transformers)
+            .styleAll(Style.font(UIFont(name: "Poppins-Regular", size: 13.0)!).foregroundColor(Colors.colorGray))
+            .attributedString
     }
 }

@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import MapKit
 import FaveButton
+import Atributika
 
 class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, FaveButtonDelegate {
     
@@ -141,9 +142,8 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, Fave
     let restaurantIngredientsView: UILabel = {
         let view = UILabel()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.font = UIFont(name: "Poppins-Regular", size: 13)
-        view.text = "Not Available"
         view.textColor = Colors.colorGray
+        view.numberOfLines = 0
         return view
     }()
     
@@ -401,10 +401,11 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, Fave
                 let menuDescriptionRect = NSString(string: (menu.menu?.description!)!).boundingRect(with: CGSize(width: frameWidth - 20, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: restaurantDescriptionTextSize)!], context: nil)
                 
                 if menu.menu?.showIngredients ?? true {
-                    let menuIngredientsRect = NSString(string: (menu.menu?.ingredients!)!.withoutHtml).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont(name: "Poppins-Regular", size: 13)!], context: nil)
                     
-                    restaurantIngredientsView.text = menu.menu?.ingredients!.withoutHtml
-                    restaurantMenuIngredientsHeight = menuIngredientsRect.height
+                    restaurantIngredientsView.attributedText = menu.menu?.ingredients!.stringWithIndentedList()
+                    restaurantMenuIngredientsHeight = restaurantIngredientsView.sizeThatFits(CGSize(width: self.frame.width - 24, height: 1000)).height
+                } else {
+                    restaurantIngredientsView.attributedText = "Not Available".stringWithIndentedList()
                 }
                 
                 restaurantMenuNameHeight = menuNameRect.height
@@ -485,6 +486,14 @@ class MenuDetailsViewCell: UICollectionViewCell, CLLocationManagerDelegate, Fave
             restaurantMenuView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]-8-[v2]-8-[v3]", views: restaurantMenuCategoryView, restaurantMenuGroupView, restaurantMenuTypeView, restaurantMenuCuisineView)
         } else {
             restaurantMenuView.addConstraintsWithFormat(format: "H:|[v0]-8-[v1]", views: restaurantMenuGroupView, restaurantMenuTypeView)
+        }
+        
+        if menu?.menu?.showIngredients ?? true {
+            
+            restaurantIngredientsView.attributedText = menu?.menu?.ingredients!.stringWithIndentedList()
+            restaurantMenuIngredientsHeight = restaurantIngredientsView.sizeThatFits(CGSize(width: self.frame.width - 24, height: 1000)).height
+        } else {
+            restaurantIngredientsView.attributedText = "Not Available".stringWithIndentedList()
         }
         
         if menu?.type?.id != 2 {

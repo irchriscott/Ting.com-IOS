@@ -32,4 +32,5 @@ target 'ting' do
     pod 'YPImagePicker'
     pod 'YNSearch'
     pod 'SwiftToast'
+    pod 'Atributika'
 end
